@@ -2,6 +2,7 @@ import { PieceAuth, createPiece } from '@activepieces/pieces-framework';
 import { PieceCategory } from '@activepieces/shared';
 import { httpSendRequestAction } from './lib/actions/send-http-request-action';
 import { parseUrl } from './lib/actions/parse-url';
+import { pollHttpEndpointTrigger } from './lib/triggers/poll-http-endpoint';
 
 export const http = createPiece({
   displayName: 'HTTP',
@@ -22,5 +23,5 @@ export const http = createPiece({
     'abuaboud',
     'pfernandez98',
   ],
-  triggers: [],
+  triggers: [pollHttpEndpointTrigger],
 });

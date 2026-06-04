@@ -10,6 +10,7 @@ import { PanelImperativeHandle } from 'react-resizable-panels';
 import { usePrevious } from 'react-use';
 
 import { useBuilderStateContext } from '@/app/builder/builder-hooks';
+import { DataMapperPanel } from '@/app/builder/data-mapper';
 import { DataSelector } from '@/app/builder/data-selector';
 import { CanvasControls } from '@/app/builder/flow-canvas/canvas-controls';
 import { StepSettingsProvider } from '@/app/builder/step-settings/step-settings-context';
@@ -174,6 +175,10 @@ const BuilderPage = () => {
               parentHeight={middlePanelSize.height}
               parentWidth={middlePanelSize.width}
             ></DataSelector>
+            <DataMapperPanel
+              parentHeight={middlePanelSize.height}
+              parentWidth={middlePanelSize.width}
+            ></DataMapperPanel>
           </div>
         </ResizablePanel>
 

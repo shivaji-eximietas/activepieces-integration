@@ -16,7 +16,7 @@ const FindFileInputSchema = z
     filename: z.string().optional(),
     attachment_sys_id: z.string().min(1).optional(),
     accept_type: z.string().optional(),
-    return_format: z.enum(['base64', 'buffer', 'metadata']).optional(),
+    return_format: z.enum(['base64', 'buffer', 'metadata']).nullish(),
   })
   .refine(
     (data) => {

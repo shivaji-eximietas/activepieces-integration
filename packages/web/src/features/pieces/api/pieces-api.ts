@@ -45,7 +45,7 @@ export const piecesApi = {
     return api
       .post<ExecutePropsResult<T>>(`/v1/pieces/options`, request)
       .catch((error) => {
-        console.error(error);
+        console.error('piece api error:', error);
         internalErrorToast();
         const defaultStateForDynamicProperty: ExecutePropsResult<PropertyType.DYNAMIC> =
           {

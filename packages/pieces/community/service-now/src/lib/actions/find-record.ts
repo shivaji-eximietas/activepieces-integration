@@ -10,12 +10,12 @@ import {
 const FindRecordInputSchema = z.object({
   table: z.string().min(1),
   query: z.string().min(1),
-  limit: z.number().optional(),
-  fields: z.array(z.string()).optional(),
-  sysparm_display_value: z.enum(['true', 'false', 'all']).optional(),
-  sysparm_exclude_reference_link: z.boolean().optional(),
-  sysparm_query_no_domain: z.boolean().optional(),
-  sysparm_view: z.enum(['desktop', 'mobile', 'both']).optional(),
+  limit: z.number().nullish(),
+  fields: z.array(z.string()).nullish(),
+  sysparm_display_value: z.enum(['true', 'false', 'all']).nullish(),
+  sysparm_exclude_reference_link: z.boolean().nullish(),
+  sysparm_query_no_domain: z.boolean().nullish(),
+  sysparm_view: z.enum(['desktop', 'mobile', 'both']).nullish(),
 });
 
 export const findRecordAction = createAction({
@@ -107,12 +107,12 @@ export const findRecordAction = createAction({
     const client = createServiceNowClient(context.auth);
 
     const options = {
-      limit: input.limit,
-      fields: input.fields,
-      sysparm_display_value: input.sysparm_display_value,
-      sysparm_exclude_reference_link: input.sysparm_exclude_reference_link,
-      sysparm_query_no_domain: input.sysparm_query_no_domain,
-      sysparm_view: input.sysparm_view,
+      limit: input.limit ?? undefined,
+      fields: input.fields ?? undefined,
+      sysparm_display_value: input.sysparm_display_value ?? undefined,
+      sysparm_exclude_reference_link: input.sysparm_exclude_reference_link ?? undefined,
+      sysparm_query_no_domain: input.sysparm_query_no_domain ?? undefined,
+      sysparm_view: input.sysparm_view ?? undefined,
     };
 
     const result = await client.findRecord(input.table, input.query, options);

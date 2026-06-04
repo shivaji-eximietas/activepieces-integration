@@ -26,5 +26,7 @@ export type CustomPropertyCodeFunctionParams =
     isEmbeded: boolean,
     projectId:string,
     property: Pick<CustomProperty<boolean>, 'displayName' | 'description' | 'required'>,
-    disabled: boolean
+    disabled: boolean,
+    flowSteps?: { name: string; displayName: string }[],
+    stepSampleData?: Record<string, unknown>,
   }

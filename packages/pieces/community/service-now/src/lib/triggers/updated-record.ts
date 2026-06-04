@@ -11,6 +11,8 @@ import {
   pollingHelper,
 } from '@activepieces/pieces-common';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
 import { servicenowAuth, tableDropdown, createServiceNowClient } from '../common/props';
 
 const polling: Polling<
@@ -22,8 +24,14 @@ const polling: Polling<
     const client = createServiceNowClient(auth);
     const { table, filter } = propsValue;
 
-    const lastFetchTime = dayjs(lastFetchEpochMS).format('YYYY-MM-DD HH:mm:ss');
-    let query = `sys_updated_on>${lastFetchTime}^sys_created_on<${lastFetchTime}`;
+    let query: string;
+    if (lastFetchEpochMS === 0) {
+      // Test mode: just fetch the most recently updated records
+      query = 'ORDERBYDESCsys_updated_on';
+    } else {
+      const lastFetchTime = dayjs.utc(lastFetchEpochMS).format('YYYY-MM-DD HH:mm:ss');
+      query = `sys_updated_on>${lastFetchTime}^sys_created_on<${lastFetchTime}^ORDERBYDESCsys_updated_on`;
+    }
     if (filter) {
       query += `^${filter}`;
     }
@@ -31,7 +39,7 @@ const polling: Polling<
     const records = await client.findRecord(table, query, { limit: 100 });
 
     return records.map((record) => ({
-      epochMilliSeconds: dayjs(record['sys_updated_on']).valueOf(),
+      epochMilliSeconds: dayjs.utc(record['sys_updated_on']).valueOf(),
       data: record,
     }));
   },

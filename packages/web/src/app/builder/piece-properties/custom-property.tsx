@@ -1,8 +1,11 @@
 import { CustomProperty as CustomPropertyType } from '@activepieces/pieces-framework';
+import { flowStructureUtil } from '@activepieces/shared';
 import { useEffect, useId } from 'react';
 
 import { useEmbedding } from '@/components/providers/embed-provider';
 import { projectCollectionUtils } from '@/features/projects';
+
+import { useBuilderStateContext } from '../builder-hooks';
 const CUSTOM_PROPERTY_CONTAINER_ID = 'custom-property-container';
 
 type CustomPropertyParams = {
@@ -32,8 +35,29 @@ const CustomProperty = ({
   const { embedState } = useEmbedding();
   const id = useId();
   const containerId = CUSTOM_PROPERTY_CONTAINER_ID + '-' + id;
+
+  const flowVersion = useBuilderStateContext((state) => state.flowVersion);
+  const outputSampleData = useBuilderStateContext(
+    (state) => state.outputSampleData,
+  );
+  const selectedStep = useBuilderStateContext((state) => state.selectedStep);
+
   useEffect(() => {
     try {
+      const flowSteps: { name: string; displayName: string }[] = [];
+      if (flowVersion?.trigger && selectedStep) {
+        const pathToStep = flowStructureUtil.findPathToStep(
+          flowVersion.trigger,
+          selectedStep,
+        );
+        pathToStep.forEach((step) => {
+          flowSteps.push({
+            name: step.name,
+            displayName: step.displayName,
+          });
+        });
+      }
+
       const params = {
         containerId,
         value,
@@ -42,6 +66,8 @@ const CustomProperty = ({
         projectId: project.id,
         disabled,
         property,
+        flowSteps,
+        stepSampleData: outputSampleData as Record<string, unknown>,
       };
       // Create function that takes a params object
       const fn = parseFunctionString(code);

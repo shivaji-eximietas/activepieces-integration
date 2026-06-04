@@ -25,7 +25,7 @@ export const servicenowAuth = PieceAuth.CustomAuth({
 export const tableDropdown = Property.Dropdown({
   auth: servicenowAuth,
   displayName: 'Table',
-  description: 'ServiceNow table to work with',
+  description: 'ServiceNow table to work with. Type a custom table name if not listed.',
   required: true,
   refreshers: [],
   options: async ({ auth }) => {
@@ -37,28 +37,33 @@ export const tableDropdown = Property.Dropdown({
       };
     }
 
-    try {
-      const client = new ServiceNowClient({
-        instanceUrl: (auth as any).instanceUrl,
-        auth: {
-          type: 'basic',
-          username: (auth as any).username,
-          password: (auth as any).password,
-        },
-      });
+    const tables = [
+      { label: 'Incident (incident)', value: 'incident' },
+      { label: 'Change Request (change_request)', value: 'change_request' },
+      { label: 'Problem (problem)', value: 'problem' },
+      { label: 'Service Request (sc_request)', value: 'sc_request' },
+      { label: 'Request Item (sc_req_item)', value: 'sc_req_item' },
+      { label: 'Task (task)', value: 'task' },
+      { label: 'User (sys_user)', value: 'sys_user' },
+      { label: 'User Group (sys_user_group)', value: 'sys_user_group' },
+      { label: 'Configuration Item (cmdb_ci)', value: 'cmdb_ci' },
+      { label: 'CI Service (cmdb_ci_service)', value: 'cmdb_ci_service' },
+      { label: 'Change Task (change_task)', value: 'change_task' },
+      { label: 'Hardware Asset (alm_hardware)', value: 'alm_hardware' },
+      { label: 'Software Asset (alm_software)', value: 'alm_software' },
+      { label: 'Knowledge Article (kb_knowledge)', value: 'kb_knowledge' },
+      { label: 'Customer Service Case (sn_customerservice_case)', value: 'sn_customerservice_case' },
+      { label: 'Catalog Item (sc_cat_item)', value: 'sc_cat_item' },
+      { label: 'Choice (sys_choice)', value: 'sys_choice' },
+      { label: 'Company (core_company)', value: 'core_company' },
+      { label: 'Contract (ast_contract)', value: 'ast_contract' },
+      { label: 'Expense Line (fm_expense_line)', value: 'fm_expense_line' },
+    ];
 
-      const tables = await client.getTables();
-      return {
-        disabled: false,
-        options: tables,
-      };
-    } catch {
-      return {
-        disabled: true,
-        placeholder: 'Failed to load tables. Check your credentials.',
-        options: [],
-      };
-    }
+    return {
+      disabled: false,
+      options: tables,
+    };
   },
 });
 
@@ -78,12 +83,14 @@ export const recordDropdown = Property.Dropdown({
     }
 
     try {
+      const authObj = auth as Record<string, unknown>;
+      const props = (authObj['props'] as Record<string, string> | undefined) ?? authObj;
       const client = new ServiceNowClient({
-        instanceUrl: (auth as any).instanceUrl,
+        instanceUrl: (props['instanceUrl'] as string) || '',
         auth: {
           type: 'basic',
-          username: (auth as any).username,
-          password: (auth as any).password,
+          username: (props['username'] as string) || '',
+          password: (props['password'] as string) || '',
         },
       });
 
@@ -92,10 +99,10 @@ export const recordDropdown = Property.Dropdown({
         disabled: false,
         options: records,
       };
-    } catch {
+    } catch (e) {
       return {
         disabled: true,
-        placeholder: 'Failed to load records. Check your credentials and table selection.',
+        placeholder: `Failed to load records: ${e instanceof Error ? e.message : 'Unknown error'}`,
         options: [],
       };
     }
@@ -118,12 +125,14 @@ export const catalogItemDropdown = Property.Dropdown({
     }
 
     try {
+      const authObj = auth as Record<string, unknown>;
+      const props = (authObj['props'] as Record<string, string> | undefined) ?? authObj;
       const client = new ServiceNowClient({
-        instanceUrl: (auth as any).instanceUrl,
+        instanceUrl: (props['instanceUrl'] as string) || '',
         auth: {
           type: 'basic',
-          username: (auth as any).username,
-          password: (auth as any).password,
+          username: (props['username'] as string) || '',
+          password: (props['password'] as string) || '',
         },
       });
 

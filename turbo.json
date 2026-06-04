@@ -12,7 +12,7 @@
         "!src/**/*.test.ts",
         "!vitest.config.*"
       ],
-      "cache": false
+      "cache": true
     },
     "web#build": {
       "dependsOn": ["^build"],

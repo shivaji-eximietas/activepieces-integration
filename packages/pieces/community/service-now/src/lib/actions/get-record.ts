@@ -6,11 +6,11 @@ import { tableDropdown, recordDropdown, createServiceNowClient, servicenowAuth }
 const GetRecordInputSchema = z.object({
   table: z.string().min(1),
   sys_id: z.string().min(1),
-  sysparm_display_value: z.enum(['true', 'false', 'all']).optional(),
-  sysparm_exclude_reference_link: z.boolean().optional(),
-  sysparm_fields: z.array(z.string()).optional(),
-  sysparm_query_no_domain: z.boolean().optional(),
-  sysparm_view: z.enum(['desktop', 'mobile', 'both']).optional(),
+  sysparm_display_value: z.enum(['true', 'false', 'all']).nullish(),
+  sysparm_exclude_reference_link: z.boolean().nullish(),
+  sysparm_fields: z.array(z.string()).nullish(),
+  sysparm_query_no_domain: z.boolean().nullish(),
+  sysparm_view: z.enum(['desktop', 'mobile', 'both']).nullish(),
 });
 
 export const getRecordAction = createAction({
@@ -101,11 +101,11 @@ export const getRecordAction = createAction({
     const client = createServiceNowClient(context.auth);
 
     const options = {
-      sysparm_display_value: input.sysparm_display_value,
-      sysparm_exclude_reference_link: input.sysparm_exclude_reference_link,
-      sysparm_fields: input.sysparm_fields,
-      sysparm_query_no_domain: input.sysparm_query_no_domain,
-      sysparm_view: input.sysparm_view,
+      ...(input.sysparm_display_value && { sysparm_display_value: input.sysparm_display_value }),
+      ...(input.sysparm_exclude_reference_link != null && { sysparm_exclude_reference_link: input.sysparm_exclude_reference_link }),
+      ...(input.sysparm_fields && { sysparm_fields: input.sysparm_fields }),
+      ...(input.sysparm_query_no_domain != null && { sysparm_query_no_domain: input.sysparm_query_no_domain }),
+      ...(input.sysparm_view && { sysparm_view: input.sysparm_view }),
     };
 
     const result = await client.getRecord(input.table, input.sys_id, options);

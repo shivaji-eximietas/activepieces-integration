@@ -6,10 +6,10 @@ import { tableDropdown, createServiceNowClient, servicenowAuth } from '../common
 const CreateRecordInputSchema = z.object({
   table: z.string().min(1),
   fields: z.record(z.string(), z.any()),
-  sysparm_display_value: z.enum(['true', 'false', 'all']).optional(),
-  sysparm_fields: z.array(z.string()).optional(),
-  sysparm_input_display_value: z.boolean().optional(),
-  sysparm_view: z.enum(['desktop', 'mobile', 'both']).optional(),
+  sysparm_display_value: z.enum(['true', 'false', 'all']).nullish(),
+  sysparm_fields: z.array(z.string()).nullish(),
+  sysparm_input_display_value: z.boolean().nullish(),
+  sysparm_view: z.enum(['desktop', 'mobile', 'both']).nullish(),
 });
 
 export const createRecordAction = createAction({
@@ -85,10 +85,10 @@ export const createRecordAction = createAction({
     const client = createServiceNowClient(context.auth);
 
     const options = {
-      sysparm_display_value: input.sysparm_display_value,
-      sysparm_fields: input.sysparm_fields,
-      sysparm_input_display_value: input.sysparm_input_display_value,
-      sysparm_view: input.sysparm_view,
+      sysparm_display_value: input.sysparm_display_value ?? undefined,
+      sysparm_fields: input.sysparm_fields ?? undefined,
+      sysparm_input_display_value: input.sysparm_input_display_value ?? undefined,
+      sysparm_view: input.sysparm_view ?? undefined,
     };
 
     const result = await client.createRecord(input.table, input.fields, options);

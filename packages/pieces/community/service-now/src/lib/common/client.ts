@@ -17,6 +17,29 @@ import {
   EmailSendResult,
 } from './types';
 
+export const MAJOR_TABLES = [
+  'incident',
+  'change_request',
+  'problem',
+  'sc_request',
+  'sc_req_item',
+  'task',
+  'sys_user',
+  'sys_user_group',
+  'cmdb_ci',
+  'cmdb_ci_service',
+  'change_task',
+  'alm_hardware',
+  'alm_software',
+  'kb_knowledge',
+  'sn_customerservice_case',
+  'sc_cat_item',
+  'sys_choice',
+  'core_company',
+  'ast_contract',
+  'fm_expense_line',
+];
+
 export class ServiceNowClient {
   private baseURL: string;
   private auth: { type: 'basic' | 'bearer'; username?: string; password?: string; token?: string };
@@ -468,40 +491,10 @@ export class ServiceNowClient {
   }
 
   async getTables(): Promise<Array<{ label: string; value: string }>> {
-    const endpoint = '/api/now/table/sys_db_object';
-    const queryParams = {
-      sysparm_query: 'nameNOT LIKEts_^nameNOT LIKEv_^nameNOT LIKEpa_^super_class.nameISEMPTY',
-      sysparm_fields: 'name,label',
-      sysparm_limit: '1000',
-    };
-
-    try {
-      const response = await httpClient.sendRequest({
-        method: HttpMethod.GET,
-        url: `${this.baseURL}${endpoint}`,
-        headers: this.getHeaders(),
-        queryParams,
-        timeout: 30000,
-        retries: 3,
-      });
-
-      const data = response.body as { result: Array<{ name: string; label: string }> };
-      return data.result.map(table => ({
-        label: `${table.label} (${table.name})`,
-        value: table.name,
-      }));
-    } catch {
-      return [
-        { label: 'Incident (incident)', value: 'incident' },
-        { label: 'Change Request (change_request)', value: 'change_request' },
-        { label: 'Problem (problem)', value: 'problem' },
-        { label: 'Service Request (sc_request)', value: 'sc_request' },
-        { label: 'Task (task)', value: 'task' },
-        { label: 'User (sys_user)', value: 'sys_user' },
-        { label: 'Group (sys_user_group)', value: 'sys_user_group' },
-        { label: 'Configuration Item (cmdb_ci)', value: 'cmdb_ci' },
-      ];
-    }
+    return MAJOR_TABLES.map((name) => ({
+      label: name.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) + ` (${name})`,
+      value: name,
+    })).sort((a, b) => a.label.localeCompare(b.label));
   }
 
   async getRecordsForDropdown(table: string, limit = 50): Promise<Array<{ label: string; value: string }>> {
