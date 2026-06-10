@@ -22,6 +22,7 @@ function visualMapperCode(params: CustomPropertyCodeFunctionParams): (() => void
     outputTypes: Record<string, FieldType>;
     connections: Record<string, string[]>;
     transforms: Record<string, Transform[]>;
+    excludeEmptyValues: boolean;
     mapping: Record<string, unknown>;
   };
 
@@ -43,6 +44,7 @@ function visualMapperCode(params: CustomPropertyCodeFunctionParams): (() => void
     outputTypes: (stored.outputTypes as Record<string, FieldType>) || {},
     connections: (stored.connections as Record<string, string[]>) || {},
     transforms: (stored.transforms as Record<string, Transform[]>) || {},
+    excludeEmptyValues: Boolean(stored.excludeEmptyValues),
     mapping: (stored.mapping as Record<string, unknown>) || {},
   };
 
@@ -269,6 +271,7 @@ function visualMapperCode(params: CustomPropertyCodeFunctionParams): (() => void
       outputTypes: Object.assign({}, s.outputTypes),
       connections: JSON.parse(JSON.stringify(s.connections)),
       transforms: JSON.parse(JSON.stringify(s.transforms)),
+      excludeEmptyValues: s.excludeEmptyValues,
       mapping: s.mapping,
     });
     renderMain();
@@ -542,7 +545,7 @@ function visualMapperCode(params: CustomPropertyCodeFunctionParams): (() => void
         row.appendChild(tag);
       }
 
-      row.onclick = (ev) => {
+      row.onclick = (_ev) => {
         if (dis) return;
         if (isSelectable) {
           const idx = pendingInputs.indexOf(node.path);
@@ -1008,6 +1011,9 @@ function visualMapperCode(params: CustomPropertyCodeFunctionParams): (() => void
     const jsonSection = mk('div', 'margin-bottom:10px;');
     const jsonHeader = mk('div', 'display:flex;align-items:center;margin-bottom:4px;');
     jsonHeader.appendChild(mkText('div', 'Mapping JSON', 'font-weight:600;font-size:10px;color:#6b7280;text-transform:uppercase;letter-spacing:0.3px;flex:1;'));
+    if (s.excludeEmptyValues) {
+      jsonHeader.appendChild(mkText('span', 'Sanitize ON', 'font-size:10px;color:#059669;font-weight:600;margin-right:6px;'));
+    }
     const clearBtn = mkBtn('Clear', 'background:none;border:1px solid #dc2626;color:#dc2626;border-radius:4px;padding:2px 8px;cursor:pointer;font-size:10px;font-weight:500;', () => {
       s.connections = {};
       s.transforms = {};
@@ -1038,12 +1044,27 @@ function visualMapperCode(params: CustomPropertyCodeFunctionParams): (() => void
           outputFields: s.outputFields.slice(),
           outputTypes: Object.assign({}, s.outputTypes),
           connections: JSON.parse(JSON.stringify(s.connections)),
+          transforms: JSON.parse(JSON.stringify(s.transforms)),
+          excludeEmptyValues: s.excludeEmptyValues,
           mapping: s.mapping,
         });
         jsonTa.style.borderColor = '#d1d5db';
       } catch (_e) { jsonTa.style.borderColor = '#dc2626'; }
     };
     jsonSection.appendChild(jsonTa);
+
+    const sanitizeRow = mk('label', 'display:flex;align-items:center;gap:6px;margin-top:6px;font-size:11px;color:#374151;cursor:pointer;');
+    const sanitizeToggle = mk('input') as HTMLInputElement;
+    sanitizeToggle.type = 'checkbox';
+    sanitizeToggle.checked = s.excludeEmptyValues;
+    sanitizeToggle.disabled = dis;
+    sanitizeToggle.onchange = () => {
+      s.excludeEmptyValues = sanitizeToggle.checked;
+      persist();
+    };
+    sanitizeRow.appendChild(sanitizeToggle);
+    sanitizeRow.appendChild(mkText('span', 'Exclude null, undefined, and empty string values'));
+    jsonSection.appendChild(sanitizeRow);
     el!.appendChild(jsonSection);
 
     // Open Visual Mapper button
@@ -1075,6 +1096,7 @@ type MappingValue = {
   outputTypes: Record<string, string>;
   connections: Record<string, string[]>;
   transforms: Record<string, string[]>;
+  excludeEmptyValues: boolean;
   mapping: Record<string, unknown>;
 };
 
@@ -1103,6 +1125,7 @@ export const advancedMapping = createAction({
         outputTypes: {},
         connections: {},
         transforms: {},
+        excludeEmptyValues: false,
         mapping: {},
       } satisfies MappingValue,
       code: visualMapperCode,
@@ -1113,7 +1136,10 @@ export const advancedMapping = createAction({
     if (!val?.mapping) return {};
     const mapping = val.mapping;
     if (Object.keys(mapping).length === 0) return {};
-    const result = processMapping(mapping);
+    const processed = processMapping(mapping);
+    const result = val.excludeEmptyValues
+      ? (sanitizeMappingValues(processed) as Record<string, unknown> ?? {})
+      : processed;
     const hasAnyValue = JSON.stringify(result) !== JSON.stringify(emptyLeaves(result));
     if (!hasAnyValue) {
       return {
@@ -1158,6 +1184,30 @@ function processMapping(obj: Record<string, unknown>): Record<string, unknown> {
     }
   }
   return result;
+}
+
+function sanitizeMappingValues(value: unknown): unknown {
+  if (value === null || value === undefined || value === '') {
+    return undefined;
+  }
+
+  if (Array.isArray(value)) {
+    return value
+      .map((item) => sanitizeMappingValues(item))
+      .filter((item) => item !== undefined);
+  }
+
+  if (typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>)
+        .flatMap(([key, item]) => {
+          const sanitized = sanitizeMappingValues(item);
+          return sanitized !== undefined ? [[key, sanitized]] : [];
+        })
+    );
+  }
+
+  return value;
 }
 
 function applyTransformChain(value: unknown, transforms: string[]): unknown {

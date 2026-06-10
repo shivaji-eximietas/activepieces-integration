@@ -211,4 +211,46 @@ describe('advancedMapping', () => {
     expect(result._debug.message).toContain('resolved to empty');
     expect(result._debug.stepRef).toBe('trigger');
   });
+
+  test('removes null, undefined and empty strings when sanitization is enabled', async () => {
+    const ctx = createMockActionContext({
+      propsValue: {
+        mapping: {
+          stepRef: 'trigger',
+          inputFields: ['name', 'description', 'status'],
+          inputTypes: { name: 'string', description: 'string', status: 'string' },
+          outputFields: ['data.name', 'data.description', 'data.status', 'data.code'],
+          outputTypes: {
+            'data.name': 'string',
+            'data.description': 'string',
+            'data.status': 'string',
+            'data.code': 'string',
+          },
+          connections: {
+            'data.name': ['name'],
+            'data.description': ['description'],
+            'data.status': ['status'],
+            'data.code': ['status'],
+          },
+          transforms: {},
+          excludeEmptyValues: true,
+          mapping: {
+            data: {
+              name: 'Alice',
+              description: '',
+              status: null,
+              code: undefined,
+            },
+          },
+        },
+      },
+    });
+
+    const result = await advancedMapping.run(ctx);
+    expect(result).toEqual({
+      data: {
+        name: 'Alice',
+      },
+    });
+  });
 });
