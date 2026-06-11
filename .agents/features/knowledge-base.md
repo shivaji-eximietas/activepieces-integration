@@ -4,14 +4,14 @@
 The Knowledge Base feature lets users upload documents (PDF, DOCX, TXT, CSV) into a project-scoped store. Uploaded files are split into text chunks, optionally embedded with a 768-dimensional vector model, and stored alongside their embeddings. Agents can then perform semantic similarity search over one or more knowledge-base files to retrieve relevant context. The feature consists of two database entities (`knowledge_base_file` and `knowledge_base_chunk`), a REST API under `/v1/knowledge-base/files`, and a small frontend UI embedded within the agent tool dialogs.
 
 ## Key Files
-- `packages/server/api/src/app/knowledge-base/knowledge-base.controller.ts` — all routes under `/v1/knowledge-base/files`
-- `packages/server/api/src/app/knowledge-base/knowledge-base.service.ts` — service: `createFile`, `uploadAndIngest`, `extractChunks`, `storeChunks`, `search`, `listFiles`, `deleteFile`, `getChunkCount`, `listChunks`
-- `packages/server/api/src/app/knowledge-base/knowledge-base-file.entity.ts` — `knowledge_base_file` entity
-- `packages/server/api/src/app/knowledge-base/knowledge-base-chunk.entity.ts` — `knowledge_base_chunk` entity with `vector(768)` embedding column
-- `packages/shared/src/lib/automation/knowledge-base/index.ts` — `KnowledgeBaseFile` Zod schema
-- `packages/web/src/features/agents/agent-tools/knowledge-base-dialog/knowledge-base-api.ts` — frontend API client
-- `packages/web/src/features/agents/agent-tools/knowledge-base-dialog/knowledge-base-hooks.ts` — React Query hooks
-- `packages/web/src/features/agents/agent-tools/components/knowledge-base-tool.tsx` — `KnowledgeBaseSection` component rendered in agent tool list
+- `backend/packages/server/api/src/app/knowledge-base/knowledge-base.controller.ts` — all routes under `/v1/knowledge-base/files`
+- `backend/packages/server/api/src/app/knowledge-base/knowledge-base.service.ts` — service: `createFile`, `uploadAndIngest`, `extractChunks`, `storeChunks`, `search`, `listFiles`, `deleteFile`, `getChunkCount`, `listChunks`
+- `backend/packages/server/api/src/app/knowledge-base/knowledge-base-file.entity.ts` — `knowledge_base_file` entity
+- `backend/packages/server/api/src/app/knowledge-base/knowledge-base-chunk.entity.ts` — `knowledge_base_chunk` entity with `vector(768)` embedding column
+- `backend/packages/shared/src/lib/automation/knowledge-base/index.ts` — `KnowledgeBaseFile` Zod schema
+- `frontend/packages/web/src/features/agents/agent-tools/knowledge-base-dialog/knowledge-base-api.ts` — frontend API client
+- `frontend/packages/web/src/features/agents/agent-tools/knowledge-base-dialog/knowledge-base-hooks.ts` — React Query hooks
+- `frontend/packages/web/src/features/agents/agent-tools/components/knowledge-base-tool.tsx` — `KnowledgeBaseSection` component rendered in agent tool list
 
 ## Edition Availability
 All editions. Requires `Permission.READ_KNOWLEDGE_BASE` / `Permission.WRITE_KNOWLEDGE_BASE`. Semantic search requires pgvector extension in the PostgreSQL database. Embedding generation requires an AI provider configured via `createCopilotEmbeddingModel` (falls back to text-only search if vector unavailable).

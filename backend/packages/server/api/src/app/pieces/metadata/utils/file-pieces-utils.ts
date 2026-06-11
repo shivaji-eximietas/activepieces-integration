@@ -8,7 +8,7 @@ import clearModule from 'clear-module'
 import { FastifyBaseLogger } from 'fastify'
 import { AppSystemProp, environmentVariables } from '../../../helper/system/system-props'
 
-const SOURCE_PIECES_PATH = resolve(cwd(), 'packages', 'pieces')
+const SOURCE_PIECES_PATH = resolve(cwd(), 'backend', 'packages', 'pieces')
 
 export const filePiecesUtils = (log: FastifyBaseLogger) => ({
 

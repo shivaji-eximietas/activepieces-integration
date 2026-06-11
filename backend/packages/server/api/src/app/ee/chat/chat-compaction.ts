@@ -11,7 +11,7 @@ const MIN_MESSAGES_BEFORE_COMPACTION = 6
 const ESTIMATED_TOKENS_PER_MESSAGE = 200
 
 const COMPACTION_SYSTEM_PROMPT = readFileSync(
-    path.resolve('packages/server/api/src/assets/prompts/chat-compaction-prompt.md'),
+    path.resolve('backend/packages/server/api/src/assets/prompts/chat-compaction-prompt.md'),
     'utf8',
 )
 

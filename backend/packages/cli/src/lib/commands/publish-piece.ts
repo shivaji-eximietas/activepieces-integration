@@ -4,7 +4,7 @@ import chalk from "chalk";
 import inquirer from 'inquirer';
 import * as dotenv from 'dotenv';
 
-dotenv.config({path: 'packages/server/api/.env'});
+dotenv.config({path: 'backend/packages/server/api/.env'});
 
 async function publishPiece(
     {apiUrl, apiKey, pieceName, failOnError}:

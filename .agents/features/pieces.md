@@ -4,17 +4,17 @@
 The pieces feature manages the metadata catalog of automation integrations (called "pieces") and exposes APIs for listing, fetching, versioning, and installing custom pieces. Pieces are stored in `piece_metadata` and served via an in-memory cache (`pieceCache`) that is rebuilt from the database on startup and refreshed via a pub/sub channel. Platform admins can install private (custom) pieces by uploading a tarball or referencing an NPM package; these are scoped to the platform with a `platformId`. The `options` endpoint runs dynamic piece property evaluation on a worker.
 
 ## Key Files
-- `packages/server/api/src/app/pieces/metadata/piece-metadata-controller.ts` — all piece routes registered under `/v1/pieces`
-- `packages/server/api/src/app/pieces/metadata/piece-metadata-service.ts` — list, get, create, delete piece metadata; manages cache interactions and piece tag enrichment
-- `packages/server/api/src/app/pieces/metadata/piece-metadata-entity.ts` — `piece_metadata` TypeORM entity
-- `packages/server/api/src/app/pieces/metadata/piece-cache.ts` — Redis/memory cache with pub/sub invalidation
-- `packages/server/api/src/app/pieces/community-piece-module.ts` — POST `/v1/pieces` for installing custom pieces
-- `packages/server/api/src/app/pieces/piece-install-service.ts` — saves archive, calls engine to extract metadata, stores result
-- `packages/server/api/src/app/pieces/piece-sync-service.ts` — syncs canonical piece registry from NPM/bundled artifacts into DB
-- `packages/server/api/src/app/pieces/tags/` — tag entity, tag service, tag-module for organizing pieces into groups
-- `packages/web/src/features/pieces/api/pieces-api.ts` — frontend HTTP client
-- `packages/web/src/features/pieces/hooks/pieces-hooks.ts` — React Query hooks for piece listing, piece model, piece options
-- `packages/web/src/features/pieces/components/` — `PieceIcon`, `PieceIconList`, `PieceSelectorSearch`, `InstallPieceDialog`
+- `backend/packages/server/api/src/app/pieces/metadata/piece-metadata-controller.ts` — all piece routes registered under `/v1/pieces`
+- `backend/packages/server/api/src/app/pieces/metadata/piece-metadata-service.ts` — list, get, create, delete piece metadata; manages cache interactions and piece tag enrichment
+- `backend/packages/server/api/src/app/pieces/metadata/piece-metadata-entity.ts` — `piece_metadata` TypeORM entity
+- `backend/packages/server/api/src/app/pieces/metadata/piece-cache.ts` — Redis/memory cache with pub/sub invalidation
+- `backend/packages/server/api/src/app/pieces/community-piece-module.ts` — POST `/v1/pieces` for installing custom pieces
+- `backend/packages/server/api/src/app/pieces/piece-install-service.ts` — saves archive, calls engine to extract metadata, stores result
+- `backend/packages/server/api/src/app/pieces/piece-sync-service.ts` — syncs canonical piece registry from NPM/bundled artifacts into DB
+- `backend/packages/server/api/src/app/pieces/tags/` — tag entity, tag service, tag-module for organizing pieces into groups
+- `frontend/packages/web/src/features/pieces/api/pieces-api.ts` — frontend HTTP client
+- `frontend/packages/web/src/features/pieces/hooks/pieces-hooks.ts` — React Query hooks for piece listing, piece model, piece options
+- `frontend/packages/web/src/features/pieces/components/` — `PieceIcon`, `PieceIconList`, `PieceSelectorSearch`, `InstallPieceDialog`
 
 ## Edition Availability
 All editions. Piece filtering by allowed/blocked list and EE-specific filtering are gated in `enterpriseFilteringUtils` but the base listing and installation is Community-level.

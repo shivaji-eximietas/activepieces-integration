@@ -32,7 +32,7 @@ jobs:
         id: checkly-tests
         run: |
           npx checkly test \
-            --config=packages/tests-e2e/checkly.config.ts \
+            --config=frontend/packages/tests-e2e/checkly.config.ts \
             --reporter=github \
             --record \
             -e E2E_CONFIG_MODE="${{ inputs.environment }}"
@@ -51,7 +51,7 @@ jobs:
         if: failure()
         run: |
           if [ -f checkly-github-report.md ]; then
-            SUMMARY=$(node tools/scripts/format-checkly-report.js checkly-github-report.md "${{ inputs.environment }}")
+            SUMMARY=$(node devops/tools/scripts/format-checkly-report.js checkly-github-report.md "${{ inputs.environment }}")
             curl -H "Content-Type: application/json" \
               -X POST \
               -d "{\"content\": $SUMMARY}" \

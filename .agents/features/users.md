@@ -4,29 +4,29 @@
 Manages user identity, platform membership, roles, session security, and a gamification badge system. A `User` record ties a `UserIdentity` (the canonical email/password/OAuth identity) to a specific platform, enabling the same person to exist across multiple platforms. Platform roles gate what users can see and do. The badge system awards achievement badges via application events and notifies users in real time via WebSocket.
 
 ## Key Files
-- `packages/server/api/src/app/user/user-service.ts` — user CRUD, `getMe`, profile update, role assignment
-- `packages/server/api/src/app/user/user-entity.ts` — User and UserIdentity entities
-- `packages/server/api/src/app/user/badges/badge-service.ts` — badge award flow, event handling, email notification
-- `packages/server/api/src/app/user/badges/badge-entity.ts` — UserBadge entity
-- `packages/server/api/src/app/user/badges/badge-check.ts` — badge check interface
-- `packages/server/api/src/app/user/badges/checks/active-flows-badges.ts` — FLOW_UPDATED badge checks
-- `packages/server/api/src/app/user/badges/checks/flow-runs-badges.ts` — FLOW_RUN_FINISHED badge checks
-- `packages/server/api/src/app/user/badges/checks/flow-content.ts` — flow content badge checks
-- `packages/server/api/src/app/user/platform/platform-user-controller.ts` — platform admin user management endpoints (EE)
-- `packages/server/api/src/app/user/platform/platform-user-module.ts` — platform user module
-- `packages/shared/src/lib/core/user/user.ts` — User, UserWithMetaInformation, UserWithBadges schemas; PlatformRole and UserStatus enums
-- `packages/shared/src/lib/core/user/badges/index.ts` — UserBadge schema
-- `packages/web/src/app/routes/platform/users/index.tsx` — platform admin user list page
-- `packages/web/src/app/routes/platform/users/columns.tsx` — user table column definitions
-- `packages/web/src/app/routes/platform/users/actions/user-actions.tsx` — action menu for a user row
-- `packages/web/src/app/routes/platform/users/actions/update-user-dialog.tsx` — edit role/status dialog
-- `packages/web/src/app/routes/platform/users/actions/edit-user-action.tsx` — edit action trigger
-- `packages/web/src/app/routes/platform/users/actions/toggle-user-status-action.tsx` — activate/deactivate action
-- `packages/web/src/app/routes/platform/users/actions/delete-user-action.tsx` — delete user action
-- `packages/web/src/features/authentication/components/sign-in-form.tsx` — sign-in form
-- `packages/web/src/features/authentication/components/sign-up-form.tsx` — sign-up form
-- `packages/web/src/features/authentication/components/change-password.tsx` — password change form
-- `packages/web/src/features/authentication/hooks/auth-hooks.ts` — auth React Query hooks
+- `backend/packages/server/api/src/app/user/user-service.ts` — user CRUD, `getMe`, profile update, role assignment
+- `backend/packages/server/api/src/app/user/user-entity.ts` — User and UserIdentity entities
+- `backend/packages/server/api/src/app/user/badges/badge-service.ts` — badge award flow, event handling, email notification
+- `backend/packages/server/api/src/app/user/badges/badge-entity.ts` — UserBadge entity
+- `backend/packages/server/api/src/app/user/badges/badge-check.ts` — badge check interface
+- `backend/packages/server/api/src/app/user/badges/checks/active-flows-badges.ts` — FLOW_UPDATED badge checks
+- `backend/packages/server/api/src/app/user/badges/checks/flow-runs-badges.ts` — FLOW_RUN_FINISHED badge checks
+- `backend/packages/server/api/src/app/user/badges/checks/flow-content.ts` — flow content badge checks
+- `backend/packages/server/api/src/app/user/platform/platform-user-controller.ts` — platform admin user management endpoints (EE)
+- `backend/packages/server/api/src/app/user/platform/platform-user-module.ts` — platform user module
+- `backend/packages/shared/src/lib/core/user/user.ts` — User, UserWithMetaInformation, UserWithBadges schemas; PlatformRole and UserStatus enums
+- `backend/packages/shared/src/lib/core/user/badges/index.ts` — UserBadge schema
+- `frontend/packages/web/src/app/routes/platform/users/index.tsx` — platform admin user list page
+- `frontend/packages/web/src/app/routes/platform/users/columns.tsx` — user table column definitions
+- `frontend/packages/web/src/app/routes/platform/users/actions/user-actions.tsx` — action menu for a user row
+- `frontend/packages/web/src/app/routes/platform/users/actions/update-user-dialog.tsx` — edit role/status dialog
+- `frontend/packages/web/src/app/routes/platform/users/actions/edit-user-action.tsx` — edit action trigger
+- `frontend/packages/web/src/app/routes/platform/users/actions/toggle-user-status-action.tsx` — activate/deactivate action
+- `frontend/packages/web/src/app/routes/platform/users/actions/delete-user-action.tsx` — delete user action
+- `frontend/packages/web/src/features/authentication/components/sign-in-form.tsx` — sign-in form
+- `frontend/packages/web/src/features/authentication/components/sign-up-form.tsx` — sign-up form
+- `frontend/packages/web/src/features/authentication/components/change-password.tsx` — password change form
+- `frontend/packages/web/src/features/authentication/hooks/auth-hooks.ts` — auth React Query hooks
 
 ## Edition Availability
 - Community (CE): User, UserIdentity, badges, session management, `GET /v1/users/me`, `POST /v1/users/me`

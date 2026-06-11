@@ -1,6 +1,6 @@
 # Server Style Guide
 
-Backend-specific conventions for `packages/server/*`. The root [CLAUDE.md](../../CLAUDE.md) covers cross-cutting rules (no `any`, named params, file order, comments-why-not-what, util exports, etc.) — read it first. This doc only adds what is specific to server code.
+Backend-specific conventions for `backend/packages/server/*`. The root [CLAUDE.md](../../CLAUDE.md) covers cross-cutting rules (no `any`, named params, file order, comments-why-not-what, util exports, etc.) — read it first. This doc only adds what is specific to server code.
 
 ---
 
@@ -9,7 +9,7 @@ Backend-specific conventions for `packages/server/*`. The root [CLAUDE.md](../..
 A backend service is exported as a function that takes `log: FastifyBaseLogger` and returns an object literal of methods. No classes, no constructor injection, no `this` inside methods.
 
 ```ts
-// packages/server/api/src/app/flows/flow/flow.service.ts
+// backend/packages/server/api/src/app/flows/flow/flow.service.ts
 export const flowService = (log: FastifyBaseLogger) => ({
     async create({ projectId, request, externalId, ownerId, templateId }: CreateParams): Promise<PopulatedFlow> {
         const folderId = await getFolderIdFromRequest({ projectId, folderId: request.folderId, folderName: request.folderName, log })
@@ -35,7 +35,7 @@ const flow = await flowService(request.log).create({ /* ... */ })
 **Stateless variant** — when the service needs neither logging nor per-request state, export a plain object directly. This is the exception, not the rule.
 
 ```ts
-// packages/server/api/src/app/tables/field/field.service.ts
+// backend/packages/server/api/src/app/tables/field/field.service.ts
 export const fieldService = {
     async create({ request, projectId }: CreateParams): Promise<Field> { /* ... */ },
     async createFromState({ projectId, field, tableId }: CreateFromStateParams): Promise<Field> { /* ... */ },
@@ -58,7 +58,7 @@ Read the file top-down like a table of contents: imports → **exported const** 
 Think of the const as a namespace — it groups the public API. A reader sees what the module *does* before they see *how*.
 
 ```ts
-// packages/server/api/src/app/flows/flow/flow.service.ts (shape)
+// backend/packages/server/api/src/app/flows/flow/flow.service.ts (shape)
 
 // 1. imports
 import { ActivepiecesError, apId, /* ... */ } from '@activepieces/shared'
@@ -99,7 +99,7 @@ Rules of thumb:
 When a module exposes more than one related function or constant, group them under a single `export const` named after the file. A reader opens the file and sees the whole public API as one object, and callers read as `<fileName>.<fn>(…)` at the call site — self-documenting even after auto-import.
 
 ```ts
-// ✅ Good — packages/server/utils/src/file-system-utils.ts
+// ✅ Good — backend/packages/server/utils/src/file-system-utils.ts
 export const fileSystemUtils = {
     fileExists: async (path: string): Promise<boolean> => { /* ... */ },
     threadSafeMkdir: async (path: string): Promise<void> => { /* ... */ },
@@ -153,7 +153,7 @@ Convention: methods named `getOne` return `Thing | null`; methods named `getOneO
 When you need to *react* to a failure rather than propagate it (fallback path, retry, logging-and-continue, attempt-then-check), wrap the call in `tryCatch` and branch on `error`. **Do not** write raw `try { ... } catch { ... }` for this — it fragments control flow and loses the typed result.
 
 ```ts
-// packages/server/worker/src/lib/execute/jobs/execute-flow.ts
+// backend/packages/server/worker/src/lib/execute/jobs/execute-flow.ts
 const { data: provisioned, error: provisionError } = await tryCatch(
     () => provisionFlowPieces({ flowVersion, platformId: data.platformId, flowId: data.flowId, projectId: data.projectId, log: ctx.log, apiClient: ctx.apiClient }),
 )
@@ -165,7 +165,7 @@ if (provisionError) {
 ```
 
 ```ts
-// packages/server/utils/src/file-system-utils.ts
+// backend/packages/server/utils/src/file-system-utils.ts
 fileExists: async (path: string): Promise<boolean> => {
     const { error } = await tryCatch(() => access(path))
     return error === null
@@ -179,4 +179,4 @@ Rules of thumb:
 - **Early return on error**, then use `data` with its narrowed non-null type (the discriminated union gives you this for free).
 - **Rename the result fields** when you have multiple calls in one function to avoid collisions: `{ data: provisioned, error: provisionError }`, `{ data: published, error: publishError }`.
 - **Don't mix** `tryCatch` with a throw of the same error — pick one: either recover or propagate.
-- **Raw `try/catch` is reserved for integration glue** where the `catch` block must invoke a side-effect handler (e.g. `exceptionHandler.handle(error, log)`) and continue down a different strategy. Example: the S3-upload fallback in `packages/server/api/src/app/file/file.service.ts`.
+- **Raw `try/catch` is reserved for integration glue** where the `catch` block must invoke a side-effect handler (e.g. `exceptionHandler.handle(error, log)`) and continue down a different strategy. Example: the S3-upload fallback in `backend/packages/server/api/src/app/file/file.service.ts`.

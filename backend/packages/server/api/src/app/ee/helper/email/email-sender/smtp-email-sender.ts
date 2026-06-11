@@ -85,8 +85,8 @@ const getPlatform = async (platformId: string | undefined, log: FastifyBaseLogge
 }
 
 const renderEmailBody = async ({ platform, templateData }: RenderEmailBodyArgs): Promise<string> => {
-    const templatePath = `packages/server/api/src/assets/emails/${templateData.name}.html`
-    const footerPath = 'packages/server/api/src/assets/emails/footer.html'
+    const templatePath = `backend/packages/server/api/src/assets/emails/${templateData.name}.html`
+    const footerPath = 'backend/packages/server/api/src/assets/emails/footer.html'
     const template = await readFile(templatePath, 'utf-8')
     const footer = await readFile(footerPath, 'utf-8')
     const edition = system.getEdition()

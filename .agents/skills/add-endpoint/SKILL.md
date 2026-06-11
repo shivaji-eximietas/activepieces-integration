@@ -9,7 +9,7 @@ Create endpoint for $ARGUMENTS.
 
 ## Steps
 
-1. **Read the pattern**: Open `packages/server/api/src/app/tables/table/table.controller.ts` as reference.
+1. **Read the pattern**: Open `backend/packages/server/api/src/app/tables/table/table.controller.ts` as reference.
 
 2. **Create or update controller** using `FastifyPluginAsyncZod`:
    ```typescript

@@ -19,7 +19,7 @@ Before generating, identify:
 
 ### Step 2: UPDATE THE ENTITY
 
-Update the TypeORM entity file in `packages/server/api/src/app/` to reflect the new schema. This ensures the CLI generation command can diff against the current state.
+Update the TypeORM entity file in `backend/packages/server/api/src/app/` to reflect the new schema. This ensures the CLI generation command can diff against the current state.
 
 Array columns always use this pattern:
 ```ts
@@ -32,7 +32,7 @@ columnName: {
 
 ### Step 3: GENERATE THE MIGRATION USING THE CLI
 
-Run from `packages/server/api/`:
+Run from `backend/packages/server/api/`:
 ```bash
 npm run db-migration -- src/app/database/migration/postgres/MigrationName
 ```
@@ -78,7 +78,7 @@ CI fails if any of these are missing.
 
 ### Step 5: REGISTER THE MIGRATION
 
-Open `packages/server/api/src/app/database/postgres-connection.ts` and add the new migration class to the `getMigrations()` array (at the end, in chronological order):
+Open `backend/packages/server/api/src/app/database/postgres-connection.ts` and add the new migration class to the `getMigrations()` array (at the end, in chronological order):
 
 ```ts
 import { AddMyColumn1234567890 } from './migration/postgres/1234567890-AddMyColumn'
@@ -147,10 +147,10 @@ Set `transaction = false` whenever using `CONCURRENTLY` — PostgreSQL requires 
 
 | Field | Value |
 |---|---|
-| Migration files | `packages/server/api/src/app/database/migration/postgres/` |
-| Registration | `packages/server/api/src/app/database/postgres-connection.ts` |
+| Migration files | `backend/packages/server/api/src/app/database/migration/postgres/` |
+| Registration | `backend/packages/server/api/src/app/database/postgres-connection.ts` |
 | `Migration` import | `import { Migration } from '../../migration'` |
-| Generate command | `npm run db-migration -- src/app/database/migration/postgres/MigrationName` (run from `packages/server/api/`) |
+| Generate command | `npm run db-migration -- src/app/database/migration/postgres/MigrationName` (run from `backend/packages/server/api/`) |
 
 
 ## Critical Reminders

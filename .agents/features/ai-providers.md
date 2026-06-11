@@ -4,17 +4,17 @@
 The AI Providers module lets platform admins configure one or more LLM backends (OpenAI, Anthropic, Google, Azure, OpenRouter, Cloudflare, or a custom OpenAI-compatible endpoint) for use by AI pieces inside flows. It also supports an auto-provisioned "Activepieces" provider backed by OpenRouter when the platform's `aiCreditsEnabled` plan flag is set, complete with a Stripe-integrated credit top-up system and monthly reset via a system job.
 
 ## Key Files
-- `packages/server/api/src/app/ai/` — backend module (controller, service, entity)
-- `packages/shared/src/lib/management/ai-providers/index.ts` — all shared Zod schemas, enums, and request/response types
-- `packages/web/src/features/platform-admin/api/ai-provider-api.ts` — frontend API client
-- `packages/web/src/features/platform-admin/hooks/ai-provider-hooks.ts` — TanStack Query hooks
-- `packages/web/src/app/routes/platform/setup/ai/index.tsx` — platform admin AI setup page
-- `packages/web/src/app/routes/platform/setup/ai/universal-pieces/ai-provider-card.tsx` — per-provider card component
-- `packages/web/src/app/routes/platform/setup/ai/universal-pieces/upsert-provider-dialog.tsx` — create/edit provider dialog
-- `packages/web/src/app/routes/platform/setup/ai/universal-pieces/upsert-provider-config-form.tsx` — provider config form
-- `packages/web/src/app/routes/platform/setup/ai/universal-pieces/model-form-popover.tsx` — model selection popover
-- `packages/web/src/features/agents/ai-model/index.tsx` — AI model selector used in agent step settings
-- `packages/web/src/features/agents/ai-model/hooks.ts` — hooks for listing available models per provider
+- `backend/packages/server/api/src/app/ai/` — backend module (controller, service, entity)
+- `backend/packages/shared/src/lib/management/ai-providers/index.ts` — all shared Zod schemas, enums, and request/response types
+- `frontend/packages/web/src/features/platform-admin/api/ai-provider-api.ts` — frontend API client
+- `frontend/packages/web/src/features/platform-admin/hooks/ai-provider-hooks.ts` — TanStack Query hooks
+- `frontend/packages/web/src/app/routes/platform/setup/ai/index.tsx` — platform admin AI setup page
+- `frontend/packages/web/src/app/routes/platform/setup/ai/universal-pieces/ai-provider-card.tsx` — per-provider card component
+- `frontend/packages/web/src/app/routes/platform/setup/ai/universal-pieces/upsert-provider-dialog.tsx` — create/edit provider dialog
+- `frontend/packages/web/src/app/routes/platform/setup/ai/universal-pieces/upsert-provider-config-form.tsx` — provider config form
+- `frontend/packages/web/src/app/routes/platform/setup/ai/universal-pieces/model-form-popover.tsx` — model selection popover
+- `frontend/packages/web/src/features/agents/ai-model/index.tsx` — AI model selector used in agent step settings
+- `frontend/packages/web/src/features/agents/ai-model/hooks.ts` — hooks for listing available models per provider
 
 ## Edition Availability
 - **Community (CE)**: Not available — the module is only registered for EE and Cloud editions in `app.ts`.

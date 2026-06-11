@@ -4,12 +4,12 @@
 Managed Auth (also called "Embedding" or "Managed Authentication") enables SaaS vendors to embed the Activepieces workflow builder inside their own product. The vendor's backend signs a short-lived JWT using an RSA private key (from a Signing Key), then passes it to the Activepieces embed SDK. The SDK calls `POST /v1/managed-authn/external-token` with that JWT. The backend verifies the JWT against the stored public key, then auto-provisions or retrieves the user, project, and project limits defined in the token claims, and returns a full Activepieces `AuthenticationResponse` (including an access token). This feature is gated by `platform.plan.embeddingEnabled`.
 
 ## Key Files
-- `packages/server/api/src/app/ee/managed-authn/managed-authn-module.ts` — module registration (no plan gate at module level; gate is on signing-key module)
-- `packages/server/api/src/app/ee/managed-authn/managed-authn-controller.ts` — single `POST /external-token` endpoint
-- `packages/server/api/src/app/ee/managed-authn/managed-authn-service.ts` — orchestration: token extraction, user/project provisioning, token issuance
-- `packages/server/api/src/app/ee/managed-authn/lib/external-token-extractor.ts` — JWT verification using the platform's signing key; parses v1/v2/v3 token payloads
-- `packages/shared/src/lib/ee/managed-authn/managed-authn-requests.ts` — `ManagedAuthnRequestBody` schema
-- `packages/web/src/features/authentication/api/managed-auth-api.ts` — frontend API client (used by embed SDK integration)
+- `backend/packages/server/api/src/app/ee/managed-authn/managed-authn-module.ts` — module registration (no plan gate at module level; gate is on signing-key module)
+- `backend/packages/server/api/src/app/ee/managed-authn/managed-authn-controller.ts` — single `POST /external-token` endpoint
+- `backend/packages/server/api/src/app/ee/managed-authn/managed-authn-service.ts` — orchestration: token extraction, user/project provisioning, token issuance
+- `backend/packages/server/api/src/app/ee/managed-authn/lib/external-token-extractor.ts` — JWT verification using the platform's signing key; parses v1/v2/v3 token payloads
+- `backend/packages/shared/src/lib/ee/managed-authn/managed-authn-requests.ts` — `ManagedAuthnRequestBody` schema
+- `frontend/packages/web/src/features/authentication/api/managed-auth-api.ts` — frontend API client (used by embed SDK integration)
 
 ## Edition Availability
 Enterprise and Cloud. The endpoint itself is public (`securityAccess.public()`), but functional only when valid signing keys exist. Signing keys are gated by `platform.plan.embeddingEnabled`.

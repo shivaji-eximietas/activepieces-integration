@@ -55,7 +55,7 @@ jobs:
       - name: Extract pieces package names from changed files
         id: extract-pieces
         run: |
-          PIECES=$(echo "${{ steps.changed-files.outputs.files }}" | grep -oE "packages/pieces/(community|core)/[^/]+" | awk -F'/' '{print $NF}' | sort -u | tr '\n' ',' | sed 's/,$//')
+          PIECES=$(echo "${{ steps.changed-files.outputs.files }}" | grep -oE "backend/packages/pieces/(community|core)/[^/]+" | awk -F'/' '{print $NF}' | sort -u | tr '\n' ',' | sed 's/,$//')
           if [ -n "$PIECES" ]; then
             FILTERS=$(echo "$PIECES" | tr ',' '\n' | sed 's/.*/{&}/' | tr '\n' ',' | sed 's/,$//')
             echo "pieces_filters=$FILTERS" >> $GITHUB_OUTPUT
@@ -81,7 +81,7 @@ jobs:
           FILTER_ARGS=""
           for piece in "${PIECES[@]}"; do
             piece_name=$(echo "$piece" | tr -d '{}')
-            if [ -f "packages/pieces/community/${piece_name}/package.json" ] || [ -f "packages/pieces/core/${piece_name}/package.json" ]; then
+            if [ -f "backend/packages/pieces/community/${piece_name}/package.json" ] || [ -f "backend/packages/pieces/core/${piece_name}/package.json" ]; then
               FILTER_ARGS="$FILTER_ARGS --filter=@activepieces/piece-${piece_name}"
             fi
           done
@@ -104,7 +104,7 @@ jobs:
           npx turbo run test-ce test-ee test-cloud check-migrations --filter=api &
           pids+=($!)
 
-          npx tsx tools/scripts/check-migration-rollback.ts &
+          npx tsx devops/tools/scripts/check-migration-rollback.ts &
           pids+=($!)
 
           status=0

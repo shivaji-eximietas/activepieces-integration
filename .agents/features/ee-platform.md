@@ -4,14 +4,14 @@
 The EE Platform module manages billing, quota enforcement, AI credits, license keys, and cloud admin operations for the Activepieces platform. It provides the `PlatformPlan` entity that gates every enterprise feature flag, enforces active-flow limits, and integrates with Stripe for cloud subscriptions and OpenRouter for AI credit accounting. Self-hosted Enterprise installs use license keys instead of Stripe to unlock features.
 
 ## Key Files
-- `packages/server/api/src/app/ee/platform/` — backend service and controller
-- `packages/server/api/src/app/ee/billing/` — Stripe webhook, checkout, billing controller
-- `packages/shared/src/lib/ee/billing/index.ts` — shared plan constants, Zod schemas, `STANDARD_CLOUD_PLAN`, `OPEN_SOURCE_PLAN`
-- `packages/shared/src/lib/management/platform/` — `PlatformPlan` type and all feature-flag fields
-- `packages/web/src/features/billing/api/billing-plans-api.ts` — `platformBillingApi` (portal, checkout, AI credits, auto top-up)
-- `packages/web/src/features/billing/hooks/billing-hooks.ts` — `billingQueries`, `billingMutations`
-- `packages/web/src/features/billing/components/` — `SubscriptionInfo`, `ActiveFlowAddon`, `AICreditUsage`, `LicenseKey`, `PurchaseAICreditsDialog`, `AutoTopUpConfigDialog`
-- `packages/web/src/app/routes/platform/billing/index.tsx` — Billing page (gated by edition, uses `LockedFeatureGuard`)
+- `backend/packages/server/api/src/app/ee/platform/` — backend service and controller
+- `backend/packages/server/api/src/app/ee/billing/` — Stripe webhook, checkout, billing controller
+- `backend/packages/shared/src/lib/ee/billing/index.ts` — shared plan constants, Zod schemas, `STANDARD_CLOUD_PLAN`, `OPEN_SOURCE_PLAN`
+- `backend/packages/shared/src/lib/management/platform/` — `PlatformPlan` type and all feature-flag fields
+- `frontend/packages/web/src/features/billing/api/billing-plans-api.ts` — `platformBillingApi` (portal, checkout, AI credits, auto top-up)
+- `frontend/packages/web/src/features/billing/hooks/billing-hooks.ts` — `billingQueries`, `billingMutations`
+- `frontend/packages/web/src/features/billing/components/` — `SubscriptionInfo`, `ActiveFlowAddon`, `AICreditUsage`, `LicenseKey`, `PurchaseAICreditsDialog`, `AutoTopUpConfigDialog`
+- `frontend/packages/web/src/app/routes/platform/billing/index.tsx` — Billing page (gated by edition, uses `LockedFeatureGuard`)
 
 ## Edition Availability
 - **Community (CE)**: No billing UI. `OPEN_SOURCE_PLAN` applied — unlimited flows, 0 AI credits, no team projects. All feature flags off.

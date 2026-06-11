@@ -6,24 +6,24 @@ Agents is a flow step type (backed by `@activepieces/piece-agent`) that executes
 ## Key Files
 
 ### Shared Types
-- `packages/shared/src/lib/automation/agents/index.ts` — enums (`AgentToolType`, `AgentTaskStatus`, `ContentBlockType`, `ToolCallType`, `AgentOutputFieldType`), types (`AgentProviderModel`, `AgentResult`, `AgentStepBlock`, `AgentOutputField`), and `AgentPieceProps` property name enum
-- `packages/shared/src/lib/automation/agents/tools.ts` — all tool Zod schemas: `AgentPieceTool`, `AgentFlowTool`, `AgentMcpTool`, `AgentKnowledgeBaseTool`, `AgentTool` discriminated union; `McpAuthConfig`, `PredefinedInputsStructure`
+- `backend/packages/shared/src/lib/automation/agents/index.ts` — enums (`AgentToolType`, `AgentTaskStatus`, `ContentBlockType`, `ToolCallType`, `AgentOutputFieldType`), types (`AgentProviderModel`, `AgentResult`, `AgentStepBlock`, `AgentOutputField`), and `AgentPieceProps` property name enum
+- `backend/packages/shared/src/lib/automation/agents/tools.ts` — all tool Zod schemas: `AgentPieceTool`, `AgentFlowTool`, `AgentMcpTool`, `AgentKnowledgeBaseTool`, `AgentTool` discriminated union; `McpAuthConfig`, `PredefinedInputsStructure`
 
 ### Frontend
-- `packages/web/src/features/agents/index.ts` — barrel export
-- `packages/web/src/features/agents/hooks/agent-hooks.ts` — `agentQueries.useFlowsForAgent()`, `agentMutations.useValidateMcpTool()`
-- `packages/web/src/features/agents/agent-tools/` — tool management UI (add dropdown, per-tool dialogs, stores)
-- `packages/web/src/features/agents/agent-tools/stores/` — Zustand stores for piece-tools dialog (`pieces-tools.ts`) and knowledge-base tools (`knowledge-base-tools.ts`)
-- `packages/web/src/features/agents/agent-tools/piece-tool-dialog/` — multi-page dialog: piece list → action list → predefined inputs form → connection picker
-- `packages/web/src/features/agents/agent-tools/flow-tool-dialog/` — dialog to attach another flow as a tool
-- `packages/web/src/features/agents/agent-tools/mcp-tool-dialog/` — MCP server URL + auth config dialog; calls `mcpToolApi.validateAgentMcpTool` to verify connectivity
-- `packages/web/src/features/agents/agent-tools/knowledge-base-dialog/` — dialog to attach a knowledge-base file
-- `packages/web/src/features/agents/agent-timeline/` — `AgentTimeline` component that renders step-by-step execution blocks (markdown + tool calls) from `AgentResult.steps`
-- `packages/web/src/features/agents/ai-model/` — `AIModelSelector` component; `PROVIDER_EMBEDDING_MODELS` constant
-- `packages/web/src/features/agents/ai-providers.ts` — `SUPPORTED_AI_PROVIDERS` list with metadata per provider
-- `packages/web/src/features/agents/structured-output/` — `AgentStructuredOutput` component for defining output field schema
-- `packages/web/src/app/builder/step-settings/agent-settings/index.tsx` — builder panel for configuring an agent step
-- `packages/web/src/app/builder/test-step/agent-test-step/index.tsx` — test panel for running a single agent step and viewing results
+- `frontend/packages/web/src/features/agents/index.ts` — barrel export
+- `frontend/packages/web/src/features/agents/hooks/agent-hooks.ts` — `agentQueries.useFlowsForAgent()`, `agentMutations.useValidateMcpTool()`
+- `frontend/packages/web/src/features/agents/agent-tools/` — tool management UI (add dropdown, per-tool dialogs, stores)
+- `frontend/packages/web/src/features/agents/agent-tools/stores/` — Zustand stores for piece-tools dialog (`pieces-tools.ts`) and knowledge-base tools (`knowledge-base-tools.ts`)
+- `frontend/packages/web/src/features/agents/agent-tools/piece-tool-dialog/` — multi-page dialog: piece list → action list → predefined inputs form → connection picker
+- `frontend/packages/web/src/features/agents/agent-tools/flow-tool-dialog/` — dialog to attach another flow as a tool
+- `frontend/packages/web/src/features/agents/agent-tools/mcp-tool-dialog/` — MCP server URL + auth config dialog; calls `mcpToolApi.validateAgentMcpTool` to verify connectivity
+- `frontend/packages/web/src/features/agents/agent-tools/knowledge-base-dialog/` — dialog to attach a knowledge-base file
+- `frontend/packages/web/src/features/agents/agent-timeline/` — `AgentTimeline` component that renders step-by-step execution blocks (markdown + tool calls) from `AgentResult.steps`
+- `frontend/packages/web/src/features/agents/ai-model/` — `AIModelSelector` component; `PROVIDER_EMBEDDING_MODELS` constant
+- `frontend/packages/web/src/features/agents/ai-providers.ts` — `SUPPORTED_AI_PROVIDERS` list with metadata per provider
+- `frontend/packages/web/src/features/agents/structured-output/` — `AgentStructuredOutput` component for defining output field schema
+- `frontend/packages/web/src/app/builder/step-settings/agent-settings/index.tsx` — builder panel for configuring an agent step
+- `frontend/packages/web/src/app/builder/test-step/agent-test-step/index.tsx` — test panel for running a single agent step and viewing results
 
 ## Edition Availability
 Gated by `platform.plan.agentsEnabled`. When disabled, the agent step type is hidden from the piece selector. All editions can run agents if the flag is enabled; by default it is off on Community, on on Cloud plans that include it.
@@ -51,7 +51,7 @@ The agent step is a `PIECE` action on `@activepieces/piece-agent`. Its `settings
 - `webSearch` / `webSearchOptions` — optional web search tool configuration
 
 ## Tool Validation
-External MCP servers configured as agent tools are validated server-side via `POST /v1/projects/:projectId/agent-tools/mcp/validate` (see `packages/server/api/src/app/agents/`). The handler performs the JSON-RPC `initialize` → `notifications/initialized` → `tools/list` handshake against the target and returns its tool names. The outbound call is routed through `apAxios`, whose http/https agents are built by `ssrf-agents.ts` to reject private / loopback / link-local / meta IPs by default. Operators can allow specific ranges via `AP_SSRF_ALLOW_LIST` (CIDR supported). All error paths collapse to a single generic message to avoid leaking reachability signal.
+External MCP servers configured as agent tools are validated server-side via `POST /v1/projects/:projectId/agent-tools/mcp/validate` (see `backend/packages/server/api/src/app/agents/`). The handler performs the JSON-RPC `initialize` → `notifications/initialized` → `tools/list` handshake against the target and returns its tool names. The outbound call is routed through `apAxios`, whose http/https agents are built by `ssrf-agents.ts` to reject private / loopback / link-local / meta IPs by default. Operators can allow specific ranges via `AP_SSRF_ALLOW_LIST` (CIDR supported). All error paths collapse to a single generic message to avoid leaking reachability signal.
 
 The validator lives under `agents/` (not `mcp/`) because it belongs to the **agent piece** domain — validating an external MCP server the agent will connect to at flow-execution time. The `mcp/` module handles the **opposite direction**: exposing Activepieces itself as an MCP server to external clients.
 

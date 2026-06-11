@@ -47,7 +47,7 @@ const BASE_ENV: Record<string, string> = {
     AP_SANDBOX_WS_TOKEN: 'test-token-aaaaaaaaaaaaaaaaaaaaaaaa',
 }
 
-const etcDir = path.resolve(process.cwd(), 'packages/server/api/src/assets/etc')
+const etcDir = path.resolve(process.cwd(), 'backend/packages/server/api/src/assets/etc')
 
 async function callCreate({
     mounts = [],

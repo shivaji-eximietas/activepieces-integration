@@ -4,12 +4,12 @@
 The Store Entry feature provides a persistent key-value store that piece steps can read from and write to during flow execution. It is a backend-only feature — there is no user-facing UI. Each entry is scoped to a project and identified by a string key. Values are arbitrary JSON (stored as `jsonb`). The API is exclusively accessible by the flow engine (worker), using `securityAccess.engine()` on all three endpoints. Pieces use SDK helpers (`storage.get`, `storage.put`, `storage.delete`) which call these endpoints at runtime. The maximum key length is 128 characters and the maximum serialized value size is 512 KB.
 
 ## Key Files
-- `packages/server/api/src/app/store-entry/store-entry.controller.ts` — REST controller (upsert, get, delete)
-- `packages/server/api/src/app/store-entry/store-entry.service.ts` — CRUD service
-- `packages/server/api/src/app/store-entry/store-entry-entity.ts` — TypeORM entity
-- `packages/server/api/src/app/store-entry/store-entry.module.ts` — Fastify plugin registration
-- `packages/shared/src/lib/core/store-entry/store-entry.ts` — `StoreEntry` type, `STORE_KEY_MAX_LENGTH`, `STORE_VALUE_MAX_SIZE`
-- `packages/shared/src/lib/core/store-entry/dto/store-entry-request.ts` — `PutStoreEntryRequest`, `GetStoreEntryRequest`, `DeleteStoreEntryRequest`
+- `backend/packages/server/api/src/app/store-entry/store-entry.controller.ts` — REST controller (upsert, get, delete)
+- `backend/packages/server/api/src/app/store-entry/store-entry.service.ts` — CRUD service
+- `backend/packages/server/api/src/app/store-entry/store-entry-entity.ts` — TypeORM entity
+- `backend/packages/server/api/src/app/store-entry/store-entry.module.ts` — Fastify plugin registration
+- `backend/packages/shared/src/lib/core/store-entry/store-entry.ts` — `StoreEntry` type, `STORE_KEY_MAX_LENGTH`, `STORE_VALUE_MAX_SIZE`
+- `backend/packages/shared/src/lib/core/store-entry/dto/store-entry-request.ts` — `PutStoreEntryRequest`, `GetStoreEntryRequest`, `DeleteStoreEntryRequest`
 
 ## Edition Availability
 - **Community (CE)**: Fully available — no plan flag required.

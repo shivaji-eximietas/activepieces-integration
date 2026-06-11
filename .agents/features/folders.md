@@ -4,14 +4,14 @@
 Folders provide a lightweight organizational layer for flows within a project. Each folder has a display name (unique case-insensitively per project) and a display order. Flows can be assigned to a folder via their `folderId` field. The folder list endpoint returns a `numberOfFlows` count alongside each folder, computed via a LEFT JOIN. A special sentinel value `NULL` (string `"NULL"`) represents uncategorized flows that have no folder. Creating or renaming a folder fires audit events. Folder names are enforced as unique per project (case-insensitive).
 
 ## Key Files
-- `packages/server/api/src/app/flows/folder/folder.module.ts` — Fastify plugin (module + controller combined)
-- `packages/server/api/src/app/flows/folder/folder.service.ts` — CRUD service (`flowFolderService`)
-- `packages/server/api/src/app/flows/folder/folder.entity.ts` — TypeORM entity
-- `packages/shared/src/lib/automation/flows/folders/folder.ts` — `Folder`, `FolderDto`, `FolderId`, `UncategorizedFolderId`
-- `packages/shared/src/lib/automation/flows/folders/folder-requests.ts` — `CreateFolderRequest`, `UpdateFolderRequest`, `DeleteFolderRequest`, `ListFolderRequest`
-- `packages/web/src/features/folders/components/rename-folder-dialog.tsx` — rename dialog
-- `packages/web/src/features/folders/api/` — frontend API client
-- `packages/web/src/features/folders/hooks/` — TanStack Query hooks
+- `backend/packages/server/api/src/app/flows/folder/folder.module.ts` — Fastify plugin (module + controller combined)
+- `backend/packages/server/api/src/app/flows/folder/folder.service.ts` — CRUD service (`flowFolderService`)
+- `backend/packages/server/api/src/app/flows/folder/folder.entity.ts` — TypeORM entity
+- `backend/packages/shared/src/lib/automation/flows/folders/folder.ts` — `Folder`, `FolderDto`, `FolderId`, `UncategorizedFolderId`
+- `backend/packages/shared/src/lib/automation/flows/folders/folder-requests.ts` — `CreateFolderRequest`, `UpdateFolderRequest`, `DeleteFolderRequest`, `ListFolderRequest`
+- `frontend/packages/web/src/features/folders/components/rename-folder-dialog.tsx` — rename dialog
+- `frontend/packages/web/src/features/folders/api/` — frontend API client
+- `frontend/packages/web/src/features/folders/hooks/` — TanStack Query hooks
 
 ## Edition Availability
 - **Community (CE)**: Fully available — no plan flag required.

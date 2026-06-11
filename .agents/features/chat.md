@@ -4,37 +4,37 @@
 A platform-level AI chat assistant that lets users interact with an LLM to manage their Activepieces projects through natural language. The chat connects to the platform's configured AI provider, streams responses via a custom WebSocket chunk reducer, and exposes Activepieces resources (flows, tables, connections, runs) as callable tools through the project's MCP server. Conversations are persisted per-user with support for message compaction, file attachments, multi-project context switching, plan approval for multi-step operations, and a tool approval gate for destructive operations.
 
 ## Key Files
-- `packages/server/api/src/app/ee/chat/chat.module.ts` — module registration with `chatEnabled` plan gate
-- `packages/server/api/src/app/ee/chat/chat-controller.ts` — HTTP endpoints (conversations CRUD, messages, tool approvals)
-- `packages/server/api/src/app/ee/chat/chat-service.ts` — core business logic (conversation management, message streaming)
-- `packages/server/api/src/app/ee/chat/chat-conversation-entity.ts` — ChatConversation TypeORM entity
-- `packages/server/api/src/app/ee/chat/chat-model-factory.ts` — creates AI SDK `LanguageModel` from provider config (OpenAI, Anthropic, Google, Azure, Bedrock, Cloudflare, Custom)
-- `packages/server/api/src/app/ee/chat/chat-compaction.ts` — long-conversation context management via summarization
-- `packages/server/api/src/app/ee/chat/chat-approval-gate.ts` — Redis pub/sub gate for tool execution approval (5-min timeout)
-- `packages/server/api/src/app/ee/chat/chat-file-utils.ts` — file attachment processing (base64, MIME validation, 10MB limit)
-- `packages/server/api/src/app/ee/chat/tools/chat-tools.ts` — local LLM tools (title, project selection, action execution, cross-project listing, plan approval)
-- `packages/server/api/src/app/ee/chat/tools/chat-display-tools.ts` — display tools for interactive UI cards (connection picker, project picker, questions, quick replies)
-- `packages/server/api/src/app/ee/chat/tools/chat-tool-categories.ts` — consolidated tool classification predicates (mutation, approval-required) as single source of truth
-- `packages/server/api/src/app/ee/chat/chat-prepare-step.ts` — per-step thinking-budget / tool-filter overrides via AI SDK `prepareStep`
-- `packages/server/api/src/app/ee/chat/mcp/chat-mcp.ts` — connects to Activepieces MCP server for project-scoped tools with approval wrapping
-- `packages/server/api/src/app/ee/chat/history/chat-history.ts` — reconstructs chat history from AI SDK `ModelMessage` format
-- `packages/server/api/src/app/ee/chat/prompt/chat-prompt.ts` — builds system prompt from markdown templates in `src/assets/prompts/`
-- `packages/server/api/src/app/ee/chat/chat-sync-job.ts` — fire-and-forget telemetry sync to console.activepieces.com (cloud-only); also exposes `chatAnalyticsBulkSync` for admin bulk sync; falls back to reconstructing messages from raw ModelMessage[] when uiMessages is null
-- `packages/shared/src/lib/ee/chat/index.ts` — shared Zod schemas, types (ChatConversation, request DTOs, ChatHistoryMessage), and typed tool outputs (`ChatToolOutputs`)
-- `packages/web/src/app/routes/chat-with-ai/index.tsx` — main chat page component
-- `packages/web/src/app/routes/chat-with-ai/ai-chat-box.tsx` — chat interface with provider check, message streaming, Zustand store provider
-- `packages/web/src/app/routes/chat-with-ai/conversation-list.tsx` — conversation history sidebar
-- `packages/web/src/app/routes/chat-with-ai/components/` — sub-components (input, assistant message, user message, thinking details panel, plan progress card, approval forms, connection picker)
-- `packages/web/src/features/chat/lib/chat-api.ts` — API client for `/v1/chat/*` endpoints
-- `packages/web/src/features/chat/lib/chat-store.ts` — Zustand store for interaction state (approvals, plan progress, display cards, thinking panel)
-- `packages/web/src/features/chat/lib/chat-store-context.tsx` — React context provider and `useChatStoreContext` selector hook
-- `packages/web/src/features/chat/lib/use-chat.ts` — `useAgentChat()` hook managing message state (persisted, optimistic, streaming) and polling fallback
-- `packages/web/src/features/chat/lib/chunk-reducer.ts` — pure streaming state machine that accumulates `UIMessageChunk` events into a `ChatUIMessage`
-- `packages/web/src/features/chat/lib/use-streaming-reducer.ts` — WebSocket-driven streaming lifecycle hook; buffers chunks and throttles React re-renders
-- `packages/web/src/features/chat/lib/chat-types.ts` — frontend type definitions, tool output parsing, display/hidden tool name sets
-- `packages/web/src/features/chat/lib/use-voice-input.ts` — `useVoiceInput()` hook for speech-to-text via the Web Speech API (`SpeechRecognition`)
-- `packages/web/src/features/chat/lib/use-tts.ts` — `useTts()` hook for text-to-speech via the `SpeechSynthesis` API
-- `packages/web/src/features/chat/components/voice-waveform.tsx` — animated waveform bars shown on the stop-recording button
+- `backend/packages/server/api/src/app/ee/chat/chat.module.ts` — module registration with `chatEnabled` plan gate
+- `backend/packages/server/api/src/app/ee/chat/chat-controller.ts` — HTTP endpoints (conversations CRUD, messages, tool approvals)
+- `backend/packages/server/api/src/app/ee/chat/chat-service.ts` — core business logic (conversation management, message streaming)
+- `backend/packages/server/api/src/app/ee/chat/chat-conversation-entity.ts` — ChatConversation TypeORM entity
+- `backend/packages/server/api/src/app/ee/chat/chat-model-factory.ts` — creates AI SDK `LanguageModel` from provider config (OpenAI, Anthropic, Google, Azure, Bedrock, Cloudflare, Custom)
+- `backend/packages/server/api/src/app/ee/chat/chat-compaction.ts` — long-conversation context management via summarization
+- `backend/packages/server/api/src/app/ee/chat/chat-approval-gate.ts` — Redis pub/sub gate for tool execution approval (5-min timeout)
+- `backend/packages/server/api/src/app/ee/chat/chat-file-utils.ts` — file attachment processing (base64, MIME validation, 10MB limit)
+- `backend/packages/server/api/src/app/ee/chat/tools/chat-tools.ts` — local LLM tools (title, project selection, action execution, cross-project listing, plan approval)
+- `backend/packages/server/api/src/app/ee/chat/tools/chat-display-tools.ts` — display tools for interactive UI cards (connection picker, project picker, questions, quick replies)
+- `backend/packages/server/api/src/app/ee/chat/tools/chat-tool-categories.ts` — consolidated tool classification predicates (mutation, approval-required) as single source of truth
+- `backend/packages/server/api/src/app/ee/chat/chat-prepare-step.ts` — per-step thinking-budget / tool-filter overrides via AI SDK `prepareStep`
+- `backend/packages/server/api/src/app/ee/chat/mcp/chat-mcp.ts` — connects to Activepieces MCP server for project-scoped tools with approval wrapping
+- `backend/packages/server/api/src/app/ee/chat/history/chat-history.ts` — reconstructs chat history from AI SDK `ModelMessage` format
+- `backend/packages/server/api/src/app/ee/chat/prompt/chat-prompt.ts` — builds system prompt from markdown templates in `src/assets/prompts/`
+- `backend/packages/server/api/src/app/ee/chat/chat-sync-job.ts` — fire-and-forget telemetry sync to console.activepieces.com (cloud-only); also exposes `chatAnalyticsBulkSync` for admin bulk sync; falls back to reconstructing messages from raw ModelMessage[] when uiMessages is null
+- `backend/packages/shared/src/lib/ee/chat/index.ts` — shared Zod schemas, types (ChatConversation, request DTOs, ChatHistoryMessage), and typed tool outputs (`ChatToolOutputs`)
+- `frontend/packages/web/src/app/routes/chat-with-ai/index.tsx` — main chat page component
+- `frontend/packages/web/src/app/routes/chat-with-ai/ai-chat-box.tsx` — chat interface with provider check, message streaming, Zustand store provider
+- `frontend/packages/web/src/app/routes/chat-with-ai/conversation-list.tsx` — conversation history sidebar
+- `frontend/packages/web/src/app/routes/chat-with-ai/components/` — sub-components (input, assistant message, user message, thinking details panel, plan progress card, approval forms, connection picker)
+- `frontend/packages/web/src/features/chat/lib/chat-api.ts` — API client for `/v1/chat/*` endpoints
+- `frontend/packages/web/src/features/chat/lib/chat-store.ts` — Zustand store for interaction state (approvals, plan progress, display cards, thinking panel)
+- `frontend/packages/web/src/features/chat/lib/chat-store-context.tsx` — React context provider and `useChatStoreContext` selector hook
+- `frontend/packages/web/src/features/chat/lib/use-chat.ts` — `useAgentChat()` hook managing message state (persisted, optimistic, streaming) and polling fallback
+- `frontend/packages/web/src/features/chat/lib/chunk-reducer.ts` — pure streaming state machine that accumulates `UIMessageChunk` events into a `ChatUIMessage`
+- `frontend/packages/web/src/features/chat/lib/use-streaming-reducer.ts` — WebSocket-driven streaming lifecycle hook; buffers chunks and throttles React re-renders
+- `frontend/packages/web/src/features/chat/lib/chat-types.ts` — frontend type definitions, tool output parsing, display/hidden tool name sets
+- `frontend/packages/web/src/features/chat/lib/use-voice-input.ts` — `useVoiceInput()` hook for speech-to-text via the Web Speech API (`SpeechRecognition`)
+- `frontend/packages/web/src/features/chat/lib/use-tts.ts` — `useTts()` hook for text-to-speech via the `SpeechSynthesis` API
+- `frontend/packages/web/src/features/chat/components/voice-waveform.tsx` — animated waveform bars shown on the stop-recording button
 
 ## Edition Availability
 - Community (CE): not available (module not registered)

@@ -83,7 +83,7 @@ export const worker = {
         })
 
         socket.on('connect_error', (error) => {
-            logger.error({ error: error.message }, 'Socket.IO connection error')
+            logger.debug({ error: error.message }, 'Socket.IO connection error')
         })
 
         if (withHealthServer) {

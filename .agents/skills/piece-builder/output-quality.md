@@ -185,7 +185,7 @@ async run(context) {
 }
 ```
 
-**Real example:** `packages/pieces/community/salesforce/src/lib/action/run-report.ts`
+**Real example:** `backend/packages/pieces/community/salesforce/src/lib/action/run-report.ts`
 
 ### Trigger Outputs
 

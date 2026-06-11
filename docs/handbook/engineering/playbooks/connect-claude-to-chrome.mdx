@@ -107,7 +107,7 @@ You should see `chrome-devtools` listed as a connected MCP server. If it appears
 
 ## Devcontainer
 
-The devcontainer is already configured to set up the Chrome DevTools MCP automatically. The `postCreateCommand` in `.devcontainer/devcontainer.json` installs dependencies and registers the MCP server, resolving the host IP via `host.docker.internal`:
+The devcontainer is already configured to set up the Chrome DevTools MCP automatically. The `postCreateCommand` in `devops/.devcontainer/devcontainer.json` installs dependencies and registers the MCP server, resolving the host IP via `host.docker.internal`:
 
 ```json
 "postCreateCommand": "bun install && HOST_IP=$(getent ahostsv4 host.docker.internal | awk '{print $1}' | head -1) && claude mcp add chrome-devtools --scope user -- npx chrome-devtools-mcp@latest --browserUrl=http://${HOST_IP}:4222"

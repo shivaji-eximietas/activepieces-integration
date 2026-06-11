@@ -1,16 +1,16 @@
 # Egress Proxy Module
 
 ## Summary
-Loopback HTTP proxy that every piece/code step is routed through when `AP_NETWORK_MODE=STRICT`. Provides SSRF protection by validating each request's resolved IPs against an allow-list before letting `proxy-chain` tunnel the traffic. In isolate execution modes it is paired with a kernel-level iptables lockdown so sandboxed processes have no other egress path. Built on `proxy-chain` (`Server`) listening on `127.0.0.1:<random port>`; started from `startEgressProxy()` in `packages/server/worker/src/lib/egress/proxy.ts`.
+Loopback HTTP proxy that every piece/code step is routed through when `AP_NETWORK_MODE=STRICT`. Provides SSRF protection by validating each request's resolved IPs against an allow-list before letting `proxy-chain` tunnel the traffic. In isolate execution modes it is paired with a kernel-level iptables lockdown so sandboxed processes have no other egress path. Built on `proxy-chain` (`Server`) listening on `127.0.0.1:<random port>`; started from `startEgressProxy()` in `backend/packages/server/worker/src/lib/egress/proxy.ts`.
 
 ## Key Files
-- `packages/server/worker/src/lib/egress/proxy.ts` — `proxy-chain` server + `prepareRequestFunction` allow-list check
-- `packages/server/worker/src/lib/egress/lifecycle.ts` — `startEgressStack()` / `shutdownStack()`, wiring proxy + iptables lockdown
-- `packages/server/worker/src/lib/egress/iptables-lockdown.ts` — kernel-level egress lockdown for isolate UIDs
-- `packages/server/worker/src/lib/execute/create-sandbox-for-job.ts` — passes proxy port into each sandbox env (`proxyEnv()`, ~line 112)
-- `packages/server/engine/src/lib/network/ssrf-guard.ts` — engine-side guard install (DNS + socket-connect + env-proxy-dispatcher)
-- `packages/server/engine/src/lib/network/proxy-dispatcher.ts` — installs undici `EnvHttpProxyAgent` for native `fetch`
-- `packages/pieces/common/src/lib/http/axios/axios-http-client.ts` — piece-side `AxiosHttpClient` that wires `HttpProxyAgent` / `HttpsProxyAgent` and sets `config.proxy = false`
+- `backend/packages/server/worker/src/lib/egress/proxy.ts` — `proxy-chain` server + `prepareRequestFunction` allow-list check
+- `backend/packages/server/worker/src/lib/egress/lifecycle.ts` — `startEgressStack()` / `shutdownStack()`, wiring proxy + iptables lockdown
+- `backend/packages/server/worker/src/lib/egress/iptables-lockdown.ts` — kernel-level egress lockdown for isolate UIDs
+- `backend/packages/server/worker/src/lib/execute/create-sandbox-for-job.ts` — passes proxy port into each sandbox env (`proxyEnv()`, ~line 112)
+- `backend/packages/server/engine/src/lib/network/ssrf-guard.ts` — engine-side guard install (DNS + socket-connect + env-proxy-dispatcher)
+- `backend/packages/server/engine/src/lib/network/proxy-dispatcher.ts` — installs undici `EnvHttpProxyAgent` for native `fetch`
+- `backend/packages/pieces/common/src/lib/http/axios/axios-http-client.ts` — piece-side `AxiosHttpClient` that wires `HttpProxyAgent` / `HttpsProxyAgent` and sets `config.proxy = false`
 
 ## Edition Availability
 - Community (CE): available, off by default (`AP_NETWORK_MODE=UNRESTRICTED`)

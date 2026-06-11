@@ -4,7 +4,7 @@ icon: 'clipboard-list'
 ---
 
 <Info>
-This playbook is specifically about **full-stack browser E2E tests using Playwright** in `packages/tests-e2e/`. For the canonical 4-layer testing taxonomy across the whole monorepo (unit / integration / e2e / smoke) — and to decide whether your test actually belongs at the E2E layer at all — see the [Testing Strategy playbook](/handbook/engineering/playbooks/testing-strategy).
+This playbook is specifically about **full-stack browser E2E tests using Playwright** in `frontend/packages/tests-e2e/`. For the canonical 4-layer testing taxonomy across the whole monorepo (unit / integration / e2e / smoke) — and to decide whether your test actually belongs at the E2E layer at all — see the [Testing Strategy playbook](/handbook/engineering/playbooks/testing-strategy).
 </Info>
 
 ## Overview
@@ -14,7 +14,7 @@ Our **full-stack browser E2E** suite uses Playwright to ensure critical user wor
 ## Project Structure
 
 ```
-packages/tests-e2e/
+frontend/packages/tests-e2e/
 ├── scenarios/           # Test files (*.spec.ts)
 ├── pages/              # Page Object Models
 │   ├── base.ts         # Base page class

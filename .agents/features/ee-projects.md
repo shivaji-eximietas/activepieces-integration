@@ -4,26 +4,26 @@
 The EE Projects module adds team collaboration, role-based access control (RBAC), git-based environment sync, and per-project piece filtering on top of the base project entity. It introduces project membership (invitations, roles), custom project roles with fine-grained permissions, project releases for deploying flows between environments, and a git sync mechanism for version-controlling flow definitions in an external repository.
 
 ## Key Files
-- `packages/server/api/src/app/ee/projects/` — platform project service, RBAC enforcement
-- `packages/server/api/src/app/ee/project-members/` — member CRUD, role lookup
-- `packages/server/api/src/app/ee/project-role/` — default and custom role management
-- `packages/server/api/src/app/ee/project-release/` — release creation, diff, apply
-- `packages/server/api/src/app/ee/git-sync/` — SSH repo push/pull
-- `packages/shared/src/lib/ee/project-members/project-member.ts` — `ProjectMember` type
-- `packages/shared/src/lib/ee/project-members/project-member-request.ts` — list/update request DTOs
-- `packages/shared/src/lib/automation/project-release/project-release.ts` — `ProjectRelease` type
-- `packages/shared/src/lib/automation/project-release/project-release.request.ts` — release request DTOs
-- `packages/shared/src/lib/automation/project-release/project-state.ts` — `ProjectSyncPlan`
-- `packages/web/src/features/members/api/project-members-api.ts` — `projectMembersApi`
-- `packages/web/src/features/members/hooks/project-members-hooks.ts` — `projectMembersHooks`
-- `packages/web/src/features/members/hooks/user-invitations-hooks.ts` — `userInvitationsHooks`
-- `packages/web/src/features/members/components/` — `InviteUserDialog`, `EditRoleDialog`, `ProjectMemberCard`, `InvitationCard`
-- `packages/web/src/features/project-releases/api/project-release-api.ts` — `projectReleaseApi`
-- `packages/web/src/features/project-releases/api/git-sync-api.ts` — `gitSyncApi`
-- `packages/web/src/features/project-releases/hooks/project-release-hooks.ts` — `projectReleaseQueries`
-- `packages/web/src/features/project-releases/hooks/git-sync-hooks.ts` — `gitSyncHooks`
-- `packages/web/src/app/components/project-settings/members/index.tsx` — `MembersSettings` component
-- `packages/web/src/app/routes/project-release/index.tsx` — `ProjectReleasesPage`
+- `backend/packages/server/api/src/app/ee/projects/` — platform project service, RBAC enforcement
+- `backend/packages/server/api/src/app/ee/project-members/` — member CRUD, role lookup
+- `backend/packages/server/api/src/app/ee/project-role/` — default and custom role management
+- `backend/packages/server/api/src/app/ee/project-release/` — release creation, diff, apply
+- `backend/packages/server/api/src/app/ee/git-sync/` — SSH repo push/pull
+- `backend/packages/shared/src/lib/ee/project-members/project-member.ts` — `ProjectMember` type
+- `backend/packages/shared/src/lib/ee/project-members/project-member-request.ts` — list/update request DTOs
+- `backend/packages/shared/src/lib/automation/project-release/project-release.ts` — `ProjectRelease` type
+- `backend/packages/shared/src/lib/automation/project-release/project-release.request.ts` — release request DTOs
+- `backend/packages/shared/src/lib/automation/project-release/project-state.ts` — `ProjectSyncPlan`
+- `frontend/packages/web/src/features/members/api/project-members-api.ts` — `projectMembersApi`
+- `frontend/packages/web/src/features/members/hooks/project-members-hooks.ts` — `projectMembersHooks`
+- `frontend/packages/web/src/features/members/hooks/user-invitations-hooks.ts` — `userInvitationsHooks`
+- `frontend/packages/web/src/features/members/components/` — `InviteUserDialog`, `EditRoleDialog`, `ProjectMemberCard`, `InvitationCard`
+- `frontend/packages/web/src/features/project-releases/api/project-release-api.ts` — `projectReleaseApi`
+- `frontend/packages/web/src/features/project-releases/api/git-sync-api.ts` — `gitSyncApi`
+- `frontend/packages/web/src/features/project-releases/hooks/project-release-hooks.ts` — `projectReleaseQueries`
+- `frontend/packages/web/src/features/project-releases/hooks/git-sync-hooks.ts` — `gitSyncHooks`
+- `frontend/packages/web/src/app/components/project-settings/members/index.tsx` — `MembersSettings` component
+- `frontend/packages/web/src/app/routes/project-release/index.tsx` — `ProjectReleasesPage`
 
 ## Edition Availability
 - **Community (CE)**: Single-user projects only. No project members, no roles, no releases, no git sync.

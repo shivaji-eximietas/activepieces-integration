@@ -62,7 +62,8 @@ WORKDIR /usr/src/app
 
 # Copy dependency files and workspace package.json files for resolution
 COPY .npmrc package.json bun.lock bunfig.toml ./
-COPY packages/ ./packages/
+COPY backend/ ./backend/
+COPY frontend/ ./frontend/
 
 # Install all dependencies with frozen lockfile
 RUN --mount=type=cache,target=/root/.bun/install/cache \
@@ -76,15 +77,15 @@ RUN npx turbo run build --filter=web --filter=@activepieces/engine --filter=api 
 
 # Generate migration manifest (ordered list of migration names) for image-tag-based rollback
 RUN node -e "\
-  const {getMigrations} = require('./packages/server/api/dist/src/app/database/postgres-connection');\
+  const {getMigrations} = require('./backend/packages/server/api/dist/src/app/database/postgres-connection');\
   const names = getMigrations().map(M => new M().name);\
   process.stdout.write(JSON.stringify(names));\
-" > packages/server/api/dist/src/migration-manifest.json
+" > backend/packages/server/api/dist/src/migration-manifest.json
 
 # Remove piece directories not needed at runtime (keeps only the 4 pieces api imports)
 # Then regenerate bun.lock so it matches the trimmed workspace
-RUN rm -rf packages/pieces/core packages/pieces/custom && \
-    find packages/pieces/community -mindepth 1 -maxdepth 1 -type d \
+RUN rm -rf backend/packages/pieces/core backend/packages/pieces/custom && \
+    find backend/packages/pieces/community -mindepth 1 -maxdepth 1 -type d \
       ! -name slack \
       ! -name square \
       ! -name facebook-leads \
@@ -98,7 +99,7 @@ FROM base AS run
 WORKDIR /usr/src/app
 
 # Copy static configuration files first (better layer caching)
-COPY --from=build /usr/src/app/packages/server/api/src/assets/default.cf /usr/local/etc/isolate
+COPY --from=build /usr/src/app/backend/packages/server/api/src/assets/default.cf /usr/local/etc/isolate
 COPY docker-entrypoint.sh .
 
 # Create all necessary directories in one layer
@@ -114,7 +115,8 @@ COPY --from=build /usr/src/app/bunfig.toml ./
 COPY --from=build /usr/src/app/LICENSE .
 
 # Copy workspace package.json files (needed for bun workspace resolution)
-COPY --from=build /usr/src/app/packages ./packages
+COPY --from=build /usr/src/app/backend ./backend
+COPY --from=build /usr/src/app/frontend ./frontend
 
 # Copy built engine
 COPY --from=build /usr/src/app/dist/packages/engine/ ./dist/packages/engine/

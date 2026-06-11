@@ -3,7 +3,7 @@ import path from 'node:path'
 import { Project, ProjectType } from '@activepieces/shared'
 
 function loadPromptTemplate(filename: string): string {
-    return readFileSync(path.resolve(`packages/server/api/src/assets/prompts/${filename}`), 'utf8')
+    return readFileSync(path.resolve(`backend/packages/server/api/src/assets/prompts/${filename}`), 'utf8')
 }
 
 const PROMPT_TEMPLATES = {

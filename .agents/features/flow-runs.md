@@ -4,23 +4,23 @@
 Flow Runs records every execution of a flow, tracking its full lifecycle from queuing through completion or failure. It stores compressed execution logs for step-by-step inspection, supports pause-and-resume for delay and webhook-based waits, provides retry strategies for recovering from failures, and emits WebSocket events and application events to notify the frontend and downstream systems in real time.
 
 ## Key Files
-- `packages/server/api/src/app/flows/flow-run/` — controller, service, entity
-- `packages/shared/src/lib/automation/flow-run/flow-run.ts` — `FlowRun` type
-- `packages/shared/src/lib/automation/flow-run/dto/` — list, retry, bulk request types
-- `packages/shared/src/lib/automation/flow-run/execution/` — `StepOutput`, `FlowExecution`, `ExecutionOutput`
-- `packages/shared/src/lib/automation/flow-run/log-serializer.ts` — zstd compress/decompress helpers
-- `packages/web/src/features/flow-runs/api/flow-runs-api.ts` — `flowRunsApi`
-- `packages/web/src/features/flow-runs/hooks/flow-run-hooks.ts` — `flowRunQueries`, `flowRunMutations`
-- `packages/web/src/features/flow-runs/components/runs-table/` — `RunsTable`, `columns.tsx`, retry/cancel/archive dialogs, `failed-step-dialog.tsx`
-- `packages/web/src/app/builder/flow-canvas/widgets/run-info-widget.tsx` — builder widget that jumps to the failed step on the canvas
-- `packages/web/src/app/builder/state/run-state.ts` — tracks the focused/failed step for the builder
-- `packages/web/src/app/builder/state/canvas-state.ts` — tracks `userManuallySelectedStepDuringRun` and exposes the `resumeLiveFollow` action for live-follow control
-- `packages/server/api/src/app/ee/alerts/alerts-service.ts` — sends the failure email via the EE Alerts feature (see `.agents/features/alerts.md`)
-- `packages/web/src/features/flow-runs/components/step-status-icon.tsx` — per-step status badge
-- `packages/web/src/app/routes/runs/index.tsx` — runs list page
-- `packages/web/src/app/routes/runs/id/index.tsx` — individual run detail page
-- `packages/web/src/app/builder/run-details/` — step input/output inspector inside the builder
-- `packages/web/src/app/builder/run-list/` — recent runs sidebar in the builder
+- `backend/packages/server/api/src/app/flows/flow-run/` — controller, service, entity
+- `backend/packages/shared/src/lib/automation/flow-run/flow-run.ts` — `FlowRun` type
+- `backend/packages/shared/src/lib/automation/flow-run/dto/` — list, retry, bulk request types
+- `backend/packages/shared/src/lib/automation/flow-run/execution/` — `StepOutput`, `FlowExecution`, `ExecutionOutput`
+- `backend/packages/shared/src/lib/automation/flow-run/log-serializer.ts` — zstd compress/decompress helpers
+- `frontend/packages/web/src/features/flow-runs/api/flow-runs-api.ts` — `flowRunsApi`
+- `frontend/packages/web/src/features/flow-runs/hooks/flow-run-hooks.ts` — `flowRunQueries`, `flowRunMutations`
+- `frontend/packages/web/src/features/flow-runs/components/runs-table/` — `RunsTable`, `columns.tsx`, retry/cancel/archive dialogs, `failed-step-dialog.tsx`
+- `frontend/packages/web/src/app/builder/flow-canvas/widgets/run-info-widget.tsx` — builder widget that jumps to the failed step on the canvas
+- `frontend/packages/web/src/app/builder/state/run-state.ts` — tracks the focused/failed step for the builder
+- `frontend/packages/web/src/app/builder/state/canvas-state.ts` — tracks `userManuallySelectedStepDuringRun` and exposes the `resumeLiveFollow` action for live-follow control
+- `backend/packages/server/api/src/app/ee/alerts/alerts-service.ts` — sends the failure email via the EE Alerts feature (see `.agents/features/alerts.md`)
+- `frontend/packages/web/src/features/flow-runs/components/step-status-icon.tsx` — per-step status badge
+- `frontend/packages/web/src/app/routes/runs/index.tsx` — runs list page
+- `frontend/packages/web/src/app/routes/runs/id/index.tsx` — individual run detail page
+- `frontend/packages/web/src/app/builder/run-details/` — step input/output inspector inside the builder
+- `frontend/packages/web/src/app/builder/run-list/` — recent runs sidebar in the builder
 
 ## Edition Availability
 - **Community (CE)**: Full run tracking and inspection. No retention limits beyond the server-configured `EXECUTION_DATA_RETENTION_DAYS`.

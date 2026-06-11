@@ -37,7 +37,7 @@ import {
     createMockSignInRequest,
     createMockSignUpRequest,
 } from '../../../helpers/mocks/authn'
-import { jwtUtils } from 'packages/server/api/src/app/helper/jwt-utils'
+import { jwtUtils } from 'backend/packages/server/api/src/app/helper/jwt-utils'
 
 let app: FastifyInstance | null = null
 

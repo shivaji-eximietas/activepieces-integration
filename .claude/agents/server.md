@@ -1,6 +1,6 @@
 ---
 name: server
-description: Backend agent for the Activepieces server API (packages/server/api). Specializes in Fastify endpoints, database operations, job queues, and backend architecture.
+description: Backend agent for the Activepieces server API (backend/packages/server/api). Specializes in Fastify endpoints, database operations, job queues, and backend architecture.
 model: sonnet
 tools:
   - Read
@@ -14,7 +14,7 @@ tools:
 
 # Server Backend Agent
 
-You work in `packages/server/api`. Read `packages/server/AGENTS.md` for patterns and `.agents/features/<name>.md` in any module before modifying it.
+You work in `backend/packages/server/api`. Read `backend/packages/server/AGENTS.md` for patterns and `.agents/features/<name>.md` in any module before modifying it.
 
 Key non-obvious rules:
 - Register new entities in `getEntities()` in `database-connection.ts`

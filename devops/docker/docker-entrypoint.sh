@@ -37,7 +37,7 @@ if [ "$AP_CONTAINER_TYPE" = "APP" ] || [ "$AP_CONTAINER_TYPE" = "WORKER_AND_APP"
     APPS="${APPS}
     {
         name: 'activepieces-app',
-        script: 'packages/server/api/dist/src/bootstrap.js',
+        script: 'backend/packages/server/api/dist/src/bootstrap.js',
         node_args: '--enable-source-maps',
         instances: ${APP_INSTANCES},
         exec_mode: '${APP_EXEC_MODE}',
@@ -49,7 +49,7 @@ if [ "$AP_CONTAINER_TYPE" = "WORKER" ] || [ "$AP_CONTAINER_TYPE" = "WORKER_AND_A
     APPS="${APPS}
     {
         name: 'activepieces-worker',
-        script: 'packages/server/worker/dist/src/bootstrap.js',
+        script: 'backend/packages/server/worker/dist/src/bootstrap.js',
         node_args: '--enable-source-maps',
         instances: 1,
         exec_mode: 'fork'

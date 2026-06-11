@@ -21,8 +21,8 @@ Follow these 5 steps every time:
 ### Step 2: PLAN
 
 -   **Determine piece location from the user's request:**
-    -   If the user says **"custom piece"** → use `packages/pieces/custom/` (no need to ask)
-    -   Otherwise → default to `packages/pieces/community/`
+    -   If the user says **"custom piece"** → use `backend/packages/pieces/custom/` (no need to ask)
+    -   Otherwise → default to `backend/packages/pieces/community/`
     -   See the Piece Types table below for full reference
 -   Choose the correct auth type -- see Quick Auth Reference below
 -   Select the most useful actions (CRUD, search, list)
@@ -46,7 +46,7 @@ npm run cli triggers create
 
 #### Option B: Manual File Creation (when CLI fails/is unavailable)
 
-Create this structure under `packages/pieces/community/<name>/`:
+Create this structure under `backend/packages/pieces/community/<name>/`:
 
 ```
 src/
@@ -62,7 +62,7 @@ tsconfig.json
 tsconfig.lib.json
 ```
 
-Copy config files from an existing simple piece (e.g. `packages/pieces/core/qrcode/`) and replace `<name>` throughout. Templates:
+Copy config files from an existing simple piece (e.g. `backend/packages/pieces/core/qrcode/`) and replace `<name>` throughout. Templates:
 
 **package.json**
 
@@ -152,7 +152,7 @@ Copy config files from an existing simple piece (e.g. `packages/pieces/core/qrco
 -   [ ] Add `createCustomApiCallAction` to `actions: [...]` for power users
 -   [ ] Register in `tsconfig.base.json` at the repo root (insert **alphabetically**):
     ```json
-    "@activepieces/piece-<name>": ["packages/pieces/community/<name>/src/index.ts"]
+    "@activepieces/piece-<name>": ["backend/packages/pieces/community/<name>/src/index.ts"]
     ```
     **Build fails without this step.**
 
@@ -169,7 +169,7 @@ Fix TypeScript errors and rebuild. Common causes: missing import in `src/index.t
 
 #### Test locally
 
-Add to `packages/server/api/.env`:
+Add to `backend/packages/server/api/.env`:
 
 ```
 AP_DEV_PIECES=<name>
@@ -183,16 +183,16 @@ Start the dev server (`npm start`), open `localhost:4200`, sign in with `dev@ap.
 
 | Location | Purpose |
 |---|---|
-| `packages/pieces/community/` | Third-party integrations (Slack, Stripe, etc.) -- use this for almost all work |
-| `packages/pieces/core/` | Built-in platform utilities (HTTP, Store, Math, etc.) -- do NOT recreate these |
-| `packages/pieces/custom/` | Private customer-specific pieces |
+| `backend/packages/pieces/community/` | Third-party integrations (Slack, Stripe, etc.) -- use this for almost all work |
+| `backend/packages/pieces/core/` | Built-in platform utilities (HTTP, Store, Math, etc.) -- do NOT recreate these |
+| `backend/packages/pieces/custom/` | Private customer-specific pieces |
 
 Full reference: [piece-types.md](piece-types.md) -- includes all `PieceCategory` values and the list of existing core pieces.
 
 ## Folder Structure
 
 ```
-packages/pieces/community/<piece-name>/
+backend/packages/pieces/community/<piece-name>/
   src/
     index.ts              # Piece definition (auth + imports + createPiece)
     lib/
@@ -241,7 +241,7 @@ export const myApp = createPiece({
     displayName: 'My App',
     description: 'What the app does in one sentence.',
     minimumSupportedRelease: '0.36.1',
-    // Logo: add a PNG to packages/pieces/community/<name>/ and reference it here.
+    // Logo: add a PNG to backend/packages/pieces/community/<name>/ and reference it here.
     logoUrl: 'https://cdn.activepieces.com/pieces/my-app.png',
     categories: [PieceCategory.PRODUCTIVITY],
     auth: myAppAuth,

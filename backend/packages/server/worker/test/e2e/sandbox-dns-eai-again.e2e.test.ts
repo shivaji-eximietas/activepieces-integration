@@ -17,7 +17,7 @@ import { silentLogger } from './helpers/silent-logger'
  *
  * Root cause:
  *   1. The sandbox /etc/resolv.conf shipped with Activepieces is hardcoded to
- *      Google DNS (8.8.8.8, 8.8.4.4) — see packages/server/api/src/assets/etc/resolv.conf.
+ *      Google DNS (8.8.8.8, 8.8.4.4) — see backend/packages/server/api/src/assets/etc/resolv.conf.
  *   2. The kernel egress lockdown (lifecycle.ts -> iptables-lockdown.ts) builds
  *      its DNS allowlist from the *worker host's* dns.getServers() — typically
  *      127.0.0.53 (systemd-resolved) or a VPC resolver, NEVER 8.8.8.8.
@@ -30,8 +30,8 @@ import { silentLogger } from './helpers/silent-logger'
 
 const BOX_ID = 0
 const SANDBOX_UID = sandboxCapacity.firstBoxUid + BOX_ID
-const ISOLATE_BINARY_PATH = path.resolve(process.cwd(), 'packages/server/api/src/assets', getIsolateExecutableName())
-const SANDBOX_RESOLV_CONF = path.resolve(process.cwd(), 'packages/server/api/src/assets/etc/resolv.conf')
+const ISOLATE_BINARY_PATH = path.resolve(process.cwd(), 'backend/packages/server/api/src/assets', getIsolateExecutableName())
+const SANDBOX_RESOLV_CONF = path.resolve(process.cwd(), 'backend/packages/server/api/src/assets/etc/resolv.conf')
 
 const skip = requireLinuxPrivileged() ?? requireIsolateBinary(ISOLATE_BINARY_PATH)
 

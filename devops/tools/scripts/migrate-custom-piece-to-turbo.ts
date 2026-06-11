@@ -12,18 +12,18 @@
  * 3. Deletes project.json (Nx configuration)
  *
  * Usage:
- *   npx ts-node tools/scripts/migrate-custom-piece-to-turbo.ts [piece-path]
+ *   npx ts-node devops/tools/scripts/migrate-custom-piece-to-turbo.ts [piece-path]
  *
- * If no path is provided, it scans packages/pieces/custom/ for all pieces.
+ * If no path is provided, it scans backend/packages/pieces/custom/ for all pieces.
  */
 
 import * as fs from 'fs';
 import * as path from 'path';
 
-const CUSTOM_PIECES_DIR = path.resolve(__dirname, '../../packages/pieces/custom');
+const CUSTOM_PIECES_DIR = path.resolve(__dirname, '../../../backend/packages/pieces/custom');
 
 function getRelativeRoot(pieceDir: string): string {
-  const piecesIndex = pieceDir.indexOf('/packages/pieces/');
+  const piecesIndex = pieceDir.indexOf('/backend/packages/pieces/');
   if (piecesIndex === -1) {
     throw new Error(`Unexpected piece directory structure: ${pieceDir}`);
   }

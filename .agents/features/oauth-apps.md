@@ -4,13 +4,13 @@
 OAuth Apps allow platform owners to register their own OAuth 2.0 application credentials (client ID and client secret) for pieces that support OAuth. When a platform has a custom OAuth app registered for a piece, the connection dialog uses those credentials instead of Activepieces' shared credentials. This gives vendors full control over OAuth consent screens, rate limits, and branding. The client secret is encrypted at rest using the platform's encryption key. There is no plan flag gate — the module is available to all authenticated platform users.
 
 ## Key Files
-- `packages/server/api/src/app/ee/oauth-apps/oauth-app.module.ts` — module registration + controller (both in one file)
-- `packages/server/api/src/app/ee/oauth-apps/oauth-app.service.ts` — CRUD service with encryption
-- `packages/server/api/src/app/ee/oauth-apps/oauth-app.entity.ts` — TypeORM entity
-- `packages/shared/src/lib/ee/oauth-apps/oauth-app.ts` — `OAuthApp`, `UpsertOAuth2AppRequest`, `ListOAuth2AppRequest` types
-- `packages/web/src/features/connections/api/oauth-apps.ts` — frontend API client
-- `packages/web/src/features/connections/hooks/oauth-apps-hooks.ts` — React query hooks
-- `packages/web/src/app/routes/platform/setup/pieces/update-oauth2-dialog.tsx` — UI dialog for configuring OAuth app credentials
+- `backend/packages/server/api/src/app/ee/oauth-apps/oauth-app.module.ts` — module registration + controller (both in one file)
+- `backend/packages/server/api/src/app/ee/oauth-apps/oauth-app.service.ts` — CRUD service with encryption
+- `backend/packages/server/api/src/app/ee/oauth-apps/oauth-app.entity.ts` — TypeORM entity
+- `backend/packages/shared/src/lib/ee/oauth-apps/oauth-app.ts` — `OAuthApp`, `UpsertOAuth2AppRequest`, `ListOAuth2AppRequest` types
+- `frontend/packages/web/src/features/connections/api/oauth-apps.ts` — frontend API client
+- `frontend/packages/web/src/features/connections/hooks/oauth-apps-hooks.ts` — React query hooks
+- `frontend/packages/web/src/app/routes/platform/setup/pieces/update-oauth2-dialog.tsx` — UI dialog for configuring OAuth app credentials
 
 ## Edition Availability
 No explicit plan flag gate. The module is available to all platform users (list endpoint uses `publicPlatform` security; create/delete use `platformAdminOnly`).

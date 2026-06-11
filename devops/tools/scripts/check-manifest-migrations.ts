@@ -1,6 +1,6 @@
 import * as fs from 'fs'
-import { identifyCandidatesByManifest } from '../../packages/server/api/src/app/database/rollback-migrations'
-import { getMigrations } from '../../packages/server/api/src/app/database/postgres-connection'
+import { identifyCandidatesByManifest } from '../../../backend/packages/server/api/src/app/database/rollback-migrations'
+import { getMigrations } from '../../../backend/packages/server/api/src/app/database/postgres-connection'
 
 function main(): void {
     const manifestArg = process.argv[2]

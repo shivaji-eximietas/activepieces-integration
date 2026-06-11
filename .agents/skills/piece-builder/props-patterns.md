@@ -171,7 +171,7 @@ Property.Dropdown({
 })
 ```
 
-**Real example:** `packages/pieces/community/github/src/lib/common/index.ts` -- see `repositoryDropdown`, `issueDropdown`, `labelDropDown`
+**Real example:** `backend/packages/pieces/community/github/src/lib/common/index.ts` -- see `repositoryDropdown`, `issueDropdown`, `labelDropDown`
 
 ## Multi-Select Dropdown (dynamic)
 

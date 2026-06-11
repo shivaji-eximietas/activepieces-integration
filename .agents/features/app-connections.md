@@ -4,23 +4,23 @@
 App Connections store encrypted authentication credentials (OAuth2 tokens, API keys, basic auth, or custom piece-defined fields) that flow steps use to call external services. They support automatic OAuth2 token refresh with distributed locking, a dual-scope model (project-level or platform-wide), and a "replace" operation that atomically rewires all flow references from one connection to another. The module handles all OAuth2 variants: user-supplied credentials, platform-managed OAuth apps, and Activepieces-hosted cloud OAuth, Users can optionally select a subset of a piece's declared OAuth2 scopes when creating a connection.
 
 ## Key Files
-- `packages/server/api/src/app/app-connection/` — backend module (controller, service, entity)
-- `packages/shared/src/lib/automation/app-connection/app-connection.ts` — core types, enums, and value union types
-- `packages/shared/src/lib/automation/app-connection/dto/upsert-app-connection-request.ts` — upsert DTO
-- `packages/shared/src/lib/automation/app-connection/dto/read-app-connection-request.ts` — list query DTO
-- `packages/shared/src/lib/automation/app-connection/oauth2-authorization-method.ts` — OAuth2 authorization method enum
-- `packages/web/src/features/connections/api/app-connections.ts` — frontend API client
-- `packages/web/src/features/connections/api/global-connections.ts` — global (platform-scope) connections API client
-- `packages/web/src/features/connections/hooks/app-connections-hooks.ts` — TanStack Query hooks (`appConnectionsQueries`, `appConnectionsMutations`)
-- `packages/web/src/features/connections/hooks/global-connections-hooks.ts` — global connections hooks
-- `packages/web/src/features/connections/utils/oauth2-utils.ts` — OAuth2 redirect URL helpers
-- `packages/web/src/features/connections/utils/utils.ts` — name-uniqueness check helpers
-- `packages/web/src/app/routes/connections/index.tsx` — project connections list page
-- `packages/web/src/app/routes/platform/setup/connections/index.tsx` — platform-wide global connections page
-- `packages/web/src/app/connections/new-connection-dialog.tsx` — new connection dialog wrapper
-- `packages/web/src/app/connections/create-edit-connection-dialog.tsx` — create/edit connection form dialog
-- `packages/web/src/features/connections/components/edit-global-connection-dialog.tsx` — edit global connection dialog
-- `packages/web/src/features/connections/components/rename-connection-dialog.tsx` — rename connection dialog
+- `backend/packages/server/api/src/app/app-connection/` — backend module (controller, service, entity)
+- `backend/packages/shared/src/lib/automation/app-connection/app-connection.ts` — core types, enums, and value union types
+- `backend/packages/shared/src/lib/automation/app-connection/dto/upsert-app-connection-request.ts` — upsert DTO
+- `backend/packages/shared/src/lib/automation/app-connection/dto/read-app-connection-request.ts` — list query DTO
+- `backend/packages/shared/src/lib/automation/app-connection/oauth2-authorization-method.ts` — OAuth2 authorization method enum
+- `frontend/packages/web/src/features/connections/api/app-connections.ts` — frontend API client
+- `frontend/packages/web/src/features/connections/api/global-connections.ts` — global (platform-scope) connections API client
+- `frontend/packages/web/src/features/connections/hooks/app-connections-hooks.ts` — TanStack Query hooks (`appConnectionsQueries`, `appConnectionsMutations`)
+- `frontend/packages/web/src/features/connections/hooks/global-connections-hooks.ts` — global connections hooks
+- `frontend/packages/web/src/features/connections/utils/oauth2-utils.ts` — OAuth2 redirect URL helpers
+- `frontend/packages/web/src/features/connections/utils/utils.ts` — name-uniqueness check helpers
+- `frontend/packages/web/src/app/routes/connections/index.tsx` — project connections list page
+- `frontend/packages/web/src/app/routes/platform/setup/connections/index.tsx` — platform-wide global connections page
+- `frontend/packages/web/src/app/connections/new-connection-dialog.tsx` — new connection dialog wrapper
+- `frontend/packages/web/src/app/connections/create-edit-connection-dialog.tsx` — create/edit connection form dialog
+- `frontend/packages/web/src/features/connections/components/edit-global-connection-dialog.tsx` — edit global connection dialog
+- `frontend/packages/web/src/features/connections/components/rename-connection-dialog.tsx` — rename connection dialog
 
 ## Edition Availability
 - **Community (CE)**: Available — project-scoped connections fully supported.

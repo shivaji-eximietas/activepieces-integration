@@ -4,30 +4,30 @@
 The Enterprise Authentication module extends the Community Edition auth layer with SAML 2.0 SSO, Google/GitHub federated OAuth, one-time-password email flows (verification and password reset), fine-grained RBAC enforcement per project, and a managed-auth JWT exchange for embedded SDK use cases. All SSO paths ultimately delegate to `authenticationService.federatedAuthn()` which creates or links a user and issues a standard AP JWT.
 
 ## Key Files
-- `packages/server/api/src/app/ee/authentication/` — backend EE auth module root
-- `packages/server/api/src/app/ee/authentication/saml-authn/` — SAML SSO service and controller
-- `packages/server/api/src/app/ee/authentication/federated-authn/` — Google/GitHub OAuth service and controller
-- `packages/server/api/src/app/ee/authentication/otp/` — OTP entity, service, and controller
-- `packages/server/api/src/app/ee/authentication/enterprise-local-authn/` — email verify + password reset
-- `packages/server/api/src/app/ee/authentication/project-role/` — RBAC enforcement service
-- `packages/server/api/src/app/ee/authentication/ee-authorization.ts` — Fastify preHandler hooks for plan/ownership checks
-- `packages/server/api/src/app/ee/managed-authn/` — managed auth JWT exchange controller + service
-- `packages/shared/src/lib/ee/authn/index.ts` — enterprise authn shared exports
-- `packages/shared/src/lib/ee/authn/access-control-list.ts` — ACL types for RBAC
-- `packages/shared/src/lib/ee/authn/enterprise-local-authn/requests.ts` — verify email / reset password DTOs
-- `packages/shared/src/lib/ee/otp/otp-model.ts` — OTP entity Zod schema and state enum
-- `packages/shared/src/lib/ee/otp/otp-type.ts` — `OtpType` enum (`EMAIL_VERIFICATION`, `PASSWORD_RESET`)
-- `packages/web/src/features/authentication/components/sign-in-form.tsx` — sign-in form (includes federated login buttons)
-- `packages/web/src/features/authentication/components/third-party-logins.tsx` — Google/GitHub login buttons
-- `packages/web/src/features/authentication/components/verify-email.tsx` — OTP email verification UI
-- `packages/web/src/features/authentication/components/reset-password-form.tsx` — OTP-based password reset form
-- `packages/web/src/features/authentication/hooks/auth-hooks.ts` — auth TanStack Query/mutation hooks
-- `packages/web/src/features/authentication/api/managed-auth-api.ts` — managed auth API client
-- `packages/web/src/app/routes/platform/security/sso/index.tsx` — SSO settings page (SAML + Google config)
-- `packages/web/src/app/routes/platform/security/sso/saml-dialog.tsx` — SAML configuration dialog
-- `packages/web/src/app/routes/platform/security/sso/oauth2-dialog.tsx` — Google/GitHub OAuth app dialog
-- `packages/web/src/app/routes/platform/security/sso/allowed-domain.tsx` — allowed email domain dialog
-- `packages/web/src/app/routes/authenticate/index.tsx` — SAML ACS callback landing page
+- `backend/packages/server/api/src/app/ee/authentication/` — backend EE auth module root
+- `backend/packages/server/api/src/app/ee/authentication/saml-authn/` — SAML SSO service and controller
+- `backend/packages/server/api/src/app/ee/authentication/federated-authn/` — Google/GitHub OAuth service and controller
+- `backend/packages/server/api/src/app/ee/authentication/otp/` — OTP entity, service, and controller
+- `backend/packages/server/api/src/app/ee/authentication/enterprise-local-authn/` — email verify + password reset
+- `backend/packages/server/api/src/app/ee/authentication/project-role/` — RBAC enforcement service
+- `backend/packages/server/api/src/app/ee/authentication/ee-authorization.ts` — Fastify preHandler hooks for plan/ownership checks
+- `backend/packages/server/api/src/app/ee/managed-authn/` — managed auth JWT exchange controller + service
+- `backend/packages/shared/src/lib/ee/authn/index.ts` — enterprise authn shared exports
+- `backend/packages/shared/src/lib/ee/authn/access-control-list.ts` — ACL types for RBAC
+- `backend/packages/shared/src/lib/ee/authn/enterprise-local-authn/requests.ts` — verify email / reset password DTOs
+- `backend/packages/shared/src/lib/ee/otp/otp-model.ts` — OTP entity Zod schema and state enum
+- `backend/packages/shared/src/lib/ee/otp/otp-type.ts` — `OtpType` enum (`EMAIL_VERIFICATION`, `PASSWORD_RESET`)
+- `frontend/packages/web/src/features/authentication/components/sign-in-form.tsx` — sign-in form (includes federated login buttons)
+- `frontend/packages/web/src/features/authentication/components/third-party-logins.tsx` — Google/GitHub login buttons
+- `frontend/packages/web/src/features/authentication/components/verify-email.tsx` — OTP email verification UI
+- `frontend/packages/web/src/features/authentication/components/reset-password-form.tsx` — OTP-based password reset form
+- `frontend/packages/web/src/features/authentication/hooks/auth-hooks.ts` — auth TanStack Query/mutation hooks
+- `frontend/packages/web/src/features/authentication/api/managed-auth-api.ts` — managed auth API client
+- `frontend/packages/web/src/app/routes/platform/security/sso/index.tsx` — SSO settings page (SAML + Google config)
+- `frontend/packages/web/src/app/routes/platform/security/sso/saml-dialog.tsx` — SAML configuration dialog
+- `frontend/packages/web/src/app/routes/platform/security/sso/oauth2-dialog.tsx` — Google/GitHub OAuth app dialog
+- `frontend/packages/web/src/app/routes/platform/security/sso/allowed-domain.tsx` — allowed email domain dialog
+- `frontend/packages/web/src/app/routes/authenticate/index.tsx` — SAML ACS callback landing page
 
 ## Edition Availability
 - **Community (CE)**: OTP flows (email verification, password reset) and RBAC base types are available in CE. SSO, managed auth, and federated OAuth are EE/Cloud only.

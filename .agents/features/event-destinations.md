@@ -4,19 +4,19 @@
 Event Destinations streams platform and project activity events to webhook URLs in real time. Internal Activepieces flow webhooks are valid targets, so operators can route events into a flow and fan them out to Slack, Gmail, Teams, or any HTTP endpoint without leaving the platform. Each destination subscribes to a configurable subset of the 27 `ApplicationEventName` events (flow CRUD, flow lifecycle, run lifecycle, user auth, connections, security, releases) and receives a structured JSON payload via a BullMQ-backed delivery queue. The feature is gated behind the `auditLogEnabled` plan flag and is only available in Enterprise/Cloud editions.
 
 ## Key Files
-- `packages/server/api/src/app/event-destinations/` — controller, service, entity
-- `packages/shared/src/lib/ee/event-destinations/dto.ts` — request/response Zod schemas (test endpoint accepts optional `event`)
-- `packages/shared/src/lib/ee/event-destinations/index.ts` — barrel export
-- `packages/shared/src/lib/ee/audit-events/` — `ApplicationEventName` enum (27 event types)
-- `packages/shared/src/lib/ee/audit-events/mock-event-builder.ts` — `buildMockEvent()` shared helper that returns a typed `ApplicationEvent` mock for any event name
-- `packages/web/src/app/routes/platform/infra/event-destinations/index.tsx` — `EventDestinationsPage`
-- `packages/web/src/app/routes/platform/infra/event-destinations/lib/event-destinations-collection.ts` — TanStack DB live collection + mutations (incl. `useImportHandlerFlow`)
-- `packages/web/src/app/routes/platform/infra/event-destinations/lib/handler-flow-builder.ts` — generates a `Template` for a one-click webhook-triggered handler flow with per-event router branches
-- `packages/web/src/app/routes/platform/infra/event-destinations/lib/parse-flow-id-from-url.ts` — extracts an internal flow ID from a webhook URL
-- `packages/web/src/app/routes/platform/infra/event-destinations/lib/use-event-labels.ts` — human-readable labels for every `ApplicationEventName`
-- `packages/web/src/app/routes/platform/infra/event-destinations/components/event-destination-dialog.tsx` — create/edit dialog with Generate handler flow button and per-event Test webhook dropdown
-- `packages/web/src/app/routes/platform/infra/event-destinations/components/event-destination-row.tsx` — per-destination row
-- `packages/web/src/app/routes/platform/infra/event-destinations/components/event-destination-actions.tsx` — per-row edit/delete/test actions
+- `backend/packages/server/api/src/app/event-destinations/` — controller, service, entity
+- `backend/packages/shared/src/lib/ee/event-destinations/dto.ts` — request/response Zod schemas (test endpoint accepts optional `event`)
+- `backend/packages/shared/src/lib/ee/event-destinations/index.ts` — barrel export
+- `backend/packages/shared/src/lib/ee/audit-events/` — `ApplicationEventName` enum (27 event types)
+- `backend/packages/shared/src/lib/ee/audit-events/mock-event-builder.ts` — `buildMockEvent()` shared helper that returns a typed `ApplicationEvent` mock for any event name
+- `frontend/packages/web/src/app/routes/platform/infra/event-destinations/index.tsx` — `EventDestinationsPage`
+- `frontend/packages/web/src/app/routes/platform/infra/event-destinations/lib/event-destinations-collection.ts` — TanStack DB live collection + mutations (incl. `useImportHandlerFlow`)
+- `frontend/packages/web/src/app/routes/platform/infra/event-destinations/lib/handler-flow-builder.ts` — generates a `Template` for a one-click webhook-triggered handler flow with per-event router branches
+- `frontend/packages/web/src/app/routes/platform/infra/event-destinations/lib/parse-flow-id-from-url.ts` — extracts an internal flow ID from a webhook URL
+- `frontend/packages/web/src/app/routes/platform/infra/event-destinations/lib/use-event-labels.ts` — human-readable labels for every `ApplicationEventName`
+- `frontend/packages/web/src/app/routes/platform/infra/event-destinations/components/event-destination-dialog.tsx` — create/edit dialog with Generate handler flow button and per-event Test webhook dropdown
+- `frontend/packages/web/src/app/routes/platform/infra/event-destinations/components/event-destination-row.tsx` — per-destination row
+- `frontend/packages/web/src/app/routes/platform/infra/event-destinations/components/event-destination-actions.tsx` — per-row edit/delete/test actions
 
 ## Edition Availability
 - **Community (CE)**: Not available.

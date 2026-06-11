@@ -384,7 +384,7 @@ After creating your evaluation file, you can use the provided evaluation harness
 1. **Install Dependencies**
 
    ```bash
-   pip install -r scripts/requirements.txt
+   pip install -r devops/scripts/requirements.txt
    ```
 
    Or install manually:
@@ -417,7 +417,7 @@ Evaluation files use XML format with `<qa_pair>` elements:
 
 ## Running Evaluations
 
-The evaluation script (`scripts/evaluation.py`) supports three transport types:
+The evaluation script (`devops/scripts/evaluation.py`) supports three transport types:
 
 **Important:**
 - **stdio transport**: The evaluation script automatically launches and manages the MCP server process for you. Do not run the server manually.
@@ -428,7 +428,7 @@ The evaluation script (`scripts/evaluation.py`) supports three transport types:
 For locally-run MCP servers (script launches the server automatically):
 
 ```bash
-python scripts/evaluation.py \
+python devops/scripts/evaluation.py \
   -t stdio \
   -c python \
   -a my_mcp_server.py \
@@ -437,7 +437,7 @@ python scripts/evaluation.py \
 
 With environment variables:
 ```bash
-python scripts/evaluation.py \
+python devops/scripts/evaluation.py \
   -t stdio \
   -c python \
   -a my_mcp_server.py \
@@ -451,7 +451,7 @@ python scripts/evaluation.py \
 For SSE-based MCP servers (you must start the server first):
 
 ```bash
-python scripts/evaluation.py \
+python devops/scripts/evaluation.py \
   -t sse \
   -u https://example.com/mcp \
   -H "Authorization: Bearer token123" \
@@ -464,7 +464,7 @@ python scripts/evaluation.py \
 For HTTP-based MCP servers (you must start the server first):
 
 ```bash
-python scripts/evaluation.py \
+python devops/scripts/evaluation.py \
   -t http \
   -u https://example.com/mcp \
   -H "Authorization: Bearer token123" \
@@ -519,7 +519,7 @@ The evaluation script generates a detailed report including:
 ### Save Report to File
 
 ```bash
-python scripts/evaluation.py \
+python devops/scripts/evaluation.py \
   -t stdio \
   -c python \
   -a my_server.py \
@@ -553,14 +553,14 @@ Here's a complete example of creating and running an evaluation:
 2. **Install dependencies**:
 
 ```bash
-pip install -r scripts/requirements.txt
+pip install -r devops/scripts/requirements.txt
 export ANTHROPIC_API_KEY=your_api_key
 ```
 
 3. **Run evaluation**:
 
 ```bash
-python scripts/evaluation.py \
+python devops/scripts/evaluation.py \
   -t stdio \
   -c python \
   -a github_mcp_server.py \

@@ -168,8 +168,8 @@ export const listTasksAction = createAction({
 ```
 
 **Real examples:**
-- `packages/pieces/community/github/src/lib/common/index.ts`
-- `packages/pieces/community/stripe/src/lib/common/index.ts`
+- `backend/packages/pieces/community/github/src/lib/common/index.ts`
+- `backend/packages/pieces/community/stripe/src/lib/common/index.ts`
 
 ---
 
@@ -211,7 +211,7 @@ export async function myAppPaginatedApiCall<T>({
 }
 ```
 
-**Real example:** `packages/pieces/community/github/src/lib/common/index.ts` -- `githubPaginatedApiCall`
+**Real example:** `backend/packages/pieces/community/github/src/lib/common/index.ts` -- `githubPaginatedApiCall`
 
 ---
 

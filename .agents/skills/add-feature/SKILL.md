@@ -17,13 +17,13 @@ Before writing code, answer:
 5. **Must work embedded?** → Check `EmbeddingState` in frontend
 6. **Project-scoped or platform-scoped?** → Filter queries accordingly
 
-## Step 1: Shared Types (`packages/shared`)
+## Step 1: Shared Types (`backend/packages/shared`)
 
 - Define Zod schemas + `z.infer` types in `src/lib/{domain}/`
 - Export from `src/index.ts` barrel
 - Bump version in `package.json` (patch for fix, minor for new export)
 
-## Step 2: Server (`packages/server/api`)
+## Step 2: Server (`backend/packages/server/api`)
 
 Read `.agents/features/<module-name>.md` first (e.g. `.agents/features/tables.md` for the tables module).
 
@@ -42,18 +42,18 @@ Read `.agents/features/<module-name>.md` first (e.g. `.agents/features/tables.md
 - Add to `SystemJobName` or `WorkerJobType` enum in shared
 - Add handler, register in `app.ts` via `systemJobHandlers.registerJobHandler()`
 
-## Step 4: Frontend (`packages/web`)
+## Step 4: Frontend (`frontend/packages/web`)
 
 - Feature folder: `src/features/{feature}/api/`, `hooks/`, `components/`
 - API client: See `features/tables/api/tables-api.ts`
 - Hooks: See `features/tables/hooks/table-hooks.ts`
 - Route: `React.lazy()` + `ProjectRouterWrapper()` + `RoutePermissionGuard` + `SuspenseWrapper`
-- Translations: `packages/web/public/locales/en/translation.json` only
+- Translations: `frontend/packages/web/public/locales/en/translation.json` only
 - Feature flags: `flagsHooks.useFlag()` or `<FlagGuard>`
 
 ## Step 5: Tests
 
-- API test: `packages/server/api/test/integration/ce/{feature}.test.ts`
+- API test: `backend/packages/server/api/test/integration/ce/{feature}.test.ts`
 - Use `setupTestEnvironment()` + `createTestContext(app)`
 
 ## Step 6: Verify

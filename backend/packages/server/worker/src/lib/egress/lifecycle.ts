@@ -192,4 +192,4 @@ export const egressInternals = {
     parseResolvConfNameservers,
 }
 
-const SANDBOX_RESOLV_CONF_PATH = path.resolve(process.cwd(), 'packages/server/api/src/assets/etc/resolv.conf')
+const SANDBOX_RESOLV_CONF_PATH = path.resolve(process.cwd(), 'backend/packages/server/api/src/assets/etc/resolv.conf')

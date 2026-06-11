@@ -16,7 +16,7 @@ From the repo root on any Docker host:
 npm run test:sandbox-e2e
 ```
 
-This builds a privileged container and runs the vitest suite inside it. See `Dockerfile` for the image definition and `scripts/run-sandbox-e2e.sh` for the wrapper.
+This builds a privileged container and runs the vitest suite inside it. See `Dockerfile` for the image definition and `devops/scripts/run-sandbox-e2e.sh` for the wrapper.
 
 If the suite is invoked directly on a host that lacks the required primitives it will skip with a clear message — it does not silently pass.
 
@@ -32,4 +32,4 @@ Tolerance: requires ≥80% of Group A hosts to succeed (one transient vendor out
 
 ## Why these exist alongside the unit tests
 
-The unit tests under `packages/server/worker/test/lib/egress/` and `packages/server/engine/test/ssrf/` mock `execFile`, `spawn`, and kernel state. They prove the logic branches, not that the kernel is actually enforcing anything. These e2e tests close that gap.
+The unit tests under `backend/packages/server/worker/test/lib/egress/` and `backend/packages/server/engine/test/ssrf/` mock `execFile`, `spawn`, and kernel state. They prove the logic branches, not that the kernel is actually enforcing anything. These e2e tests close that gap.

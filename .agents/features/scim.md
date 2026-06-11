@@ -4,13 +4,13 @@
 SCIM (System for Cross-domain Identity Management) 2.0 integration allows enterprise Identity Providers (IdPs) such as Okta, Azure AD, and Google Workspace to automatically provision, update, and deprovision users and groups in Activepieces. Users map directly to Activepieces platform users; Groups map to Activepieces projects (only `ProjectType.TEAM` projects). Authentication uses an API key passed as a Bearer token (`platformAdminOnly SERVICE` principal). The module also exposes the SCIM discovery endpoints (`ServiceProviderConfig`, `ResourceTypes`, `Schemas`) for IdP auto-configuration. Gated by `platform.plan.scimEnabled`.
 
 ## Key Files
-- `packages/server/api/src/app/ee/scim/scim-module.ts` — module registration, `scimEnabled` guard, `application/scim+json` content type parser
-- `packages/server/api/src/app/ee/scim/scim-user-controller.ts` — user CRUD endpoints
-- `packages/server/api/src/app/ee/scim/scim-user-service.ts` — user provisioning logic
-- `packages/server/api/src/app/ee/scim/scim-group-controller.ts` — group CRUD endpoints
-- `packages/server/api/src/app/ee/scim/scim-group-service.ts` — group/project management logic
-- `packages/server/api/src/app/ee/scim/scim-discovery-controller.ts` — discovery endpoints (ServiceProviderConfig, ResourceTypes, Schemas)
-- `packages/shared/src/lib/ee/scim/index.ts` — all SCIM types, schemas, constants, `parseScimFilter`, `ScimError`
+- `backend/packages/server/api/src/app/ee/scim/scim-module.ts` — module registration, `scimEnabled` guard, `application/scim+json` content type parser
+- `backend/packages/server/api/src/app/ee/scim/scim-user-controller.ts` — user CRUD endpoints
+- `backend/packages/server/api/src/app/ee/scim/scim-user-service.ts` — user provisioning logic
+- `backend/packages/server/api/src/app/ee/scim/scim-group-controller.ts` — group CRUD endpoints
+- `backend/packages/server/api/src/app/ee/scim/scim-group-service.ts` — group/project management logic
+- `backend/packages/server/api/src/app/ee/scim/scim-discovery-controller.ts` — discovery endpoints (ServiceProviderConfig, ResourceTypes, Schemas)
+- `backend/packages/shared/src/lib/ee/scim/index.ts` — all SCIM types, schemas, constants, `parseScimFilter`, `ScimError`
 
 ## Edition Availability
 Enterprise and Cloud. Gated by `platform.plan.scimEnabled`. Module hook: `platformMustHaveFeatureEnabled((platform) => platform.plan.scimEnabled)`.

@@ -4,13 +4,13 @@
 The File Storage Service is the central infrastructure for persisting binary files in Activepieces. It supports two storage backends: database (PostgreSQL `bytea`) and S3-compatible object storage (AWS S3, Cloudflare R2, or any S3-compatible endpoint). The backend used for a given file depends on its `FileType` — execution-related files that expire (run logs, step files, trigger payloads, webhook payloads) use the configured `FILE_STORAGE_LOCATION` system property; non-expiring files (platform assets, user profile pictures, knowledge base files, project releases, etc.) always use the database. Files are optionally compressed with Zstd. A scheduled system job runs every hour to delete stale execution files beyond the configurable retention window. The `step-file` sub-feature exposes engine-accessible endpoints for pieces to upload and download files produced during a flow run, using short-lived JWT tokens for download authorization.
 
 ## Key Files
-- `packages/server/api/src/app/file/file.service.ts` — core service: save, getFile, getDataOrThrow, delete, deleteStaleBulk, uploadPublicAsset
-- `packages/server/api/src/app/file/file.entity.ts` — TypeORM entity
-- `packages/server/api/src/app/file/file.module.ts` — module registration, cleanup job scheduling
-- `packages/server/api/src/app/file/s3-helper.ts` — S3 client wrapper (upload, download, delete, signed URLs)
-- `packages/server/api/src/app/file/file-compressor.ts` — Zstd compress/decompress utilities
-- `packages/server/api/src/app/file/files-controller.ts` — primary file upload/download (`/v1/files`) and legacy `signedStepFileController` redirect for `/v1/step-files/signed`
-- `packages/shared/src/lib/core/file/index.ts` — `File`, `FileType`, `FileCompression`, `FileLocation`, `FileId`
+- `backend/packages/server/api/src/app/file/file.service.ts` — core service: save, getFile, getDataOrThrow, delete, deleteStaleBulk, uploadPublicAsset
+- `backend/packages/server/api/src/app/file/file.entity.ts` — TypeORM entity
+- `backend/packages/server/api/src/app/file/file.module.ts` — module registration, cleanup job scheduling
+- `backend/packages/server/api/src/app/file/s3-helper.ts` — S3 client wrapper (upload, download, delete, signed URLs)
+- `backend/packages/server/api/src/app/file/file-compressor.ts` — Zstd compress/decompress utilities
+- `backend/packages/server/api/src/app/file/files-controller.ts` — primary file upload/download (`/v1/files`) and legacy `signedStepFileController` redirect for `/v1/step-files/signed`
+- `backend/packages/shared/src/lib/core/file/index.ts` — `File`, `FileType`, `FileCompression`, `FileLocation`, `FileId`
 
 ## Edition Availability
 - **Community (CE)**: Fully available — used internally by the execution engine.

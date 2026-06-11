@@ -1,11 +1,11 @@
 # Activepieces E2E Tests
 
-This package holds the monorepo's full-stack end-to-end tests. Under the canonical 4-layer testing taxonomy (unit / integration / e2e / smoke), this is the only package that owns the E2E layer: Playwright-driven browser flows that exercise the entire Activepieces stack through the public UI. Per-package unit and integration tests live in their respective packages (`packages/server/api/test/`, `packages/server/engine/test/`, `packages/server/worker/test/`).
+This package holds the monorepo's full-stack end-to-end tests. Under the canonical 4-layer testing taxonomy (unit / integration / e2e / smoke), this is the only package that owns the E2E layer: Playwright-driven browser flows that exercise the entire Activepieces stack through the public UI. Per-package unit and integration tests live in their respective packages (`backend/packages/server/api/test/`, `backend/packages/server/engine/test/`, `backend/packages/server/worker/test/`).
 
 ## Layout
 
 ```
-packages/tests-e2e/
+frontend/packages/tests-e2e/
 ├── scenarios/
 │   ├── ce/         # Community Edition specs (*.spec.ts)
 │   └── ee/         # Enterprise Edition specs (*.spec.ts)

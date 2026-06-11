@@ -1,6 +1,6 @@
 import * as fs from 'fs'
-import { getMigrations } from '../../packages/server/api/src/app/database/postgres-connection'
-import { Migration } from '../../packages/server/api/src/app/database/migration'
+import { getMigrations } from '../../../backend/packages/server/api/src/app/database/postgres-connection'
+import { Migration } from '../../../backend/packages/server/api/src/app/database/migration'
 
 function findMigrationsForRelease(releaseVersion: string): Migration[] {
     const migrationClasses = getMigrations()

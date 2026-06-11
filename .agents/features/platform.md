@@ -4,15 +4,15 @@
 A Platform is the top-level tenant namespace in Activepieces. Every installation has at least one platform. It owns branding (logo, colors, favicon), authentication settings (email auth toggle, allowed auth domains, federated SSO providers), piece filtering rules, and a `PlatformPlan` that governs feature flags and resource limits. On Cloud a user can own multiple platforms; on CE/EE there is typically one. Platform admins can update branding, auth settings, and piece pinning. Platform deletion is Cloud-only and triggers async cleanup.
 
 ## Key Files
-- `packages/server/api/src/app/platform/platform.controller.ts` — POST `/:id` (update), GET `/:id` (read), DELETE `/:id` (Cloud only), GET `/assets/:id` (logo/favicon download)
-- `packages/server/api/src/app/platform/platform.service.ts` — CRUD service; `create`, `update`, `getOneWithPlanAndUsageOrThrow`, `listPlatformsForIdentityWithAtleastProject`
-- `packages/server/api/src/app/platform/platform.entity.ts` — `platform` TypeORM entity
-- `packages/server/api/src/app/platform/platform.utils.ts` — `getPlatformIdForRequest`, `isCustomerOnDedicatedDomain`
-- `packages/server/api/src/app/platform/platform-jobs.ts` — `HARD_DELETE_PLATFORM` job handler
-- `packages/shared/src/lib/management/platform/platform.model.ts` — `Platform`, `PlatformWithoutSensitiveData`, `PlatformPlan`, `PlatformUsage` Zod schemas
-- `packages/shared/src/lib/management/platform/platform.request.ts` — `UpdatePlatformRequestBody`
-- `packages/web/src/hooks/platform-hooks.ts` — `useCurrentPlatform()` React Query hook
-- `packages/web/src/features/platform-admin/hooks/branding-hooks.ts` — branding mutation hooks
+- `backend/packages/server/api/src/app/platform/platform.controller.ts` — POST `/:id` (update), GET `/:id` (read), DELETE `/:id` (Cloud only), GET `/assets/:id` (logo/favicon download)
+- `backend/packages/server/api/src/app/platform/platform.service.ts` — CRUD service; `create`, `update`, `getOneWithPlanAndUsageOrThrow`, `listPlatformsForIdentityWithAtleastProject`
+- `backend/packages/server/api/src/app/platform/platform.entity.ts` — `platform` TypeORM entity
+- `backend/packages/server/api/src/app/platform/platform.utils.ts` — `getPlatformIdForRequest`, `isCustomerOnDedicatedDomain`
+- `backend/packages/server/api/src/app/platform/platform-jobs.ts` — `HARD_DELETE_PLATFORM` job handler
+- `backend/packages/shared/src/lib/management/platform/platform.model.ts` — `Platform`, `PlatformWithoutSensitiveData`, `PlatformPlan`, `PlatformUsage` Zod schemas
+- `backend/packages/shared/src/lib/management/platform/platform.request.ts` — `UpdatePlatformRequestBody`
+- `frontend/packages/web/src/hooks/platform-hooks.ts` — `useCurrentPlatform()` React Query hook
+- `frontend/packages/web/src/features/platform-admin/hooks/branding-hooks.ts` — branding mutation hooks
 
 ## Edition Availability
 All editions. The `PlatformPlan` feature flags (e.g. `customAppearanceEnabled`, `ssoEnabled`, `agentsEnabled`) control which capabilities are active. Community edition uses `OPEN_SOURCE_PLAN` with all booleans set to their CE defaults. `usage` is only populated on non-Community editions.

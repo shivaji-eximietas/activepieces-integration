@@ -18,7 +18,7 @@
 		}
 	},
 	"forwardPorts": [3000, 4200, 5432],
-	"postAttachCommand": "/bin/bash .devcontainer/setup.sh",
+	"postAttachCommand": "/bin/bash devops/.devcontainer/setup.sh",
 	"hostRequirements": {
   	  "cpus": 4,
   	  "memory": "8gb"

@@ -9,16 +9,16 @@
         "./src/*"
       ],
       "@activepieces/shared": [
-        "../../packages/shared/src"
+        "../../../backend/packages/shared/src"
       ],
       "@activepieces/pieces-framework": [
-        "../../packages/pieces/framework/src"
+        "../../../backend/packages/pieces/framework/src"
       ],
       "ee-embed-sdk": [
-        "../../packages/ee/embed-sdk/src"
+        "../ee/embed-sdk/src"
       ],
       "@activepieces/piece-ai": [
-        "../../packages/pieces/community/ai/src"
+        "../../../backend/packages/pieces/community/ai/src"
       ]
     },
     "types": [

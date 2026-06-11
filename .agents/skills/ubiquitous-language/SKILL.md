@@ -29,13 +29,13 @@ Before writing a single line of code or proposing a design for a new feature, yo
 
 1. **Feature docs** — read all `.md` files in `.agents/features/` to understand what features already exist, what they cover, and how they work. This is the primary source of truth for feature inventory.
 
-2. **Components / services / hooks** — use the Glob tool to find files whose names relate to the proposed concept (e.g., `packages/**/*<keyword>*.{ts,tsx}`), then use the Grep tool to search file contents for the keyword. Also search by directory name patterns (e.g., `packages/server/api/src/app/<concept>/`).
+2. **Components / services / hooks** — use the Glob tool to find files whose names relate to the proposed concept (e.g., `packages/**/*<keyword>*.{ts,tsx}`), then use the Grep tool to search file contents for the keyword. Also search by directory name patterns (e.g., `backend/packages/server/api/src/app/<concept>/`).
 
-3. **Route definitions** — use the Grep tool to check whether an API route already covers the use case: search for the keyword in `packages/server/api/src` with glob `*.ts`.
+3. **Route definitions** — use the Grep tool to check whether an API route already covers the use case: search for the keyword in `backend/packages/server/api/src` with glob `*.ts`.
 
-4. **Shared types** — use the Grep tool to inspect `packages/shared/src/` for existing type definitions or enums that represent the concept.
+4. **Shared types** — use the Grep tool to inspect `backend/packages/shared/src/` for existing type definitions or enums that represent the concept.
 
-5. **Feature flags / plan limits** — use the Grep tool to search `packages/shared/src/lib/` for any existing capability or plan flag that may gate the feature.
+5. **Feature flags / plan limits** — use the Grep tool to search `backend/packages/shared/src/lib/` for any existing capability or plan flag that may gate the feature.
 
 **Decision rule:**
 
@@ -64,9 +64,9 @@ After the feature is implemented, create a new file at `.agents/features/<featur
 One-paragraph description of what this feature does and why it exists.
 
 ## Key Files
-- `packages/web/src/features/<path>` — frontend components
-- `packages/server/api/src/app/<path>` — backend service/controller
-- `packages/shared/src/lib/<path>` — shared types
+- `frontend/packages/web/src/features/<path>` — frontend components
+- `backend/packages/server/api/src/app/<path>` — backend service/controller
+- `backend/packages/shared/src/lib/<path>` — shared types
 
 ## Edition Availability
 Which editions support this feature (Community, Enterprise, Cloud).

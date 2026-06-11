@@ -1,11 +1,11 @@
 import { execSync } from 'child_process'
 import semver from 'semver'
-import { Migration } from '../../packages/server/api/src/app/database/migration'
+import { Migration } from '../../../backend/packages/server/api/src/app/database/migration'
 
 const MIGRATION_DIRS = [
-    'packages/server/api/src/app/database/migration/postgres',
-    'packages/server/api/src/app/database/migration/common',
-    'packages/server/api/src/app/ee/database/migrations/postgres',
+    'backend/packages/server/api/src/app/database/migration/postgres',
+    'backend/packages/server/api/src/app/database/migration/common',
+    'backend/packages/server/api/src/app/ee/database/migrations/postgres',
 ]
 
 function getChangedMigrationFiles(): string[] {

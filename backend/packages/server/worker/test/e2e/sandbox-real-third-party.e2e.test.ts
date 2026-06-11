@@ -24,7 +24,7 @@ import { silentLogger } from './helpers/silent-logger'
 
 const BOX_ID = 0
 const SANDBOX_UID = sandboxCapacity.firstBoxUid + BOX_ID
-const ISOLATE_BINARY_PATH = path.resolve(process.cwd(), 'packages/server/api/src/assets', getIsolateExecutableName())
+const ISOLATE_BINARY_PATH = path.resolve(process.cwd(), 'backend/packages/server/api/src/assets', getIsolateExecutableName())
 
 const PRIVILEGE_SKIP = requireLinuxPrivileged() ?? requireIsolateBinary(ISOLATE_BINARY_PATH)
 

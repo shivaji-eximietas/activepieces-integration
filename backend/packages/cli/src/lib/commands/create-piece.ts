@@ -178,7 +178,7 @@ export const createPiece = async (
   console.log(chalk.green('✨  Done!'));
   console.log(
     chalk.yellow(
-      `The piece has been generated at: packages/pieces/${pieceType}/${pieceName}`
+      `The piece has been generated at: backend/packages/pieces/${pieceType}/${pieceName}`
     )
   );
 };

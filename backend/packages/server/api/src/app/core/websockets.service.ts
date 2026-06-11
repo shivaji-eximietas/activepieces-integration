@@ -30,7 +30,7 @@ export const websocketService = {
         switch (type) {
             case PrincipalType.USER: {
                 await validateProjectId({ userId: principal.id, projectId, log })
-                log.info({
+                log.debug({
                     message: 'User connected',
                     userId: principal.id,
                     projectId,
@@ -41,7 +41,7 @@ export const websocketService = {
             }
             case PrincipalType.WORKER: {
                 const workerId = socket.handshake.auth.workerId
-                log.info({
+                log.debug({
                     message: 'Worker connected',
                     workerId,
                 })

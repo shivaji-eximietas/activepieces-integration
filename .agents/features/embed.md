@@ -1,27 +1,27 @@
 # Embed
 
 ## Summary
-Embed Onboarding lets a platform admin configure embedded workflows. The admin UI at `/platform/security/embed` (`packages/web/src/app/routes/platform/security/embed/`) renders a stepper:
+Embed Onboarding lets a platform admin configure embedded workflows. The admin UI at `/platform/security/embed` (`frontend/packages/web/src/app/routes/platform/security/embed/`) renders a stepper:
 - **Cloud edition**: 4 steps — register a Cloudflare custom hostname (`embed_subdomain`), verify DNS, set `allowedEmbedDomains` (frame-ancestors), create signing keys.
 - **CE/EE editions**: 2 steps — set `allowedEmbedDomains`, create signing keys (no hostname/DNS — self-hosted uses `FRONTEND_URL`).
 
 The cryptographic core is **Signing Keys**: RSA-4096 key pairs generated server-side for the Managed Auth flow. The platform admin creates a signing key — the private key is returned exactly once and must be saved by the admin; only the public key is stored. The vendor's backend uses the private key to sign JWTs that Activepieces verifies using the stored public key when `POST /v1/managed-authn/external-token` is called. Whole feature gated by `platform.plan.embeddingEnabled`.
 
-`allowedEmbedDomains` lives on the `platform` table (alongside `allowedAuthDomains`) and is updated via `POST /v1/platforms/:id` (`UpdatePlatformRequestBody.allowedEmbedDomains`). The `embed-security` Fastify hook (`packages/server/api/src/app/helper/embed-security.ts`) reads this list per request to set the `Content-Security-Policy: frame-ancestors` header. See `managed-auth.md` for the JWT verification flow.
+`allowedEmbedDomains` lives on the `platform` table (alongside `allowedAuthDomains`) and is updated via `POST /v1/platforms/:id` (`UpdatePlatformRequestBody.allowedEmbedDomains`). The `embed-security` Fastify hook (`backend/packages/server/api/src/app/helper/embed-security.ts`) reads this list per request to set the `Content-Security-Policy: frame-ancestors` header. See `managed-auth.md` for the JWT verification flow.
 
 ## Key Files
-- `packages/server/api/src/app/ee/signing-key/signing-key-module.ts` — module registration with `embeddingEnabled` guard
-- `packages/server/api/src/app/ee/signing-key/signing-key-controller.ts` — REST controller (CRUD + audit event on create)
-- `packages/server/api/src/app/ee/signing-key/signing-key-service.ts` — service (add, list, get, delete)
-- `packages/server/api/src/app/ee/signing-key/signing-key-generator.ts` — RSA-4096 key pair generation using Node.js `crypto`
-- `packages/server/api/src/app/ee/signing-key/signing-key-entity.ts` — TypeORM entity
-- `packages/shared/src/lib/ee/signing-key/signing-key-model.ts` — `SigningKey` type and `KeyAlgorithm` enum
-- `packages/shared/src/lib/ee/signing-key/signing-key-response.ts` — `AddSigningKeyResponse` type (includes `privateKey`)
-- `packages/shared/src/lib/ee/signing-key/signing-key.request.ts` — `AddSigningKeyRequestBody` schema
-- `packages/web/src/features/platform-admin/api/signing-key-api.ts` — frontend API client
-- `packages/web/src/features/platform-admin/hooks/signing-key-hooks.ts` — React query hooks
-- `packages/web/src/features/platform-admin/components/new-signing-key-dialog.tsx` — UI dialog showing the private key once on creation
-- `packages/web/src/app/routes/platform/security/embed/` — platform admin UI page (Embed Onboarding)
+- `backend/packages/server/api/src/app/ee/signing-key/signing-key-module.ts` — module registration with `embeddingEnabled` guard
+- `backend/packages/server/api/src/app/ee/signing-key/signing-key-controller.ts` — REST controller (CRUD + audit event on create)
+- `backend/packages/server/api/src/app/ee/signing-key/signing-key-service.ts` — service (add, list, get, delete)
+- `backend/packages/server/api/src/app/ee/signing-key/signing-key-generator.ts` — RSA-4096 key pair generation using Node.js `crypto`
+- `backend/packages/server/api/src/app/ee/signing-key/signing-key-entity.ts` — TypeORM entity
+- `backend/packages/shared/src/lib/ee/signing-key/signing-key-model.ts` — `SigningKey` type and `KeyAlgorithm` enum
+- `backend/packages/shared/src/lib/ee/signing-key/signing-key-response.ts` — `AddSigningKeyResponse` type (includes `privateKey`)
+- `backend/packages/shared/src/lib/ee/signing-key/signing-key.request.ts` — `AddSigningKeyRequestBody` schema
+- `frontend/packages/web/src/features/platform-admin/api/signing-key-api.ts` — frontend API client
+- `frontend/packages/web/src/features/platform-admin/hooks/signing-key-hooks.ts` — React query hooks
+- `frontend/packages/web/src/features/platform-admin/components/new-signing-key-dialog.tsx` — UI dialog showing the private key once on creation
+- `frontend/packages/web/src/app/routes/platform/security/embed/` — platform admin UI page (Embed Onboarding)
 
 ## Edition Availability
 Enterprise and Cloud. Gated by `platform.plan.embeddingEnabled`. Module hook: `platformMustHaveFeatureEnabled((platform) => platform.plan.embeddingEnabled)`.

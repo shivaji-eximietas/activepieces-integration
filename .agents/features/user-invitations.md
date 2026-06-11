@@ -4,15 +4,15 @@
 The User Invitations feature lets platform owners and project members with the `WRITE_INVITATION` permission invite users to join a platform or a specific project. An invitation is scoped to either a platform (granting a `PlatformRole`) or a project (granting a named `ProjectRole`). When created, an invitation is either immediately auto-accepted (for SERVICE key calls or when inviting an already-registered user to a project) or kept as PENDING and an email link is sent. The invitation link embeds a short-lived JWT token; recipients click it to accept without needing a login session. On acceptance, the user's platform role or project membership is provisioned automatically. Invitations are cleaned up after acceptance.
 
 ## Key Files
-- `packages/server/api/src/app/user-invitations/user-invitation.module.ts` — Fastify plugin registration + all route handlers (acts as both module and controller)
-- `packages/server/api/src/app/user-invitations/user-invitation.service.ts` — core invitation lifecycle: create, accept, list, delete, provision
-- `packages/server/api/src/app/user-invitations/user-invitation.entity.ts` — TypeORM entity
-- `packages/shared/src/lib/management/invitations/index.ts` — `UserInvitation`, `InvitationType`, `InvitationStatus`, `SendUserInvitationRequest`, `AcceptUserInvitationRequest`, `ListUserInvitationsRequest`
-- `packages/web/src/features/members/components/invite-user/` — invite user dialog
-- `packages/web/src/features/members/components/invitation-card.tsx` — displays a pending invitation with revoke action
-- `packages/web/src/features/members/components/accept-invitation.tsx` — accept flow for incoming invitation links
-- `packages/web/src/features/members/api/` — frontend API client for invitations
-- `packages/web/src/features/members/hooks/` — TanStack Query hooks
+- `backend/packages/server/api/src/app/user-invitations/user-invitation.module.ts` — Fastify plugin registration + all route handlers (acts as both module and controller)
+- `backend/packages/server/api/src/app/user-invitations/user-invitation.service.ts` — core invitation lifecycle: create, accept, list, delete, provision
+- `backend/packages/server/api/src/app/user-invitations/user-invitation.entity.ts` — TypeORM entity
+- `backend/packages/shared/src/lib/management/invitations/index.ts` — `UserInvitation`, `InvitationType`, `InvitationStatus`, `SendUserInvitationRequest`, `AcceptUserInvitationRequest`, `ListUserInvitationsRequest`
+- `frontend/packages/web/src/features/members/components/invite-user/` — invite user dialog
+- `frontend/packages/web/src/features/members/components/invitation-card.tsx` — displays a pending invitation with revoke action
+- `frontend/packages/web/src/features/members/components/accept-invitation.tsx` — accept flow for incoming invitation links
+- `frontend/packages/web/src/features/members/api/` — frontend API client for invitations
+- `frontend/packages/web/src/features/members/hooks/` — TanStack Query hooks
 
 ## Edition Availability
 - **Community (CE)**: Platform invitations available. Project invitations require `projectRolesEnabled` plan flag (gated via `projectMustBeTeamType` and `platformMustHaveFeatureEnabled`).

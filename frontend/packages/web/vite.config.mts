@@ -7,6 +7,7 @@ import { defineConfig } from 'vite';
 import checker from 'vite-plugin-checker';
 import tailwindcss from '@tailwindcss/vite';
 import customHtmlPlugin from './vite-plugins/html-plugin';
+import { createDevApiProxy, createDevViteLogger } from './vite-plugins/dev-proxy.js';
 
 export default defineConfig(({ command, mode }) => {
   const isDev = command === 'serve' || mode === 'development';
@@ -16,19 +17,17 @@ export default defineConfig(({ command, mode }) => {
 
   return {
     root: __dirname,
-    cacheDir: '../../node_modules/.vite/packages/web',
+    cacheDir: '../../../node_modules/.vite/packages/web',
+    ...(isDev ? { customLogger: createDevViteLogger() } : {}),
     server: {
       // allowedHosts: ['wozcsvaint.loclx.io'],
       proxy: {
-        '/api': {
+        '/api': createDevApiProxy({
           target: 'http://127.0.0.1:3000',
-          secure: false,
-          changeOrigin: true,
           headers: {
             Host: '127.0.0.1:4200',
           },
-          ws: true,
-        },
+        }),
         '^/mcp(/|$)': {
           target: 'http://127.0.0.1:3000',
           secure: false,
@@ -98,15 +97,15 @@ export default defineConfig(({ command, mode }) => {
         '@': path.resolve(__dirname, './src'),
         '@activepieces/shared': path.resolve(
           __dirname,
-          '../../packages/shared/src',
+          '../../../backend/packages/shared/src',
         ),
         'ee-embed-sdk': path.resolve(
           __dirname,
-          '../../packages/ee/embed-sdk/src',
+          '../ee/embed-sdk/src',
         ),
         '@activepieces/pieces-framework': path.resolve(
           __dirname,
-          '../../packages/pieces/framework/src',
+          '../../../backend/packages/pieces/framework/src',
         ),
       },
     },
@@ -132,7 +131,7 @@ export default defineConfig(({ command, mode }) => {
     ],
 
     build: {
-      outDir: '../../dist/packages/web',
+      outDir: '../../../dist/packages/web',
       emptyOutDir: true,
       reportCompressedSize: true,
       commonjsOptions: {

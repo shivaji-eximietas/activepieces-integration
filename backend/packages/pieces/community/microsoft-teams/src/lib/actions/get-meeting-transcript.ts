@@ -28,7 +28,7 @@ export const getMeetingTranscriptAction = createAction({
 			// https://learn.microsoft.com/graph/api/calltranscript-get?view=graph-rest-1.0
 			const content = await withGraphRetry(() =>
 				client
-					.api(`/me/onlineMeetings/${meetingId}/transcripts/${transcriptId}/content`)
+					.api(`/me/onlineMeetings/${meetingId}/trandevops/scripts/${transcriptId}/content`)
 					.header('Accept', 'text/vtt')
 					.responseType(ResponseType.TEXT)
 					.get(),

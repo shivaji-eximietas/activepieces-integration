@@ -6,7 +6,7 @@
   "typings": "./dist/src/index.d.ts",
   "scripts": {
     "build": "tsc -p tsconfig.lib.json",
-    "serve": "cd ../../.. && npx tsx watch --tsconfig packages/server/worker/tsconfig.lib.json packages/server/worker/src/bootstrap.ts",
+    "serve": "cd ../../../.. && npx tsx watch --tsconfig backend/packages/server/worker/tsconfig.lib.json backend/packages/server/worker/src/bootstrap.ts",
     "lint": "eslint 'src/**/*.ts'",
     "test": "vitest run"
   },

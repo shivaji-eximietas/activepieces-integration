@@ -67,7 +67,7 @@ export const newRecordTrigger = createTrigger({
 });
 ```
 
-**Real example:** `packages/pieces/community/airtable/src/lib/trigger/new-record.trigger.ts`
+**Real example:** `backend/packages/pieces/community/airtable/src/lib/trigger/new-record.trigger.ts`
 
 ### LAST_ITEM Polling
 
@@ -210,7 +210,7 @@ export const newRecordWebhookTrigger = createTrigger({
 });
 ```
 
-**Real example:** `packages/pieces/community/stripe/src/lib/trigger/new-customer.ts`
+**Real example:** `backend/packages/pieces/community/stripe/src/lib/trigger/new-customer.ts`
 
 ### Webhook with Nested Event Data
 

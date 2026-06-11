@@ -85,6 +85,26 @@ describe('loggerRedact', () => {
         })
         expect(out).not.toContain('leaked')
     })
+
+    it('redacts email and tenant identifiers from auth logs', () => {
+        const out = capture((log) => {
+            log.info({
+                email: 'dev@ap.com',
+                platformId: 'p16fvDdO97oVJ71Zr1PwF',
+                userId: 'cjKwjh3uhhV5YsXpNwxXy',
+                projectId: 'FxvLSBrkhZFHQcDERLaPH',
+                workerId: 'worker-3jxBuaUiiWDg3IX7UeolF',
+                reqId: 'req_PsUH4hubQMK93hdOJ7FQL',
+            }, 'User signed in with password')
+        })
+        expect(out).not.toContain('dev@ap.com')
+        expect(out).not.toContain('p16fvDdO97oVJ71Zr1PwF')
+        expect(out).not.toContain('cjKwjh3uhhV5YsXpNwxXy')
+        expect(out).not.toContain('FxvLSBrkhZFHQcDERLaPH')
+        expect(out).not.toContain('worker-3jxBuaUiiWDg3IX7UeolF')
+        expect(out).not.toContain('req_PsUH4hubQMK93hdOJ7FQL')
+        expect(out).toContain('[REDACTED]')
+    })
 })
 
 function capture(emit: (log: pino.Logger) => void): string {

@@ -6,7 +6,7 @@ on:
     branches:
       - main
     paths:
-      - 'packages/pieces/**'
+      - 'backend/packages/pieces/**'
 
 jobs:
   validate-publishable-packages:
@@ -38,4 +38,4 @@ jobs:
         run: bun install
 
       - name: validate publishable packages
-        run: npx ts-node -r tsconfig-paths/register -P packages/server/engine/tsconfig.lib.json tools/scripts/validate-publishable-packages.ts
+        run: npx ts-node -r tsconfig-paths/register -P backend/packages/server/engine/tsconfig.lib.json devops/tools/scripts/validate-publishable-packages.ts

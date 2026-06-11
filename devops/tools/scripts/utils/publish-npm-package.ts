@@ -4,8 +4,8 @@ import { execSync } from 'node:child_process'
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { readPackageJson } from './files'
 import { packagePrePublishChecks } from './package-pre-publish-checks'
-import { preparePieceDistForPublish } from '../../../packages/cli/src/lib/utils/prepare-piece-utils'
-import { isExactVersion } from '../../../packages/cli/src/lib/utils/workspace-utils'
+import { preparePieceDistForPublish } from '../../../../backend/packages/cli/src/lib/utils/prepare-piece-utils'
+import { isExactVersion } from '../../../../backend/packages/cli/src/lib/utils/workspace-utils'
 
 function assertNoSemverRanges(packageJsonPath: string): void {
   const json = JSON.parse(readFileSync(packageJsonPath).toString())

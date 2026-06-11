@@ -48,19 +48,19 @@ RUN --mount=type=cache,target=/root/.bun/install/cache \
 # isolate binary + config (checked into the repo under assets/; repo ships x86_64 and arm variants)
 RUN ARCH=$(uname -m) && \
     if [ "$ARCH" = "x86_64" ]; then \
-      SRC=packages/server/api/src/assets/isolate; \
+      SRC=backend/packages/server/api/src/assets/isolate; \
     else \
-      SRC=packages/server/api/src/assets/isolate-arm; \
+      SRC=backend/packages/server/api/src/assets/isolate-arm; \
     fi && \
     install -m 0755 "$SRC" /usr/local/bin/isolate && \
     mkdir -p /usr/local/etc && \
-    cp packages/server/api/src/assets/default.cf /usr/local/etc/isolate && \
+    cp backend/packages/server/api/src/assets/default.cf /usr/local/etc/isolate && \
     mkdir -p /var/local/lib/isolate && \
     mkdir -p /usr/src/node_modules
 
 ENV E2E_LOG_LEVEL=warn
 
-# cwd is the repo root — isolate.ts resolves its binary via `process.cwd() + packages/server/api/src/assets/…`.
+# cwd is the repo root — isolate.ts resolves its binary via `process.cwd() + backend/packages/server/api/src/assets/…`.
 WORKDIR /usr/src/app
 
-CMD ["bun", "x", "vitest", "run", "--config", "packages/server/worker/test/e2e/vitest.config.ts"]
+CMD ["bun", "x", "vitest", "run", "--config", "backend/packages/server/worker/test/e2e/vitest.config.ts"]

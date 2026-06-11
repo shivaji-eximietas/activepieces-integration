@@ -1,6 +1,6 @@
 # Web Frontend
 
-You are working in the Activepieces web application (`packages/web`).
+You are working in the Activepieces web application (`frontend/packages/web`).
 
 ## Tech Stack
 
@@ -25,9 +25,9 @@ You are working in the Activepieces web application (`packages/web`).
 
 ## Testing
 
-- **Tests live under `packages/web/test/`, never under `src/`.** Mirror the source path so the test for `src/features/foo/bar.ts` lives at `test/features/foo/bar.test.ts`. Keeping tests out of `src/` stops them from being shipped in the app bundle and keeps the production source tree free of test noise.
+- **Tests live under `frontend/packages/web/test/`, never under `src/`.** Mirror the source path so the test for `src/features/foo/bar.ts` lives at `test/features/foo/bar.test.ts`. Keeping tests out of `src/` stops them from being shipped in the app bundle and keeps the production source tree free of test noise.
 - Import the subject under test via the `@/` alias (e.g. `import { x } from '@/features/foo/bar';`), not a relative path, so moving a file doesn't require updating tests.
-- Run with `cd packages/web && npm test` (vitest, node environment).
+- Run with `cd frontend/packages/web && npm test` (vitest, node environment).
 
 ## Tailwind / Styling
 
@@ -43,7 +43,7 @@ You are working in the Activepieces web application (`packages/web`).
 
 ## React Hook Form
 
-- **Zod error messages must use `formErrors`** — For standard validation messages (e.g. required fields) use the `formErrors` constant from `@activepieces/shared`. For custom messages, add the key to `packages/web/public/locales/en/translation.json` first, then use the key string. `FormMessage` automatically calls `t()` on every error message, so the string must be a valid translation key.
+- **Zod error messages must use `formErrors`** — For standard validation messages (e.g. required fields) use the `formErrors` constant from `@activepieces/shared`. For custom messages, add the key to `frontend/packages/web/public/locales/en/translation.json` first, then use the key string. `FormMessage` automatically calls `t()` on every error message, so the string must be a valid translation key.
 - **Always use `zodResolver`** — Wire the Zod schema directly to the form: `useForm({ resolver: zodResolver(MySchema) })`.
 - **Always set `defaultValues`** — Prevents uncontrolled→controlled warnings and ensures clean resets. Derive them from a helper, not inline literals.
 - **Use `mode: 'onChange'`** — Gives immediate validation feedback as the user types.
@@ -111,7 +111,7 @@ return useQuery({
 All user-facing layouts — pages, dialogs, cards, email templates — follow the **F-pattern reading model**. Content is left-aligned so users scan left-to-right then down the left edge. Avoid centering text blocks, headings, or body copy. CTAs (buttons) may be full-width but should not cause surrounding text to be centered.
 ## i18n / Translation Strings
 
-This project uses **ICU MessageFormat** via `i18next-icu` (configured in `src/i18n.ts`). All translation strings in `packages/web/public/locales/en/translation.json` must follow ICU syntax, **not** default i18next syntax.
+This project uses **ICU MessageFormat** via `i18next-icu` (configured in `src/i18n.ts`). All translation strings in `frontend/packages/web/public/locales/en/translation.json` must follow ICU syntax, **not** default i18next syntax.
 
 - **Variables use single braces**: `{variableName}` — never double braces `{{variableName}}`.
   ```json

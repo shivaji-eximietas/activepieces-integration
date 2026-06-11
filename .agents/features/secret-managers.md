@@ -4,15 +4,15 @@
 Secret Managers let platform admins connect Activepieces to an external secret management system (HashiCorp Vault, AWS Secrets Manager, CyberArk Conjur, or 1Password) so that sensitive values referenced in flow steps and connections are resolved from the vault at runtime rather than stored directly in the database. A secret reference uses the syntax `{{<connectionId><separator><path>}}`. The service resolves string and object values transparently before execution. Provider authentication config is encrypted at rest. Gated by `platform.plan.secretManagersEnabled`.
 
 ## Key Files
-- `packages/server/api/src/app/ee/secret-managers/secret-managers.module.ts` — module registration with `platformMustHaveFeatureEnabled` guard
-- `packages/server/api/src/app/ee/secret-managers/secret-managers.controller.ts` — REST controller
-- `packages/server/api/src/app/ee/secret-managers/secret-managers.service.ts` — service with CRUD + resolution methods
-- `packages/server/api/src/app/ee/secret-managers/secret-manager.entity.ts` — TypeORM entity
-- `packages/server/api/src/app/ee/secret-managers/secret-manager-cache.ts` — Redis cache for secrets and connection status
-- `packages/server/api/src/app/ee/secret-managers/secret-manager-providers/` — provider implementations (AWS, HashiCorp, CyberArk, 1Password)
-- `packages/shared/src/lib/ee/secret-managers/dto.ts` — all types, provider configs, request schemas
-- `packages/web/src/features/secret-managers/` — frontend components
-- `packages/web/src/app/routes/platform/security/secret-managers/` — platform admin UI page
+- `backend/packages/server/api/src/app/ee/secret-managers/secret-managers.module.ts` — module registration with `platformMustHaveFeatureEnabled` guard
+- `backend/packages/server/api/src/app/ee/secret-managers/secret-managers.controller.ts` — REST controller
+- `backend/packages/server/api/src/app/ee/secret-managers/secret-managers.service.ts` — service with CRUD + resolution methods
+- `backend/packages/server/api/src/app/ee/secret-managers/secret-manager.entity.ts` — TypeORM entity
+- `backend/packages/server/api/src/app/ee/secret-managers/secret-manager-cache.ts` — Redis cache for secrets and connection status
+- `backend/packages/server/api/src/app/ee/secret-managers/secret-manager-providers/` — provider implementations (AWS, HashiCorp, CyberArk, 1Password)
+- `backend/packages/shared/src/lib/ee/secret-managers/dto.ts` — all types, provider configs, request schemas
+- `frontend/packages/web/src/features/secret-managers/` — frontend components
+- `frontend/packages/web/src/app/routes/platform/security/secret-managers/` — platform admin UI page
 
 ## Edition Availability
 Enterprise and Cloud. Gated by `platform.plan.secretManagersEnabled`.

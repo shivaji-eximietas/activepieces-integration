@@ -4,19 +4,19 @@
 The authentication feature handles user identity creation, sign-in, and JWT session management across all editions. It supports email/password credentials, federated OAuth providers (Google, SAML), and invitation-only sign-up when a platform is configured. On first sign-up (no `platformId`), a new platform and personal project are created automatically. The token is a short-lived JWT (7 days) signed with a shared secret, and sessions are invalidated by rotating the `tokenVersion` on the `UserIdentity` record.
 
 ## Key Files
-- `packages/server/api/src/app/authentication/authentication.controller.ts` — Fastify routes: POST /sign-up, POST /sign-in, POST /switch-platform
-- `packages/server/api/src/app/authentication/authentication.service.ts` — core service: `signUp`, `signInWithPassword`, `federatedAuthn`, `switchPlatform`
-- `packages/server/api/src/app/authentication/authentication-utils.ts` — shared guards (domain check, email auth check, invitation check) and `getProjectAndToken` helper
-- `packages/server/api/src/app/authentication/lib/access-token-manager.ts` — JWT generation (`generateToken`, `generateEngineToken`, `generateWorkerToken`) and `verifyPrincipal`
-- `packages/server/api/src/app/authentication/lib/password-hasher.ts` — bcrypt helpers
-- `packages/server/api/src/app/authentication/user-identity/user-identity-entity.ts` — `user_identity` table entity
-- `packages/server/api/src/app/authentication/user-identity/user-identity-service.ts` — identity CRUD, password verification, `verify()`, `getIdentityByEmail()`
-- `packages/shared/src/lib/core/authentication/dto/authentication-response.ts` — `AuthenticationResponse` Zod schema
-- `packages/web/src/features/authentication/hooks/auth-hooks.ts` — React Query mutations: `useSignIn`, `useSignUp`, `useSendOtpEmail`, `useResetPassword`, `useVerifyEmail`
-- `packages/web/src/features/authentication/components/sign-in-form.tsx` — sign-in form component
-- `packages/web/src/features/authentication/components/sign-up-form.tsx` — sign-up form component
-- `packages/web/src/features/authentication/components/third-party-logins.tsx` — OAuth provider buttons
-- `packages/web/src/app/routes/auth-routes.tsx` — route declarations: /sign-in, /sign-up, /forget-password, /reset-password, /verify-email, /invitation
+- `backend/packages/server/api/src/app/authentication/authentication.controller.ts` — Fastify routes: POST /sign-up, POST /sign-in, POST /switch-platform
+- `backend/packages/server/api/src/app/authentication/authentication.service.ts` — core service: `signUp`, `signInWithPassword`, `federatedAuthn`, `switchPlatform`
+- `backend/packages/server/api/src/app/authentication/authentication-utils.ts` — shared guards (domain check, email auth check, invitation check) and `getProjectAndToken` helper
+- `backend/packages/server/api/src/app/authentication/lib/access-token-manager.ts` — JWT generation (`generateToken`, `generateEngineToken`, `generateWorkerToken`) and `verifyPrincipal`
+- `backend/packages/server/api/src/app/authentication/lib/password-hasher.ts` — bcrypt helpers
+- `backend/packages/server/api/src/app/authentication/user-identity/user-identity-entity.ts` — `user_identity` table entity
+- `backend/packages/server/api/src/app/authentication/user-identity/user-identity-service.ts` — identity CRUD, password verification, `verify()`, `getIdentityByEmail()`
+- `backend/packages/shared/src/lib/core/authentication/dto/authentication-response.ts` — `AuthenticationResponse` Zod schema
+- `frontend/packages/web/src/features/authentication/hooks/auth-hooks.ts` — React Query mutations: `useSignIn`, `useSignUp`, `useSendOtpEmail`, `useResetPassword`, `useVerifyEmail`
+- `frontend/packages/web/src/features/authentication/components/sign-in-form.tsx` — sign-in form component
+- `frontend/packages/web/src/features/authentication/components/sign-up-form.tsx` — sign-up form component
+- `frontend/packages/web/src/features/authentication/components/third-party-logins.tsx` — OAuth provider buttons
+- `frontend/packages/web/src/app/routes/auth-routes.tsx` — route declarations: /sign-in, /sign-up, /forget-password, /reset-password, /verify-email, /invitation
 
 ## Edition Availability
 All editions (Community, Enterprise, Cloud). Email auth checks and domain-allow-listing guards are skipped on Community edition. OTP email verification is sent on Cloud; on Community and Enterprise the identity is automatically marked verified.

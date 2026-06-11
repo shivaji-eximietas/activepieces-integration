@@ -130,7 +130,7 @@ export const pieceLoader = {
 }
 
 async function findInDistFolder(packageName: string): Promise<string | null> {
-    const sourcePiecesPath = path.resolve('packages/pieces')
+    const sourcePiecesPath = path.resolve('backend/packages/pieces')
     if (!await utils.folderExists(sourcePiecesPath)) {
         return null
     }

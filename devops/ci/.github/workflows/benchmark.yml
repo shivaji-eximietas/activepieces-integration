@@ -53,16 +53,16 @@ jobs:
         run: |
           APP_REPLICAS=${{ matrix.apps }} \
           WORKER_REPLICAS=${{ matrix.workers }} \
-            docker compose -f benchmark/docker-compose.yml up -d
+            docker compose -f devops/benchmark/docker-compose.yml up -d
           echo "Waiting for containers to start..."
           sleep 5
-          docker compose -f benchmark/docker-compose.yml ps
+          docker compose -f devops/benchmark/docker-compose.yml ps
 
       - name: Setup flow and wait for app
         id: setup
         run: |
-          chmod +x benchmark/setup.sh
-          FLOW_ID=$(benchmark/setup.sh)
+          chmod +x devops/benchmark/setup.sh
+          FLOW_ID=$(devops/benchmark/setup.sh)
           echo "flow_id=$FLOW_ID" >> "$GITHUB_OUTPUT"
           echo "Flow ID: $FLOW_ID"
 
@@ -101,8 +101,8 @@ jobs:
 
       - name: Parse results
         run: |
-          chmod +x benchmark/parse.sh
-          benchmark/parse.sh /tmp/hey-output.txt /tmp/results.json
+          chmod +x devops/benchmark/parse.sh
+          devops/benchmark/parse.sh /tmp/hey-output.txt /tmp/results.json
 
       - name: Upload results
         if: always()
@@ -116,11 +116,11 @@ jobs:
       - name: Show container logs on failure
         if: failure()
         run: |
-          docker compose -f benchmark/docker-compose.yml logs --tail=100
+          docker compose -f devops/benchmark/docker-compose.yml logs --tail=100
 
       - name: Teardown
         if: always()
-        run: docker compose -f benchmark/docker-compose.yml down -v
+        run: docker compose -f devops/benchmark/docker-compose.yml down -v
 
   summary:
     runs-on: ubuntu-latest

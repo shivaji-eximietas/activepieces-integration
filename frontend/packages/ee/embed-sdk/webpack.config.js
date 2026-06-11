@@ -5,7 +5,7 @@ module.exports = {
   mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
   entry: path.resolve(__dirname, 'src/index.ts'),
   output: {
-    path: path.resolve(__dirname, '../../../dist/packages/ee/embed-sdk'),
+    path: path.resolve(__dirname, '../../../../dist/packages/ee/embed-sdk'),
     filename: 'bundled.js',
     libraryTarget: 'umd',
   },

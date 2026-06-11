@@ -4,17 +4,17 @@
 The Analytics module provides platform-level reporting on automation usage: daily run counts, active flow counts, active user counts, and time-saved estimates. It powers an "Impact" dashboard for project-level drill-down and a "Leaderboard" view that ranks projects and users by automation output. Reports are cached with a 5-minute TTL and refreshed via a distributed-lock background job; a separate daily cron tracks per-piece usage across all flows.
 
 ## Key Files
-- `packages/server/api/src/app/analytics/` — backend module (controller, two services, entity)
-- `packages/shared/src/lib/management/analytics/index.ts` — all shared Zod schemas and enums (`AnalyticsTimePeriod`, `PlatformAnalyticsReport`, `ProjectLeaderboardItem`, `UserLeaderboardItem`, etc.)
-- `packages/web/src/features/platform-admin/api/analytics-api.ts` — frontend API client
-- `packages/web/src/features/platform-admin/hooks/analytics-hooks.ts` — TanStack Query hooks (`platformAnalyticsHooks`)
-- `packages/web/src/app/routes/impact/index.tsx` — Impact page root
-- `packages/web/src/app/routes/impact/summary/index.tsx` — summary metrics (active flows, users, runs, time saved)
-- `packages/web/src/app/routes/impact/trends/index.tsx` — time-series area charts
-- `packages/web/src/app/routes/impact/details/index.tsx` — per-flow drill-down with editable time-saved
-- `packages/web/src/app/routes/leaderboard/index.tsx` — leaderboard page root
-- `packages/web/src/app/routes/leaderboard/projects-leaderboard.tsx` — projects leaderboard table
-- `packages/web/src/app/routes/leaderboard/users-leaderboard.tsx` — users leaderboard table
+- `backend/packages/server/api/src/app/analytics/` — backend module (controller, two services, entity)
+- `backend/packages/shared/src/lib/management/analytics/index.ts` — all shared Zod schemas and enums (`AnalyticsTimePeriod`, `PlatformAnalyticsReport`, `ProjectLeaderboardItem`, `UserLeaderboardItem`, etc.)
+- `frontend/packages/web/src/features/platform-admin/api/analytics-api.ts` — frontend API client
+- `frontend/packages/web/src/features/platform-admin/hooks/analytics-hooks.ts` — TanStack Query hooks (`platformAnalyticsHooks`)
+- `frontend/packages/web/src/app/routes/impact/index.tsx` — Impact page root
+- `frontend/packages/web/src/app/routes/impact/summary/index.tsx` — summary metrics (active flows, users, runs, time saved)
+- `frontend/packages/web/src/app/routes/impact/trends/index.tsx` — time-series area charts
+- `frontend/packages/web/src/app/routes/impact/details/index.tsx` — per-flow drill-down with editable time-saved
+- `frontend/packages/web/src/app/routes/leaderboard/index.tsx` — leaderboard page root
+- `frontend/packages/web/src/app/routes/leaderboard/projects-leaderboard.tsx` — projects leaderboard table
+- `frontend/packages/web/src/app/routes/leaderboard/users-leaderboard.tsx` — users leaderboard table
 
 ## Edition Availability
 - **Community (CE)**: Not available — gated behind `analyticsEnabled` plan flag.

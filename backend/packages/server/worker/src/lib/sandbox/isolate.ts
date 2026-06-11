@@ -52,8 +52,8 @@ function assertSandboxEnv(env: Record<string, string>): void {
     }
 }
 
-const isolateBinaryPath = path.resolve(process.cwd(), 'packages/server/api/src/assets', getIsolateExecutableName())
-const etcDir = path.resolve(process.cwd(), 'packages/server/api/src/assets/etc')
+const isolateBinaryPath = path.resolve(process.cwd(), 'backend/packages/server/api/src/assets', getIsolateExecutableName())
+const etcDir = path.resolve(process.cwd(), 'backend/packages/server/api/src/assets/etc')
 
 export function isolateProcess(log: SandboxLogger, enginePath: string, _codeDirectory: string, boxId: number): SandboxProcessMaker {
     return {

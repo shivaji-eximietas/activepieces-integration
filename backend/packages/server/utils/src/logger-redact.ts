@@ -88,6 +88,30 @@ export const loggerRedact: RedactConfig = {
         'err.config.headers.authorization',
         'err.config.headers.Authorization',
         'err.request._header',
+
+        'email',
+        '*.email',
+        '*.*.email',
+
+        'userId',
+        '*.userId',
+        '*.*.userId',
+
+        'platformId',
+        '*.platformId',
+        '*.*.platformId',
+
+        'projectId',
+        '*.projectId',
+        '*.*.projectId',
+
+        'workerId',
+        '*.workerId',
+        '*.*.workerId',
+
+        'reqId',
+        '*.reqId',
+        '*.*.reqId',
     ],
     censor: '[REDACTED]',
     remove: false,

@@ -1,15 +1,15 @@
 # Enterprise Edition (EE) Overview
 
 ## Summary
-The Enterprise Edition extends the Community Edition with commercial features grouped into distinct modules under `packages/server/api/src/app/ee/`. EE modules are never imported from CE code; instead, CE defines hook interfaces via `hooksFactory.create<T>(ceDefault)` and EE implementations are injected via `.set(eeImpl)` inside the edition switch in `app.ts`. Plan flags on `PlatformPlan` (40+ boolean fields) gate individual features at the endpoint level using `platformMustHaveFeatureEnabled()`. License keys map to plan flag presets, enabling trial periods and per-customer feature combinations.
+The Enterprise Edition extends the Community Edition with commercial features grouped into distinct modules under `backend/packages/server/api/src/app/ee/`. EE modules are never imported from CE code; instead, CE defines hook interfaces via `hooksFactory.create<T>(ceDefault)` and EE implementations are injected via `.set(eeImpl)` inside the edition switch in `app.ts`. Plan flags on `PlatformPlan` (40+ boolean fields) gate individual features at the endpoint level using `platformMustHaveFeatureEnabled()`. License keys map to plan flag presets, enabling trial periods and per-customer feature combinations.
 
 ## Key Files
-- `packages/server/api/src/app/ee/` — all EE module source code
-- `packages/server/api/src/app/app.ts` — edition switch (lines ~247–317) where EE modules are registered
-- `packages/server/api/src/app/ee/platform/platform-plan/` — PlatformPlan entity + Stripe billing + AI credits
-- `packages/server/api/src/app/ee/license-keys/` — license activation, trial, plan flag mapping
-- `packages/server/api/src/app/ee/authentication/ee-authorization.ts` — shared authorization preHandler hooks
-- `packages/server/api/src/app/ee/helper/` — SMTP email service + appearance/branding helper
+- `backend/packages/server/api/src/app/ee/` — all EE module source code
+- `backend/packages/server/api/src/app/app.ts` — edition switch (lines ~247–317) where EE modules are registered
+- `backend/packages/server/api/src/app/ee/platform/platform-plan/` — PlatformPlan entity + Stripe billing + AI credits
+- `backend/packages/server/api/src/app/ee/license-keys/` — license activation, trial, plan flag mapping
+- `backend/packages/server/api/src/app/ee/authentication/ee-authorization.ts` — shared authorization preHandler hooks
+- `backend/packages/server/api/src/app/ee/helper/` — SMTP email service + appearance/branding helper
 
 ## Edition Availability
 - **Community (CE)**: None of the modules in `src/app/ee/` are available.

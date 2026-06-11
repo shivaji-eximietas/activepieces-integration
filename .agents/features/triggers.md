@@ -4,30 +4,30 @@
 Manages the full lifecycle of flow triggers — registration, event capture, testing, and deduplication. A trigger defines how and when a flow starts: via polling, inbound webhooks, app-native webhooks routed through a shared event bus, or manual invocation. The module tracks each enabled trigger as a `TriggerSource` record, maintains deduplication state in Redis, and drives enable/disable side effects such as BullMQ job scheduling and external webhook registration.
 
 ## Key Files
-- `packages/server/api/src/app/trigger/trigger-source/flow-trigger-side-effect.ts` — enable/disable side effects per strategy
-- `packages/server/api/src/app/trigger/trigger-source/trigger-source-service.ts` — TriggerSource CRUD
-- `packages/server/api/src/app/trigger/trigger-source/trigger-source-entity.ts` — TriggerSource entity
-- `packages/server/api/src/app/trigger/trigger-source/trigger-utils.ts` — helper utilities
-- `packages/server/api/src/app/trigger/trigger-events/trigger-event.service.ts` — TriggerEvent storage and retrieval
-- `packages/server/api/src/app/trigger/trigger-events/trigger-event-controller.ts` — TriggerEvent endpoints
-- `packages/server/api/src/app/trigger/trigger-events/trigger-event.entity.ts` — TriggerEvent entity
-- `packages/server/api/src/app/trigger/test-trigger/test-trigger-service.ts` — simulation and test-function modes
-- `packages/server/api/src/app/trigger/test-trigger/test-trigger-controller.ts` — test trigger endpoints
-- `packages/server/api/src/app/trigger/dedupe-service.ts` — Redis-based deduplication for polling
-- `packages/server/api/src/app/trigger/app-event-routing/app-event-routing.service.ts` — APP_WEBHOOK routing table
-- `packages/server/api/src/app/trigger/app-event-routing/app-event-routing.entity.ts` — AppEventRouting entity
-- `packages/server/api/src/app/trigger/trigger-run/trigger-run-stats.ts` — per-platform trigger health tracking
-- `packages/server/api/src/app/trigger/trigger-run/trigger-run.controller.ts` — trigger run stats endpoints
-- `packages/server/api/src/app/trigger/trigger.module.ts` — module registration
-- `packages/shared/src/lib/automation/trigger/index.ts` — TriggerSource schema, TriggerStrategy enum, WebhookHandshakeConfiguration, ScheduleOptions
-- `packages/web/src/app/builder/test-step/test-trigger-section/index.tsx` — test panel in the builder sidebar
-- `packages/web/src/app/builder/test-step/test-trigger-section/first-time-testing-section.tsx` — initial test prompt before any event is captured
-- `packages/web/src/app/builder/test-step/test-trigger-section/simulation-section.tsx` — simulation status UI
-- `packages/web/src/app/builder/test-step/test-trigger-section/trigger-event-select.tsx` — event selector from previously captured events
-- `packages/web/src/app/builder/test-step/test-trigger-section/manual-webhook-test-button.tsx` — button to send a test HTTP request to the webhook endpoint
-- `packages/web/src/app/builder/test-step/custom-test-step/test-webhook-dialog.tsx` — dialog for manually testing webhook triggers
-- `packages/web/src/app/builder/flow-canvas/nodes/step-node/trigger-widget.tsx` — trigger node widget on the flow canvas
-- `packages/web/src/app/builder/flow-canvas/widgets/above-trigger-button.tsx` — "+ Add trigger" button above the trigger node
+- `backend/packages/server/api/src/app/trigger/trigger-source/flow-trigger-side-effect.ts` — enable/disable side effects per strategy
+- `backend/packages/server/api/src/app/trigger/trigger-source/trigger-source-service.ts` — TriggerSource CRUD
+- `backend/packages/server/api/src/app/trigger/trigger-source/trigger-source-entity.ts` — TriggerSource entity
+- `backend/packages/server/api/src/app/trigger/trigger-source/trigger-utils.ts` — helper utilities
+- `backend/packages/server/api/src/app/trigger/trigger-events/trigger-event.service.ts` — TriggerEvent storage and retrieval
+- `backend/packages/server/api/src/app/trigger/trigger-events/trigger-event-controller.ts` — TriggerEvent endpoints
+- `backend/packages/server/api/src/app/trigger/trigger-events/trigger-event.entity.ts` — TriggerEvent entity
+- `backend/packages/server/api/src/app/trigger/test-trigger/test-trigger-service.ts` — simulation and test-function modes
+- `backend/packages/server/api/src/app/trigger/test-trigger/test-trigger-controller.ts` — test trigger endpoints
+- `backend/packages/server/api/src/app/trigger/dedupe-service.ts` — Redis-based deduplication for polling
+- `backend/packages/server/api/src/app/trigger/app-event-routing/app-event-routing.service.ts` — APP_WEBHOOK routing table
+- `backend/packages/server/api/src/app/trigger/app-event-routing/app-event-routing.entity.ts` — AppEventRouting entity
+- `backend/packages/server/api/src/app/trigger/trigger-run/trigger-run-stats.ts` — per-platform trigger health tracking
+- `backend/packages/server/api/src/app/trigger/trigger-run/trigger-run.controller.ts` — trigger run stats endpoints
+- `backend/packages/server/api/src/app/trigger/trigger.module.ts` — module registration
+- `backend/packages/shared/src/lib/automation/trigger/index.ts` — TriggerSource schema, TriggerStrategy enum, WebhookHandshakeConfiguration, ScheduleOptions
+- `frontend/packages/web/src/app/builder/test-step/test-trigger-section/index.tsx` — test panel in the builder sidebar
+- `frontend/packages/web/src/app/builder/test-step/test-trigger-section/first-time-testing-section.tsx` — initial test prompt before any event is captured
+- `frontend/packages/web/src/app/builder/test-step/test-trigger-section/simulation-section.tsx` — simulation status UI
+- `frontend/packages/web/src/app/builder/test-step/test-trigger-section/trigger-event-select.tsx` — event selector from previously captured events
+- `frontend/packages/web/src/app/builder/test-step/test-trigger-section/manual-webhook-test-button.tsx` — button to send a test HTTP request to the webhook endpoint
+- `frontend/packages/web/src/app/builder/test-step/custom-test-step/test-webhook-dialog.tsx` — dialog for manually testing webhook triggers
+- `frontend/packages/web/src/app/builder/flow-canvas/nodes/step-node/trigger-widget.tsx` — trigger node widget on the flow canvas
+- `frontend/packages/web/src/app/builder/flow-canvas/widgets/above-trigger-button.tsx` — "+ Add trigger" button above the trigger node
 
 ## Edition Availability
 - Community (CE): all four trigger strategies (POLLING, WEBHOOK, APP_WEBHOOK, MANUAL)

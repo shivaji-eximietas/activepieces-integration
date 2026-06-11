@@ -1,4 +1,4 @@
-// firstBoxUid / numBoxes must match packages/server/api/src/assets/default.cf
+// firstBoxUid / numBoxes must match backend/packages/server/api/src/assets/default.cf
 // (isolate's `first_uid` and `num_boxes`) — iptables owner-match and sandbox UID
 // assignment both rely on the same contiguous range.
 const FIRST_BOX_UID = 60000

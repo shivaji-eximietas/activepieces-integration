@@ -4,20 +4,20 @@
 Variables are project-scoped, encrypted secret values (API keys, tokens, opaque strings) that users create once and reference inside any flow input via a mention syntax `{{variables['NAME']}}`. They live in a dedicated `variable` table — completely separate from `app_connection` — and resolve at flow execution time through a worker endpoint the engine calls. Values are encrypted at rest with `encryptUtils.encryptObject`; the plaintext is only available to USER principals via the explicit reveal endpoint (audit-logged) or to the engine during a flow run.
 
 ## Key Files
-- `packages/server/api/src/app/variable/variable.entity.ts` — TypeORM entity (`variable` table, unique `(projectId, name)` index, SET NULL FK to user).
-- `packages/server/api/src/app/variable/variable.service.ts` — upsert / list / delete / reveal / decrypt-for-worker.
-- `packages/server/api/src/app/variable/variable.controller.ts` — `/v1/variables` REST routes (USER + SERVICE).
-- `packages/server/api/src/app/variable/variable-worker.controller.ts` — `/v1/worker/variables/:name` engine-only route.
-- `packages/server/api/src/app/variable/variable.module.ts` — Fastify module wrapper.
-- `packages/server/api/src/app/database/migration/postgres/1793000000000-AddVariableTable.ts` — schema migration.
-- `packages/server/engine/src/lib/piece-context/variable-resolver.ts` — engine-side resolver, mirrors `connection-resolver.ts`.
-- `packages/server/engine/src/lib/variables/props-resolver.ts` — adds the `variables` branch to `resolveSingleToken`.
-- `packages/shared/src/lib/automation/variable/variable.ts` — `Variable`, `VariableWithoutSensitiveData`, `VARIABLE_NAME_REGEX`.
-- `packages/shared/src/lib/automation/variable/dto/{upsert,read}-variable-request.ts` — request schemas.
-- `packages/web/src/features/variables/{api/variables.ts,hooks/variables-hooks.ts}` — frontend client + TanStack Query hooks.
-- `packages/web/src/app/routes/variables/index.tsx` — `/variables` list page.
-- `packages/web/src/app/variables/variable-dialog.tsx` — create / rotate dialog (reused by the page and the data-selector tab).
-- `packages/web/src/app/builder/data-selector/variables-tab.tsx` — builder side panel for inserting `variables['NAME']` mentions.
+- `backend/packages/server/api/src/app/variable/variable.entity.ts` — TypeORM entity (`variable` table, unique `(projectId, name)` index, SET NULL FK to user).
+- `backend/packages/server/api/src/app/variable/variable.service.ts` — upsert / list / delete / reveal / decrypt-for-worker.
+- `backend/packages/server/api/src/app/variable/variable.controller.ts` — `/v1/variables` REST routes (USER + SERVICE).
+- `backend/packages/server/api/src/app/variable/variable-worker.controller.ts` — `/v1/worker/variables/:name` engine-only route.
+- `backend/packages/server/api/src/app/variable/variable.module.ts` — Fastify module wrapper.
+- `backend/packages/server/api/src/app/database/migration/postgres/1793000000000-AddVariableTable.ts` — schema migration.
+- `backend/packages/server/engine/src/lib/piece-context/variable-resolver.ts` — engine-side resolver, mirrors `connection-resolver.ts`.
+- `backend/packages/server/engine/src/lib/variables/props-resolver.ts` — adds the `variables` branch to `resolveSingleToken`.
+- `backend/packages/shared/src/lib/automation/variable/variable.ts` — `Variable`, `VariableWithoutSensitiveData`, `VARIABLE_NAME_REGEX`.
+- `backend/packages/shared/src/lib/automation/variable/dto/{upsert,read}-variable-request.ts` — request schemas.
+- `frontend/packages/web/src/features/variables/{api/variables.ts,hooks/variables-hooks.ts}` — frontend client + TanStack Query hooks.
+- `frontend/packages/web/src/app/routes/variables/index.tsx` — `/variables` list page.
+- `frontend/packages/web/src/app/variables/variable-dialog.tsx` — create / rotate dialog (reused by the page and the data-selector tab).
+- `frontend/packages/web/src/app/builder/data-selector/variables-tab.tsx` — builder side panel for inserting `variables['NAME']` mentions.
 
 ## Edition Availability
 - Community (CE): available.

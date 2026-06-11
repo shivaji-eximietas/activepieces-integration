@@ -11,13 +11,13 @@ This folder contains the brand/visual foundations, CSS tokens, fonts, icon conve
 | Source | Location |
 | --- | --- |
 | Shadcn UI Kit for Figma + Pro Blocks (Oct 2025) | mounted `.fig` VFS — browse via `fig_ls /`, screenshot via `fig_screenshot` |
-| Activepieces codebase | `github.com/yazeed-prog/activepieces` (`packages/web` is the React UI) |
-| Canonical brand stylesheet | `packages/web/src/styles.css` (Tailwind v4 + Shadcn "new-york" style) |
-| Brand logo | `packages/web/public/logo.svg` — purple mark `#8142E3` |
+| Activepieces codebase | `github.com/yazeed-prog/activepieces` (`frontend/packages/web` is the React UI) |
+| Canonical brand stylesheet | `frontend/packages/web/src/styles.css` (Tailwind v4 + Shadcn "new-york" style) |
+| Brand logo | `frontend/packages/web/public/logo.svg` — purple mark `#8142E3` |
 | Brand fonts | Inter (400/500/600/700/800) — provided in `uploads/` and `fonts/` |
 | `Sentient-Variable.woff2` | provided as a display/display-alt exploration font (not used in shipping UI) |
 
-Activepieces uses **Shadcn/Radix UI** primitives on top of Tailwind, with **Lucide** as its icon library (confirmed in `packages/web/components.json` → `"iconLibrary": "lucide"`). Shadcn base color is `"neutral"`.
+Activepieces uses **Shadcn/Radix UI** primitives on top of Tailwind, with **Lucide** as its icon library (confirmed in `frontend/packages/web/components.json` → `"iconLibrary": "lucide"`). Shadcn base color is `"neutral"`.
 
 ---
 
@@ -80,7 +80,7 @@ The kit is plain React via Babel standalone — no build step. Single `app.css` 
 **Audience**: mixed — "developers set up the tools, and anyone in the organization can use the no-code builder" (from README). Non-technical users live in the builder; developers contribute new pieces as typed npm packages.
 
 **Products / surfaces represented in this design system**:
-1. **Web app** (`packages/web`) — the authenticated product: flow builder, runs, connections, tables, agents, settings. This is the only UI in scope; the marketing site is not in the repo.
+1. **Web app** (`frontend/packages/web`) — the authenticated product: flow builder, runs, connections, tables, agents, settings. This is the only UI in scope; the marketing site is not in the repo.
 
 ---
 
@@ -168,8 +168,8 @@ Activepieces copy is **functional, direct, and product-led**. It talks about wor
   ```
   Or use inline SVGs from https://lucide.dev. Sizes: default `16` (`size-4`), small `12` (`size-3`), large `20` (`size-5`).
 - **Icon conventions**: icons sit left of text with 8px gap (`gap-2`). Ghost buttons and xs buttons get `size-3` icons, default `size-4`.
-- **Piece icons**: each integration has its own SVG (Google, OpenAI, Slack, …). These live at `packages/web/src/assets/img/piece/` and as npm-published per-piece packages. **Copy the real SVG** — do not redraw.
-- **Custom product glyphs**: a small set of custom SVGs for MCP, Cursor, Claude, Windsurf, auth providers. These live at `packages/web/src/assets/img/custom/`. We copy the MCP and code glyphs into `assets/`.
+- **Piece icons**: each integration has its own SVG (Google, OpenAI, Slack, …). These live at `frontend/packages/web/src/assets/img/piece/` and as npm-published per-piece packages. **Copy the real SVG** — do not redraw.
+- **Custom product glyphs**: a small set of custom SVGs for MCP, Cursor, Claude, Windsurf, auth providers. These live at `frontend/packages/web/src/assets/img/custom/`. We copy the MCP and code glyphs into `assets/`.
 - **Emoji**: not used in product UI. Used lightly in the public README (🔥🤯🧠). Do not use in app.
 - **Unicode icon chars** (✓, ×, arrows): not used — always a Lucide `<Check>`, `<X>`, `<ChevronRight>`.
 

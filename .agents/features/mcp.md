@@ -4,22 +4,22 @@
 Exposes an Activepieces project as a Model Context Protocol (MCP) server so that AI clients (Claude Desktop, Cursor, Windsurf) can read and manipulate flows, connections, tables, and other project resources through a typed tool interface. Each project gets exactly one MCP server record with a bearer token for authentication; the server is built per-request from a combination of static locked/controllable tools and dynamic flow-as-tool entries.
 
 ## Key Files
-- `packages/server/api/src/app/mcp/mcp-service.ts` — server build logic, tool registration, token auth
-- `packages/server/api/src/app/mcp/mcp-server-controller.ts` — HTTP endpoints (get, update, rotate, protocol handler, agent validator)
-- `packages/server/api/src/app/mcp/mcp-entity.ts` — McpServer entity
-- `packages/server/api/src/app/mcp/tools/index.ts` — static tool exports
-- `packages/server/api/src/app/mcp/oauth/` — OAuth 2.0 PKCE flow for MCP clients that require OAuth
-- `packages/shared/src/lib/automation/mcp/mcp.ts` — McpServer schema, McpToolDefinition type
-- `packages/shared/src/lib/automation/mcp/mcp-oauth.ts` — MCP OAuth types
-- `packages/web/src/app/components/project-settings/mcp-server/index.tsx` — project settings panel for MCP
-- `packages/web/src/app/components/project-settings/mcp-server/mcp-credentials.tsx` — token display and rotate UI
-- `packages/web/src/app/components/project-settings/mcp-server/mcp-flows.tsx` — list of flows exposed as tools
-- `packages/web/src/app/components/project-settings/mcp-server/mcp-tools.tsx` — controllable tool toggle UI
-- `packages/web/src/app/routes/mcp-authorize/index.tsx` — OAuth authorization page for MCP clients
-- `packages/web/src/features/agents/agent-tools/mcp-tool-dialog/index.tsx` — dialog to add an external MCP server as an agent tool
-- `packages/web/src/features/agents/agent-tools/mcp-tool-dialog/add-mcp-tool-form.tsx` — form inside the dialog
-- `packages/web/src/features/agents/agent-tools/components/mcp-tool.tsx` — inline display of an MCP tool in agent settings
-- `packages/web/src/app/builder/test-step/custom-test-step/mcp-tool-testing-dialog.tsx` — test an individual MCP tool from the builder
+- `backend/packages/server/api/src/app/mcp/mcp-service.ts` — server build logic, tool registration, token auth
+- `backend/packages/server/api/src/app/mcp/mcp-server-controller.ts` — HTTP endpoints (get, update, rotate, protocol handler, agent validator)
+- `backend/packages/server/api/src/app/mcp/mcp-entity.ts` — McpServer entity
+- `backend/packages/server/api/src/app/mcp/tools/index.ts` — static tool exports
+- `backend/packages/server/api/src/app/mcp/oauth/` — OAuth 2.0 PKCE flow for MCP clients that require OAuth
+- `backend/packages/shared/src/lib/automation/mcp/mcp.ts` — McpServer schema, McpToolDefinition type
+- `backend/packages/shared/src/lib/automation/mcp/mcp-oauth.ts` — MCP OAuth types
+- `frontend/packages/web/src/app/components/project-settings/mcp-server/index.tsx` — project settings panel for MCP
+- `frontend/packages/web/src/app/components/project-settings/mcp-server/mcp-credentials.tsx` — token display and rotate UI
+- `frontend/packages/web/src/app/components/project-settings/mcp-server/mcp-flows.tsx` — list of flows exposed as tools
+- `frontend/packages/web/src/app/components/project-settings/mcp-server/mcp-tools.tsx` — controllable tool toggle UI
+- `frontend/packages/web/src/app/routes/mcp-authorize/index.tsx` — OAuth authorization page for MCP clients
+- `frontend/packages/web/src/features/agents/agent-tools/mcp-tool-dialog/index.tsx` — dialog to add an external MCP server as an agent tool
+- `frontend/packages/web/src/features/agents/agent-tools/mcp-tool-dialog/add-mcp-tool-form.tsx` — form inside the dialog
+- `frontend/packages/web/src/features/agents/agent-tools/components/mcp-tool.tsx` — inline display of an MCP tool in agent settings
+- `frontend/packages/web/src/app/builder/test-step/custom-test-step/mcp-tool-testing-dialog.tsx` — test an individual MCP tool from the builder
 
 ## Edition Availability
 - Community (CE): available
@@ -77,7 +77,7 @@ Exposes an Activepieces project as a Model Context Protocol (MCP) server so that
 - `POST /v1/mcp/:projectId/rotate` — rotate auth token
 - `POST /v1/mcp/:projectId/http` — StreamableHTTP MCP protocol endpoint (main protocol handler)
 
-External MCP server validation for the **agent piece** lives under `packages/server/api/src/app/agents/` (endpoint: `POST /v1/projects/:projectId/agent-tools/mcp/validate`), not here — it's a probe for URLs the agent will later connect to, not part of the Activepieces-as-MCP-server feature.
+External MCP server validation for the **agent piece** lives under `backend/packages/server/api/src/app/agents/` (endpoint: `POST /v1/projects/:projectId/agent-tools/mcp/validate`), not here — it's a probe for URLs the agent will later connect to, not part of the Activepieces-as-MCP-server feature.
 
 ## Authentication
 

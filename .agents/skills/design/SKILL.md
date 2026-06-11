@@ -49,7 +49,7 @@ Read `README.md` in this folder **first** — it is the canonical reference. Thi
 
 ## Hard rules (never violate)
 
-1. **Primary is purple `hsl(257 74% 57%)` / `#8142E3`** — the shipping value from `packages/web/src/styles.css`. Not the `#9747FF` swatch some Figma files show. **Primary stays purple in dark mode** too (brand continuity) — use `.dark.blue-primary` to opt back into the repo's blue-in-dark behaviour.
+1. **Primary is purple `hsl(257 74% 57%)` / `#8142E3`** — the shipping value from `frontend/packages/web/src/styles.css`. Not the `#9747FF` swatch some Figma files show. **Primary stays purple in dark mode** too (brand continuity) — use `.dark.blue-primary` to opt back into the repo's blue-in-dark behaviour.
 2. **Body text is 14px (`text-sm`), not 16**. Activepieces feels dense and tool-like. Headings use `-0.01em` to `-0.02em` tracking.
 3. **Sentence case everywhere**: headings, buttons, menu items, page titles. Proper nouns only for feature names (Flows, Runs, Pieces, MCP, Agents, Connections).
 4. **Lucide icons only**, 1.5–2px stroke, rounded caps. Default size `16` (`size-4`). Icon + text → `gap-2` (8px). No emoji in the product UI. No Unicode glyphs (✓ × ←) — always a Lucide component.
@@ -138,7 +138,7 @@ Matter-of-fact, second-person, verb-first. No "Click here". No "Please". No hype
 <!-- Load Lucide via CDN when building HTML prototypes -->
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 ```
-Or inline SVGs from https://lucide.dev. Piece/integration icons: copy the real SVG from `packages/web/src/assets/img/piece/` — do not redraw. Piece tile is 38–48px rounded-square with an 8% tinted background of the piece's brand color.
+Or inline SVGs from https://lucide.dev. Piece/integration icons: copy the real SVG from `frontend/packages/web/src/assets/img/piece/` — do not redraw. Piece tile is 38–48px rounded-square with an 8% tinted background of the piece's brand color.
 
 ## Surfaces & layout
 
@@ -165,11 +165,11 @@ Or inline SVGs from https://lucide.dev. Piece/integration icons: copy the real S
 
 ## Known gotchas
 
-- Figma file shows primary as `#9747FF`. **Ignore it.** Shipping primary is `#8142E3` (from `packages/web/src/styles.css` and the logo).
+- Figma file shows primary as `#9747FF`. **Ignore it.** Shipping primary is `#8142E3` (from `frontend/packages/web/src/styles.css` and the logo).
 - The repo's dark mode shifts primary to **blue**. This system keeps primary **purple** in both modes for brand consistency; document the blue variant only if the user explicitly asks for dark-mode fidelity.
 - `Sentient-Variable.woff2` is an *optional* display/marketing font — **not used in shipping product UI**. Only use if explicitly doing branding/marketing exploration.
 - The Pro-Blocks Figma pages (Landing, Application, etc.) are Shadcn stock templates, not Activepieces marketing. Use as Shadcn pattern reference only.
-- `packages/web` is the only shipping UI surface in the repo. There is no marketing-site code to reference.
+- `frontend/packages/web` is the only shipping UI surface in the repo. There is no marketing-site code to reference.
 
 ## Starting a new design
 

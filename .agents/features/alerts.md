@@ -4,29 +4,29 @@
 Flow Failure Alerts allow users to subscribe to email notifications when a flow run fails. When a flow fails for the first time within a 24-hour window, the system sends an email to all configured alert receivers for that project. Subsequent failures of the same flow version within the same window are suppressed using a Redis counter to avoid alert spam. Both **personal** and **team** projects support alerts: personal projects allow exactly one receiver — the project owner — toggled via a single switch, while team projects allow any number of receivers managed by project admins. Platform admins can also bulk subscribe/unsubscribe their own email across many projects from the platform admin Projects table. This feature is available on Cloud and Enterprise editions only.
 
 ## Key Files
-- `packages/server/api/src/app/ee/alerts/alerts-controller.ts` — REST controller (list, create, delete)
-- `packages/server/api/src/app/ee/alerts/alerts-service.ts` — alert dispatch logic, Redis deduplication, case-insensitive receiver storage, personal-project owner-only constraint
-- `packages/server/api/src/app/ee/helper/email/email-service.ts` — `sendIssueCreatedNotification` (`IssueCreatedArgs` shape: `projectName`, `runUrl`, `failedStepDisplayName`, `failedStepNumber`, optional `failedStepMessage`)
-- `packages/server/api/src/app/ee/helper/email/email-sender/smtp-email-sender.ts` — `getEmailSubject` builds the inbox subject line
-- `packages/server/api/src/assets/emails/issue-created.html` — Mustache template for the failure email
-- `packages/server/api/src/app/ee/alerts/alerts-entity.ts` — TypeORM entity
-- `packages/server/api/src/app/ee/alerts/alerts-module.ts` — module registration (no project-type restriction)
-- `packages/server/api/src/app/ee/projects/ee-project-hooks.ts` — auto-subscribes the owner on personal-project creation; auto-subscribes `alertReceiverEmail` on team-project creation
-- `packages/server/api/src/app/project/project-hooks.ts` — `ProjectHooks.postCreate` accepts `ProjectPostCreateContext`
-- `packages/server/api/src/app/project/project-service.ts` — plumbs `postCreateContext` through to hooks
-- `packages/server/api/src/app/ee/projects/platform-project-controller.ts` — accepts `alertReceiverEmail` on the create-project request
-- `packages/server/api/src/app/ee/projects/platform-project-service.ts` — forwards `alertReceiverEmail` into `callProjectPostCreateHooks`
-- `packages/shared/src/lib/ee/alerts/alerts-dto.ts` — `Alert` type and `AlertChannel` enum
-- `packages/shared/src/lib/ee/alerts/alerts-requests.ts` — `ListAlertsParams` and `CreateAlertParams` Zod schemas
-- `packages/shared/src/lib/management/project/project-requests.ts` — `CreatePlatformProjectRequest.alertReceiverEmail`
-- `packages/web/src/features/alerts/api/alerts-api.ts` — frontend API client
-- `packages/web/src/features/alerts/hooks/alert-hooks.ts` — React Query hooks: `useAlertsEmailList`, `useCreateAlert`, `useDeleteAlert`, `useBulkSubscribeAlerts`, `useBulkUnsubscribeAlerts`
-- `packages/web/src/app/components/project-settings/alerts/index.tsx` — routes between personal/team UI based on `currentProject.type`
-- `packages/web/src/app/components/project-settings/alerts/personal-project-alerts.tsx` — single-switch UI for personal projects
-- `packages/web/src/app/components/project-settings/alerts/team-project-alerts.tsx` — receiver list UI for team projects
-- `packages/web/src/app/components/project-settings/alerts/add-alert-email-form.tsx` — inline add-receiver form (replaces the prior dialog)
-- `packages/web/src/features/projects/components/platform-admin-project-alert-subscription-bulk-actions.tsx` — bulk subscribe/unsubscribe action on the platform admin Projects table
-- `packages/web/src/features/projects/components/new-project-dialog.tsx` — exposes the `Alert Receiver Email` field on project creation
+- `backend/packages/server/api/src/app/ee/alerts/alerts-controller.ts` — REST controller (list, create, delete)
+- `backend/packages/server/api/src/app/ee/alerts/alerts-service.ts` — alert dispatch logic, Redis deduplication, case-insensitive receiver storage, personal-project owner-only constraint
+- `backend/packages/server/api/src/app/ee/helper/email/email-service.ts` — `sendIssueCreatedNotification` (`IssueCreatedArgs` shape: `projectName`, `runUrl`, `failedStepDisplayName`, `failedStepNumber`, optional `failedStepMessage`)
+- `backend/packages/server/api/src/app/ee/helper/email/email-sender/smtp-email-sender.ts` — `getEmailSubject` builds the inbox subject line
+- `backend/packages/server/api/src/assets/emails/issue-created.html` — Mustache template for the failure email
+- `backend/packages/server/api/src/app/ee/alerts/alerts-entity.ts` — TypeORM entity
+- `backend/packages/server/api/src/app/ee/alerts/alerts-module.ts` — module registration (no project-type restriction)
+- `backend/packages/server/api/src/app/ee/projects/ee-project-hooks.ts` — auto-subscribes the owner on personal-project creation; auto-subscribes `alertReceiverEmail` on team-project creation
+- `backend/packages/server/api/src/app/project/project-hooks.ts` — `ProjectHooks.postCreate` accepts `ProjectPostCreateContext`
+- `backend/packages/server/api/src/app/project/project-service.ts` — plumbs `postCreateContext` through to hooks
+- `backend/packages/server/api/src/app/ee/projects/platform-project-controller.ts` — accepts `alertReceiverEmail` on the create-project request
+- `backend/packages/server/api/src/app/ee/projects/platform-project-service.ts` — forwards `alertReceiverEmail` into `callProjectPostCreateHooks`
+- `backend/packages/shared/src/lib/ee/alerts/alerts-dto.ts` — `Alert` type and `AlertChannel` enum
+- `backend/packages/shared/src/lib/ee/alerts/alerts-requests.ts` — `ListAlertsParams` and `CreateAlertParams` Zod schemas
+- `backend/packages/shared/src/lib/management/project/project-requests.ts` — `CreatePlatformProjectRequest.alertReceiverEmail`
+- `frontend/packages/web/src/features/alerts/api/alerts-api.ts` — frontend API client
+- `frontend/packages/web/src/features/alerts/hooks/alert-hooks.ts` — React Query hooks: `useAlertsEmailList`, `useCreateAlert`, `useDeleteAlert`, `useBulkSubscribeAlerts`, `useBulkUnsubscribeAlerts`
+- `frontend/packages/web/src/app/components/project-settings/alerts/index.tsx` — routes between personal/team UI based on `currentProject.type`
+- `frontend/packages/web/src/app/components/project-settings/alerts/personal-project-alerts.tsx` — single-switch UI for personal projects
+- `frontend/packages/web/src/app/components/project-settings/alerts/team-project-alerts.tsx` — receiver list UI for team projects
+- `frontend/packages/web/src/app/components/project-settings/alerts/add-alert-email-form.tsx` — inline add-receiver form (replaces the prior dialog)
+- `frontend/packages/web/src/features/projects/components/platform-admin-project-alert-subscription-bulk-actions.tsx` — bulk subscribe/unsubscribe action on the platform admin Projects table
+- `frontend/packages/web/src/features/projects/components/new-project-dialog.tsx` — exposes the `Alert Receiver Email` field on project creation
 
 ## Edition Availability
 Cloud (`AP_EDITION=cloud`) and Enterprise (`AP_EDITION=ee`). The service checks `paidEditions` at runtime when dispatching alert emails. Both personal and team projects can subscribe, with different rules:
@@ -80,7 +80,7 @@ Body for create: `{ projectId, channel, receiver }`.
 
 ## Issue-Created Email
 
-Template: `packages/server/api/src/assets/emails/issue-created.html`. Mustache vars: `projectName`, `flowName`, `createdAt`, `failedStepNumber`, `failedStepDisplayName`, `failedStepMessage` (optional), `runUrl`. Layout: heading → "First seen at … To recover, retry this run from the runs table, or update the flow, republish, and retry it again." → labeled rows for **Project**, **Failed at**, optional **Reason** → CTA "View Run" linking to `projects/<projectId>/runs/<flowRunId>`.
+Template: `backend/packages/server/api/src/assets/emails/issue-created.html`. Mustache vars: `projectName`, `flowName`, `createdAt`, `failedStepNumber`, `failedStepDisplayName`, `failedStepMessage` (optional), `runUrl`. Layout: heading → "First seen at … To recover, retry this run from the runs table, or update the flow, republish, and retry it again." → labeled rows for **Project**, **Failed at**, optional **Reason** → CTA "View Run" linking to `projects/<projectId>/runs/<flowRunId>`.
 
 Subject (built in `smtp-email-sender.ts:getEmailSubject`): `` `[${projectName}] Flow has an issue "${flowName}" ⚠️` ``.
 

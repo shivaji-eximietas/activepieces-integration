@@ -35,7 +35,7 @@ const merge = mergician({ appendArrays: true, dedupArrays: true });
 
   let spec: any = merge(
     await OpenAPIParser.parse(specLocation),
-    await OpenAPIParser.parse('./scripts/openapi.overrides.yml', {
+    await OpenAPIParser.parse('./devops/scripts/openapi.overrides.yml', {
       validate: {
         schema: false,
         spec: false,

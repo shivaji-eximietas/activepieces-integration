@@ -4,40 +4,40 @@
 A built-in relational database feature that lets users store structured data directly within Activepieces, without needing an external database. Tables support typed fields, cell-level storage, per-row webhooks that fire flow automations, and a rich spreadsheet-like editor in the UI. They are tightly integrated with the flow engine through the Tables piece, which provides trigger and action steps for reacting to and manipulating table data.
 
 ## Key Files
-- `packages/server/api/src/app/tables/table/table.service.ts` — table CRUD, export, webhook management
-- `packages/server/api/src/app/tables/table/table.controller.ts` — table endpoints
-- `packages/server/api/src/app/tables/table/table.entity.ts` — Table entity
-- `packages/server/api/src/app/tables/table/table-webhook.entity.ts` — TableWebhook entity
-- `packages/server/api/src/app/tables/field/field.service.ts` — field CRUD
-- `packages/server/api/src/app/tables/field/field.controller.ts` — field endpoints
-- `packages/server/api/src/app/tables/field/field.entity.ts` — Field entity
-- `packages/server/api/src/app/tables/record/record.service.ts` — record CRUD, bulk ops
-- `packages/server/api/src/app/tables/record/record.controller.ts` — record endpoints
-- `packages/server/api/src/app/tables/record/record.entity.ts` — Record entity
-- `packages/server/api/src/app/tables/record/cell.entity.ts` — Cell entity
-- `packages/server/api/src/app/tables/record/record-side-effects.ts` — fires TableWebhook flows on record events
-- `packages/server/api/src/app/tables/tables.module.ts` — module registration
-- `packages/shared/src/lib/automation/tables/table.ts` — Table schema
-- `packages/shared/src/lib/automation/tables/field.ts` — Field schema and FieldType enum
-- `packages/shared/src/lib/automation/tables/record.ts` — Record schema
-- `packages/shared/src/lib/automation/tables/cell.ts` — Cell schema
-- `packages/shared/src/lib/automation/tables/table-webhook.ts` — TableWebhook schema
-- `packages/shared/src/lib/automation/tables/dto/` — request/response DTOs
-- `packages/web/src/app/routes/tables/id/index.tsx` — the table editor page (react-data-grid based)
-- `packages/web/src/features/tables/components/ap-table-header.tsx` — header bar with table name, actions
-- `packages/web/src/features/tables/components/ap-table-state-provider.tsx` — state context for the table
-- `packages/web/src/features/tables/components/ap-field-header.tsx` — column header with field actions
-- `packages/web/src/features/tables/components/table-columns.tsx` — column definitions for react-data-grid
-- `packages/web/src/features/tables/components/editable-cell.tsx` — cell editing wrapper
-- `packages/web/src/features/tables/components/ap-table-actions-menu.tsx` — table-level action menu
-- `packages/web/src/features/tables/components/import-table-dialog.tsx` — CSV import dialog
-- `packages/web/src/features/tables/components/new-field-popup.tsx` — add field popup
-- `packages/web/src/features/tables/hooks/table-hooks.ts` — React Query hooks for tables/fields/records
-- `packages/web/src/features/tables/stores/store/ap-tables-client-state.tsx` — optimistic client-side state
-- `packages/web/src/features/tables/stores/store/ap-tables-server-state.ts` — server-synced state
-- `packages/web/src/features/tables/api/tables-api.ts` — table API calls
-- `packages/web/src/features/tables/api/fields-api.ts` — field API calls
-- `packages/web/src/features/tables/api/records-api.ts` — record API calls
+- `backend/packages/server/api/src/app/tables/table/table.service.ts` — table CRUD, export, webhook management
+- `backend/packages/server/api/src/app/tables/table/table.controller.ts` — table endpoints
+- `backend/packages/server/api/src/app/tables/table/table.entity.ts` — Table entity
+- `backend/packages/server/api/src/app/tables/table/table-webhook.entity.ts` — TableWebhook entity
+- `backend/packages/server/api/src/app/tables/field/field.service.ts` — field CRUD
+- `backend/packages/server/api/src/app/tables/field/field.controller.ts` — field endpoints
+- `backend/packages/server/api/src/app/tables/field/field.entity.ts` — Field entity
+- `backend/packages/server/api/src/app/tables/record/record.service.ts` — record CRUD, bulk ops
+- `backend/packages/server/api/src/app/tables/record/record.controller.ts` — record endpoints
+- `backend/packages/server/api/src/app/tables/record/record.entity.ts` — Record entity
+- `backend/packages/server/api/src/app/tables/record/cell.entity.ts` — Cell entity
+- `backend/packages/server/api/src/app/tables/record/record-side-effects.ts` — fires TableWebhook flows on record events
+- `backend/packages/server/api/src/app/tables/tables.module.ts` — module registration
+- `backend/packages/shared/src/lib/automation/tables/table.ts` — Table schema
+- `backend/packages/shared/src/lib/automation/tables/field.ts` — Field schema and FieldType enum
+- `backend/packages/shared/src/lib/automation/tables/record.ts` — Record schema
+- `backend/packages/shared/src/lib/automation/tables/cell.ts` — Cell schema
+- `backend/packages/shared/src/lib/automation/tables/table-webhook.ts` — TableWebhook schema
+- `backend/packages/shared/src/lib/automation/tables/dto/` — request/response DTOs
+- `frontend/packages/web/src/app/routes/tables/id/index.tsx` — the table editor page (react-data-grid based)
+- `frontend/packages/web/src/features/tables/components/ap-table-header.tsx` — header bar with table name, actions
+- `frontend/packages/web/src/features/tables/components/ap-table-state-provider.tsx` — state context for the table
+- `frontend/packages/web/src/features/tables/components/ap-field-header.tsx` — column header with field actions
+- `frontend/packages/web/src/features/tables/components/table-columns.tsx` — column definitions for react-data-grid
+- `frontend/packages/web/src/features/tables/components/editable-cell.tsx` — cell editing wrapper
+- `frontend/packages/web/src/features/tables/components/ap-table-actions-menu.tsx` — table-level action menu
+- `frontend/packages/web/src/features/tables/components/import-table-dialog.tsx` — CSV import dialog
+- `frontend/packages/web/src/features/tables/components/new-field-popup.tsx` — add field popup
+- `frontend/packages/web/src/features/tables/hooks/table-hooks.ts` — React Query hooks for tables/fields/records
+- `frontend/packages/web/src/features/tables/stores/store/ap-tables-client-state.tsx` — optimistic client-side state
+- `frontend/packages/web/src/features/tables/stores/store/ap-tables-server-state.ts` — server-synced state
+- `frontend/packages/web/src/features/tables/api/tables-api.ts` — table API calls
+- `frontend/packages/web/src/features/tables/api/fields-api.ts` — field API calls
+- `frontend/packages/web/src/features/tables/api/records-api.ts` — record API calls
 
 ## Edition Availability
 - Community (CE): available
@@ -52,7 +52,7 @@ A built-in relational database feature that lets users store structured data dir
 - **TableWebhook** — a link between a table event and a flow; fires the flow when the event occurs
 - **Table events** — `RECORD_CREATED`, `RECORD_UPDATED`, `RECORD_DELETED`
 - **externalId** — a stable external identifier for tables and fields, used by the flow integration layer
-- **Tables piece** — `packages/pieces/core/tables/`; provides trigger and action steps that interact with tables via the internal API
+- **Tables piece** — `backend/packages/pieces/core/tables/`; provides trigger and action steps that interact with tables via the internal API
 
 ## Data Model
 
@@ -91,7 +91,7 @@ After record create/update/delete, `recordSideEffects.handleRecordsEvent()`:
 
 ## Table → Flow Integration
 
-Tables piece (`packages/pieces/core/tables/`) provides:
+Tables piece (`backend/packages/pieces/core/tables/`) provides:
 - **Triggers**: New Record, Record Updated, Record Deleted (register TableWebhook on enable, delete on disable)
 - **Actions**: Create Record(s), Get Record, Find Records, Update Record, Delete Record(s), Clear Table
 - Uses internal API with Bearer token authentication

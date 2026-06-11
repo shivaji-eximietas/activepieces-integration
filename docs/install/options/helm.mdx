@@ -110,14 +110,14 @@ helm dependency update
 
 ### 3. Create a Values File
 
-Create a `my-values.yaml` file with your configuration. You can use the [example values file](https://github.com/activepieces/activepieces/blob/main/deploy/activepieces-helm/values.yaml) as a reference.
+Create a `my-values.yaml` file with your configuration. You can use the [example values file](https://github.com/activepieces/activepieces/blob/main/devops/deploy/activepieces-helm/values.yaml) as a reference.
 The Helm chart has sensible defaults for required values while leaving the optional ones empty, but you should customize these core values for production
 
 
 ### 4. Install Activepieces
 
 ```bash
-helm install activepieces deploy/activepieces-helm -f my-values.yaml
+helm install activepieces devops/deploy/activepieces-helm -f my-values.yaml
 ```
 
 ### 5. Verify Installation
@@ -147,7 +147,7 @@ kubectl get services
 helm dependency update
 
 # Upgrade release
-helm upgrade activepieces deploy/activepieces-helm -f my-values.yaml
+helm upgrade activepieces devops/deploy/activepieces-helm -f my-values.yaml
 
 # Check upgrade status
 kubectl rollout status deployment/activepieces

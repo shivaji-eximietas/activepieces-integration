@@ -73,10 +73,10 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Build shared package
-        run: bun run --cwd packages/shared build
+        run: bun run --cwd backend/packages/shared build
 
       - name: Build server-utils package
-        run: bun run --cwd packages/server/utils build
+        run: bun run --cwd backend/packages/server/utils build
 
       - name: Configure SSH
         run: |
@@ -101,13 +101,13 @@ jobs:
           MANIFEST=$(ssh ops -t -t 'bash -ic "cd mrsk/prod && kamal app exec \
             --reuse \
             --config-file=config/app-canary.yml -- \
-            cat /usr/src/app/packages/server/api/dist/src/migration-manifest.json; exit"' \
+            cat /usr/src/app/backend/packages/server/api/dist/src/migration-manifest.json; exit"' \
             2>/dev/null | grep '^\[' || echo '[]')
           echo "json=$MANIFEST" >> $GITHUB_OUTPUT
 
       - name: Check for breaking migrations
         id: check
-        run: bunx tsx tools/scripts/check-manifest-migrations.ts '${{ steps.current-manifest.outputs.json }}'
+        run: bunx tsx devops/tools/scripts/check-manifest-migrations.ts '${{ steps.current-manifest.outputs.json }}'
 
       - name: Fail on breaking migrations
         if: steps.check.outputs.has_breaking == 'true'

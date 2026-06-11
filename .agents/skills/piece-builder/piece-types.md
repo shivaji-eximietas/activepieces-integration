@@ -5,7 +5,7 @@
 The monorepo has three piece directories, each with a different purpose:
 
 ```
-packages/pieces/
+backend/packages/pieces/
   community/    ← third-party integrations (Slack, Stripe, GitHub, etc.)
   core/         ← built-in Activepieces utilities (HTTP, Store, Schedule, etc.)
   custom/       ← private pieces built by individual Activepieces customers

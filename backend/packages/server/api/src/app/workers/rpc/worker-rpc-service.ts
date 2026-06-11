@@ -38,12 +38,12 @@ const getPollQueueName = (workerGroupId?: string): string => {
 export function createHandlers(log: FastifyBaseLogger, workerGroupId?: string): WorkerToApiContract {
     return {
         async poll(input) {
-            log.info({ workerId: input.workerId, workerGroupId }, '[workerRpc#poll] Poll request received')
+            log.debug({ workerId: input.workerId, workerGroupId }, '[workerRpc#poll] Poll request received')
             await machineService(log).onConnection(input, workerGroupId)
             const pollQueueName = getPollQueueName(workerGroupId)
             const job = await jobBroker(log).poll(pollQueueName)
             if (job) {
-                log.info({ workerId: input.workerId, jobId: job.jobId, jobType: job.jobData.jobType }, '[workerRpc#poll] Returning job to worker')
+                log.debug({ workerId: input.workerId, jobId: job.jobId, jobType: job.jobData.jobType }, '[workerRpc#poll] Returning job to worker')
             }
             else {
                 log.debug({ workerId: input.workerId }, '[workerRpc#poll] No job available, returning null')

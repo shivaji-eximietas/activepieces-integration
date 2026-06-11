@@ -4,14 +4,14 @@
 Audit Logging records security-relevant actions taken within a platform for compliance and forensic purposes. Events are persisted to the `audit_event` table and can be queried by platform admins with rich filtering options (user, action type, project, date range). The service registers listeners on the `applicationEvents` event bus so events are captured transparently across the codebase without coupling to callers. Gated by `platform.plan.auditLogEnabled`.
 
 ## Key Files
-- `packages/server/api/src/app/ee/audit-logs/audit-event-module.ts` — module registration, sets up listeners on startup, registers `platformMustHaveFeatureEnabled` guard
-- `packages/server/api/src/app/ee/audit-logs/audit-event-service.ts` — service with `setup()` and `list()` methods
-- `packages/server/api/src/app/ee/audit-logs/audit-event-entity.ts` — TypeORM entity
-- `packages/shared/src/lib/ee/audit-events/index.ts` — all event types, `ApplicationEvent` union, `ApplicationEventName` enum, `summarizeApplicationEvent()` helper
-- `packages/shared/src/lib/ee/audit-events/mock-event-builder.ts` — `buildMockEvent()` returns a typed `ApplicationEvent` mock for every `ApplicationEventName` value (used by event destination test delivery)
-- `packages/web/src/features/platform-admin/api/audit-events-api.ts` — frontend API client
-- `packages/web/src/features/platform-admin/hooks/audit-log-hooks.ts` — React query hooks
-- `packages/web/src/app/routes/platform/security/audit-logs/` — platform admin UI page
+- `backend/packages/server/api/src/app/ee/audit-logs/audit-event-module.ts` — module registration, sets up listeners on startup, registers `platformMustHaveFeatureEnabled` guard
+- `backend/packages/server/api/src/app/ee/audit-logs/audit-event-service.ts` — service with `setup()` and `list()` methods
+- `backend/packages/server/api/src/app/ee/audit-logs/audit-event-entity.ts` — TypeORM entity
+- `backend/packages/shared/src/lib/ee/audit-events/index.ts` — all event types, `ApplicationEvent` union, `ApplicationEventName` enum, `summarizeApplicationEvent()` helper
+- `backend/packages/shared/src/lib/ee/audit-events/mock-event-builder.ts` — `buildMockEvent()` returns a typed `ApplicationEvent` mock for every `ApplicationEventName` value (used by event destination test delivery)
+- `frontend/packages/web/src/features/platform-admin/api/audit-events-api.ts` — frontend API client
+- `frontend/packages/web/src/features/platform-admin/hooks/audit-log-hooks.ts` — React query hooks
+- `frontend/packages/web/src/app/routes/platform/security/audit-logs/` — platform admin UI page
 
 ## Edition Availability
 Enterprise and Cloud. Gated by `platform.plan.auditLogEnabled`.

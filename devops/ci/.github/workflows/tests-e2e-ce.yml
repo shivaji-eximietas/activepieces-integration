@@ -97,7 +97,7 @@ jobs:
         if: always()
         with:
           name: playwright-report-ce
-          path: packages/tests-e2e/playwright-report/
+          path: frontend/packages/tests-e2e/playwright-report/
           retention-days: 10
           
       - name: Upload Test Results
@@ -105,5 +105,5 @@ jobs:
         if: always()
         with:
           name: test-results-ce
-          path: packages/tests-e2e/test-results/
+          path: frontend/packages/tests-e2e/test-results/
           retention-days: 10

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Local benchmark runner with SANDBOXED mode support
-# Usage: ./benchmark/run-local.sh [execution_mode] [total_requests]
+# Usage: ./devops/benchmark/run-local.sh [execution_mode] [total_requests]
 #   execution_mode: SANDBOXED | SANDBOX_CODE_ONLY (default: SANDBOXED)
 #   total_requests: number of requests for hey (default: 500)
 
@@ -40,7 +40,7 @@ sleep 5
 $COMPOSE ps
 
 echo "=== Setting up flow ==="
-FLOW_ID=$(FLOW_ENABLE_TIMEOUT=$FLOW_ENABLE_TIMEOUT benchmark/setup.sh)
+FLOW_ID=$(FLOW_ENABLE_TIMEOUT=$FLOW_ENABLE_TIMEOUT devops/benchmark/setup.sh)
 echo "Flow ID: $FLOW_ID"
 
 echo "=== Warmup ==="
@@ -62,6 +62,6 @@ hey -n "$TOTAL_REQUESTS" \
     | tee /tmp/hey-output.txt
 
 echo "=== Parsing results ==="
-benchmark/parse.sh /tmp/hey-output.txt /tmp/results.json
+devops/benchmark/parse.sh /tmp/hey-output.txt /tmp/results.json
 echo "Results saved to /tmp/results.json"
 cat /tmp/results.json
