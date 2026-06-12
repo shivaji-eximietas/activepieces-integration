@@ -2,7 +2,7 @@ import path from 'path'
 import { defineConfig } from 'vitest/config'
 
 // Change CWD to repo root for compatibility with piece-loader path resolution
-const repoRoot = path.resolve(__dirname, '../../..')
+const repoRoot = path.resolve(__dirname, '../../../..')
 process.chdir(repoRoot)
 
 process.env.AP_EXECUTION_MODE = 'UNSANDBOXED'
@@ -19,9 +19,9 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@activepieces/shared': path.resolve(__dirname, '../../../backend/packages/shared/src/index.ts'),
-      '@activepieces/pieces-framework': path.resolve(__dirname, '../../../backend/packages/pieces/framework/src/index.ts'),
-      '@activepieces/pieces-common': path.resolve(__dirname, '../../../backend/packages/pieces/common/src/index.ts'),
+      '@activepieces/shared': path.resolve(__dirname, '../../shared/src/index.ts'),
+      '@activepieces/pieces-framework': path.resolve(__dirname, '../../pieces/framework/src/index.ts'),
+      '@activepieces/pieces-common': path.resolve(__dirname, '../../pieces/common/src/index.ts'),
     },
   },
 })

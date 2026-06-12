@@ -8,7 +8,7 @@ import { Logger } from 'pino'
 import { workerSettings } from '../../config/worker-settings'
 import { cacheState, NO_SAVE_GUARD } from '../cache-state'
 
-const engineExecutablePath = 'dist/packages/engine/main.js'
+const engineExecutablePath = 'backend/dist/packages/engine/main.js'
 const ENGINE_CACHE_ID = nanoid()
 const ENGINE_INSTALLED = 'ENGINE_INSTALLED'
 
