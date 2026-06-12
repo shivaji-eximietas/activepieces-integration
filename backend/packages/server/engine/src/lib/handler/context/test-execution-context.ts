@@ -6,6 +6,7 @@ import {
     FlowVersion,
     GenericStepOutput,
     isNil,
+    loopBatchUtils,
     LoopStepOutput,
     RouterStepOutput,
     spreadIfDefined,
@@ -65,13 +66,23 @@ export const testExecutionContext = {
                         unresolvedInput: step.settings,
                         executionState: flowExecutionContext,
                     })
+                    const { batches, batchSize: effectiveBatchSize } = loopBatchUtils.splitItemsIntoBatches({
+                        items: Array.isArray(resolvedInput.items) ? resolvedInput.items : [],
+                        batchSize: step.settings.batchSize,
+                    })
+                    const firstBatch = batches[0] ?? []
+                    const iterationContext = loopBatchUtils.buildIterationContext({
+                        batch: firstBatch,
+                        batchIndex: 0,
+                        batchSize: effectiveBatchSize,
+                        totalBatches: batches.length,
+                    })
                     flowExecutionContext = await flowExecutionContext.upsertStep(
                         step.name,
                         LoopStepOutput.init({
                             input: step.settings,
                         }).setOutput({
-                            item: resolvedInput.items[0],
-                            index: 1,
+                            ...iterationContext,
                             iterations: [],
                         }),
                     )

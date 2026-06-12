@@ -18,7 +18,6 @@ import {
 
 type PathSegment = string | number;
 
-const MAX_CHUNK_LENGTH = 10;
 const JOINED_VALUES_MAX_LENGTH = 32;
 
 function buildTestStepNode(
@@ -44,20 +43,6 @@ function buildTestStepNode(
         key: `test_${stepName}`,
       },
     ],
-  };
-}
-
-function buildChunkNode(
-  displayName: string,
-  children: DataSelectorTreeNode<DataSelectorTreeNodeDataUnion>[] | undefined,
-): DataSelectorTreeNode<DataSelectorTreeNodeDataUnion> {
-  return {
-    key: displayName,
-    data: {
-      type: 'chunk',
-      displayName,
-    },
-    children,
   };
 }
 
@@ -183,22 +168,6 @@ function buildDataSelectorNode(
   };
 }
 
-function breakArrayIntoChunks<T>(
-  array: T[],
-  chunkSize: number,
-): { items: T[]; range: { start: number; end: number } }[] {
-  return Array.from(
-    { length: Math.ceil(array.length / chunkSize) },
-    (_, i) => ({
-      items: array.slice(i * chunkSize, i * chunkSize + chunkSize),
-      range: {
-        start: i * chunkSize + 1,
-        end: Math.min((i + 1) * chunkSize, array.length),
-      },
-    }),
-  );
-}
-
 function traverseOutput(
   displayName: string,
   propertyPath: PathSegment[],
@@ -218,27 +187,11 @@ function traverseOutput(
           insertable,
         ),
       );
-      const chunks = breakArrayIntoChunks(mentionNodes, MAX_CHUNK_LENGTH);
-      const isSingleChunk = chunks.length === 1;
-      if (isSingleChunk) {
-        return buildDataSelectorNode(
-          displayName,
-          propertyPath,
-          node,
-          mentionNodes,
-          insertable,
-        );
-      }
       return buildDataSelectorNode(
         displayName,
         propertyPath,
-        undefined,
-        chunks.map((chunk) =>
-          buildChunkNode(
-            `${displayName} [${chunk.range.start}-${chunk.range.end}]`,
-            chunk.items,
-          ),
-        ),
+        node,
+        mentionNodes,
         insertable,
       );
     } else {

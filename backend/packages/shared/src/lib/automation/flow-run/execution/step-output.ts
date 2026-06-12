@@ -142,6 +142,10 @@ export type LoopStepResult = {
     item: unknown
     index: number
     iterations: Record<string, StepOutput>[]
+    batchSize?: number
+    batchIndex?: number
+    totalBatches?: number
+    itemStartIndex?: number
 }
 
 export class LoopStepOutput extends GenericStepOutput<
@@ -184,9 +188,17 @@ LoopStepResult
     setItemAndIndex({
         item,
         index,
+        batchSize,
+        batchIndex,
+        totalBatches,
+        itemStartIndex,
     }: {
         item: unknown
         index: number
+        batchSize?: number
+        batchIndex?: number
+        totalBatches?: number
+        itemStartIndex?: number
     }): LoopStepOutput {
         return new LoopStepOutput({
             ...this,
@@ -194,6 +206,12 @@ LoopStepResult
                 item,
                 index,
                 iterations: this.output?.iterations ?? [],
+                ...spreadLoopBatchMetadata({
+                    batchSize,
+                    batchIndex,
+                    totalBatches,
+                    itemStartIndex,
+                }),
             },
         })
     }
@@ -205,7 +223,35 @@ LoopStepResult
                 item: this.output?.item,
                 index: this.output?.index,
                 iterations: [...(this.output?.iterations ?? []), {}],
+                ...spreadLoopBatchMetadata({
+                    batchSize: this.output?.batchSize,
+                    batchIndex: this.output?.batchIndex,
+                    totalBatches: this.output?.totalBatches,
+                    itemStartIndex: this.output?.itemStartIndex,
+                }),
             },
         })
+    }
+}
+
+function spreadLoopBatchMetadata({
+    batchSize,
+    batchIndex,
+    totalBatches,
+    itemStartIndex,
+}: {
+    batchSize?: number
+    batchIndex?: number
+    totalBatches?: number
+    itemStartIndex?: number
+}): Pick<LoopStepResult, 'batchSize' | 'batchIndex' | 'totalBatches' | 'itemStartIndex'> {
+    if (batchSize === undefined || batchSize <= 1) {
+        return {}
+    }
+    return {
+        batchSize,
+        batchIndex,
+        totalBatches,
+        itemStartIndex,
     }
 }

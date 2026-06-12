@@ -88,4 +88,73 @@ describe('flow with looping', () => {
         expect(result.steps.echo_step.output).toEqual({ 'key': 3 })
     })
 
+    it('should execute all iterations in parallel with concurrency > 1', async () => {
+        const codeAction = buildCodeAction({
+            name: 'echo_step',
+            input: {
+                index: '{{loop.index}}',
+            },
+        })
+        const result = await flowExecutor.execute({
+            action: buildSimpleLoopAction({
+                name: 'loop',
+                loopItems: '{{ [10,20,30,40,50] }}',
+                concurrency: 3,
+                firstLoopAction: codeAction,
+            }),
+            executionState: FlowExecutorContext.empty(),
+            constants: generateMockEngineConstants({ stepNames: ['loop'] }),
+        })
+
+        const loopOut = result.steps.loop as LoopStepOutput
+        expect(result.verdict.status).toBe(FlowRunStatus.RUNNING)
+        expect(loopOut.output?.iterations.length).toBe(5)
+        // All 5 iterations must have their child step output recorded
+        for (let i = 0; i < 5; i++) {
+            expect(loopOut.output?.iterations[i]['echo_step']).toBeDefined()
+        }
+    })
+
+    it('should produce same iteration results with concurrency as sequential', async () => {
+        const items = '[1,2,3,4,5,6]'
+        const codeAction = buildCodeAction({
+            name: 'echo_step',
+            input: { val: '{{loop.item}}' },
+        })
+
+        const sequential = await flowExecutor.execute({
+            action: buildSimpleLoopAction({
+                name: 'loop',
+                loopItems: `{{ ${items} }}`,
+                firstLoopAction: codeAction,
+            }),
+            executionState: FlowExecutorContext.empty(),
+            constants: generateMockEngineConstants({ stepNames: ['loop'] }),
+        })
+
+        const parallel = await flowExecutor.execute({
+            action: buildSimpleLoopAction({
+                name: 'loop',
+                loopItems: `{{ ${items} }}`,
+                concurrency: 3,
+                firstLoopAction: codeAction,
+            }),
+            executionState: FlowExecutorContext.empty(),
+            constants: generateMockEngineConstants({ stepNames: ['loop'] }),
+        })
+
+        const seqOut = sequential.steps.loop as LoopStepOutput
+        const parOut = parallel.steps.loop as LoopStepOutput
+
+        expect(parOut.output?.iterations.length).toBe(seqOut.output?.iterations.length)
+        // Each iteration's echo_step output must match (duration excluded — timing-sensitive)
+        for (let i = 0; i < seqOut.output!.iterations.length; i++) {
+            const parStep = parOut.output?.iterations[i]['echo_step']
+            const seqStep = seqOut.output?.iterations[i]['echo_step']
+            expect(parStep?.output).toEqual(seqStep?.output)
+            expect(parStep?.input).toEqual(seqStep?.input)
+            expect(parStep?.status).toEqual(seqStep?.status)
+        }
+    })
+
 })
