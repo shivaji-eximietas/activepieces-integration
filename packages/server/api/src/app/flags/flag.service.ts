@@ -1,3 +1,4 @@
+import { apVersionUtil } from '@activepieces/server-utils'
 import { ApEdition, ApFlagId, ExecutionMode, Flag, isNil } from '@activepieces/shared'
 import dayjs from 'dayjs'
 import { FastifyBaseLogger } from 'fastify'
@@ -7,7 +8,8 @@ import { federatedAuthnService } from '../ee/authentication/federated-authn/fede
 import { smtpEmailSender } from '../ee/helper/email/email-sender/smtp-email-sender'
 import { domainHelper } from '../helper/domain-helper'
 import { system } from '../helper/system/system'
-import { AppSystemProp, apVersionUtil } from '../helper/system/system-props'
+import { AppSystemProp } from '../helper/system/system-props'
+import { knowledgeBaseSchema } from '../knowledge-base/knowledge-base-schema'
 import { FlagEntity } from './flag.entity'
 import { defaultTheme } from './theme'
 import { webhookSecretsUtils } from './webhook-secrets-util'
@@ -61,7 +63,7 @@ export const flagService = (log: FastifyBaseLogger) => ({
         const now = dayjs().toISOString()
         const created = now
         const updated = now
-        const currentVersion = await apVersionUtil.getCurrentRelease()
+        const currentVersion = apVersionUtil.getCurrentRelease()
         const latestVersion = await apVersionUtil.getLatestRelease()
         flags.push(
             {
@@ -304,6 +306,12 @@ export const flagService = (log: FastifyBaseLogger) => ({
             {
                 id: ApFlagId.SMTP_CONFIGURED,
                 value: smtpEmailSender(log).isSmtpConfigured(),
+                created,
+                updated,
+            },
+            {
+                id: ApFlagId.PGVECTOR_AVAILABLE,
+                value: await knowledgeBaseSchema.isVectorExtensionInstalled(),
                 created,
                 updated,
             },

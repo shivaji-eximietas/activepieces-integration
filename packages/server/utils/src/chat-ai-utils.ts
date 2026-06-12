@@ -5,12 +5,14 @@ import {
     BedrockProviderAuthConfig,
     BedrockProviderConfig,
     chatPersistenceUtils,
+    chatToolClassification,
     CloudflareGatewayProviderConfig,
     OpenAICompatibleProviderConfig,
     PersistedChatPart,
     PersistedChatPartType,
     PersistedToolCallStatus,
     splitCloudflareGatewayModelId,
+    spreadIfDefined,
 } from '@activepieces/shared'
 import { createAmazonBedrock } from '@ai-sdk/amazon-bedrock'
 import { createAnthropic } from '@ai-sdk/anthropic'
@@ -73,6 +75,7 @@ function createChatModel({ provider, auth, config, modelId }: {
                 },
             }).chatModel(modelId)
         }
+        case AIProviderName.MISTRAL:
         case AIProviderName.ACTIVEPIECES:
         case AIProviderName.OPENROUTER: {
             const { apiKey } = auth as BaseAIProviderAuthConfig
@@ -85,16 +88,15 @@ function createChatModel({ provider, auth, config, modelId }: {
     }
 }
 
-const THINKING_PROVIDERS = new Set([
-    AIProviderName.ANTHROPIC,
-    AIProviderName.BEDROCK,
-    AIProviderName.OPENROUTER,
-    AIProviderName.ACTIVEPIECES,
-])
-
-function stripThinkingBlocks(messages: ModelMessage[], provider: AIProviderName): ModelMessage[] {
-    if (THINKING_PROVIDERS.has(provider)) return messages
-
+/**
+ * Strips for ALL providers (not just non-thinking ones) because Anthropic rejects
+ * a re-sent `thinking` block whose `signature` didn't survive our DB round-trip /
+ * compaction / truncation reshaping ("Invalid `signature` in `thinking` block"),
+ * and prior-turn reasoning adds nothing the text + tool results don't already carry.
+ * In-flight thinking within one streamText call keeps its intact signature and is
+ * untouched — this only touches the cross-turn history we assemble.
+ */
+function stripThinkingBlocks(messages: ModelMessage[], _provider: AIProviderName): ModelMessage[] {
     const hasThinking = messages.some(
         (msg) => msg.role === 'assistant' && Array.isArray(msg.content)
             && (msg.content as Array<Record<string, unknown>>).some(
@@ -116,7 +118,47 @@ function stripThinkingBlocks(messages: ModelMessage[], provider: AIProviderName)
         .filter((msg): msg is ModelMessage => msg !== null)
 }
 
-const OPENROUTER_EFFORT_BY_TIER: Record<string, string> = { fast: 'low', smart: 'medium', premium: 'high' }
+function sanitizeTruncatedAssistantTail(messages: ModelMessage[]): ModelMessage[] {
+    const last = messages[messages.length - 1]
+    if (!last || last.role !== 'assistant' || !Array.isArray(last.content)) {
+        return messages
+    }
+
+    const resolvedToolCallIds = new Set(
+        messages
+            .flatMap((msg) => (msg.role === 'tool' && Array.isArray(msg.content) ? msg.content : []))
+            .flatMap((part) => (part.type === 'tool-result' ? [part.toolCallId] : [])),
+    )
+
+    const sanitizedParts = last.content.filter((part) => {
+        if (part.type === 'reasoning') {
+            return false
+        }
+        if (part.type === 'tool-call') {
+            return resolvedToolCallIds.has(part.toolCallId)
+        }
+        return true
+    })
+
+    const head = messages.slice(0, -1)
+    if (sanitizedParts.length === 0) {
+        return head
+    }
+    if (sanitizedParts.length === last.content.length) {
+        return messages
+    }
+    return [...head, { ...last, content: sanitizedParts }]
+}
+
+/**
+ * Collect the messages from EVERY step of a streamText turn, not just the last one.
+ * `result.response.messages` is the last step only — using it drops the tool calls and
+ * tool results of all earlier steps, so the persisted history would lose what the agent
+ * already did this conversation and it would re-run those tools on the next turn.
+ */
+function collectStepMessages(steps: Array<{ response: { messages: ModelMessage[] } }>): ModelMessage[] {
+    return steps.flatMap((step) => step.response.messages)
+}
 
 function buildProviderOptions({ provider, tier }: { provider: AIProviderName, tier: { id: string, thinkingBudget: number } }): SharedV3ProviderOptions {
     switch (provider) {
@@ -125,7 +167,7 @@ function buildProviderOptions({ provider, tier }: { provider: AIProviderName, ti
             return { anthropic: { thinking: { type: 'enabled', budgetTokens: tier.thinkingBudget } } }
         case AIProviderName.ACTIVEPIECES:
         case AIProviderName.OPENROUTER:
-            return { openrouter: { cache_control: { type: 'ephemeral' }, reasoning: { effort: OPENROUTER_EFFORT_BY_TIER[tier.id] ?? 'medium' } } }
+            return { openrouter: { cache_control: { type: 'ephemeral' }, reasoning: { max_tokens: tier.thinkingBudget } } }
         default:
             return {}
     }
@@ -186,14 +228,49 @@ function buildStepParts({ content }: {
                 }
                 const result = part.toolCallId ? resultMap.get(part.toolCallId) : undefined
                 const rawOutput = result?.output ? chatPersistenceUtils.unwrapToolOutput(result.output) : undefined
+                const title = typeof input['title'] === 'string' ? input['title'] : undefined
+                const description = typeof input['description'] === 'string' ? input['description'] : undefined
                 parts.push({
                     type: PersistedChatPartType.TOOL_CALL,
                     toolCallId: part.toolCallId ?? '',
                     toolName,
+                    ...spreadIfDefined('title', title),
+                    ...spreadIfDefined('description', description),
                     input,
                     output: rawOutput,
                     status: result ? PersistedToolCallStatus.COMPLETED : PersistedToolCallStatus.ERROR,
                 })
+                if (toolName === 'ap_execute_action' && typeof rawOutput === 'object' && rawOutput !== null && 'batchProgress' in rawOutput) {
+                    parts.push({
+                        type: PersistedChatPartType.BATCH_PROGRESS,
+                        data: (rawOutput as Record<string, unknown>)['batchProgress'] as Record<string, unknown>,
+                    })
+                }
+                if (toolName === 'ap_execute_action' && result) {
+                    const outputRecord = typeof rawOutput === 'object' && rawOutput !== null ? rawOutput as Record<string, unknown> : {}
+                    const meta = typeof outputRecord['_meta'] === 'object' && outputRecord['_meta'] !== null ? outputRecord['_meta'] as Record<string, unknown> : undefined
+                    const connectionLabel = typeof meta?.['connectionLabel'] === 'string' ? meta['connectionLabel'] : undefined
+                    const firstContentText = Array.isArray(outputRecord['content']) && typeof outputRecord['content'][0]?.['text'] === 'string' ? outputRecord['content'][0]['text'] as string : ''
+                    const isAppSuccess = result.type === 'tool-result'
+                        && outputRecord['success'] !== false
+                        && outputRecord['isError'] !== true
+                        && !chatToolClassification.hasFailureTextPrefix(firstContentText)
+                        && !firstContentText.includes('cancelled by user')
+                    const errorText = !isAppSuccess && firstContentText
+                        ? firstContentText
+                        : (result.type === 'tool-error' && typeof result.output === 'string' ? result.output : undefined)
+                    parts.push({
+                        type: PersistedChatPartType.ACTION_RECEIPT,
+                        toolCallId: part.toolCallId ?? '',
+                        actionDisplayName: title ?? toolName,
+                        pieceName: typeof input['pieceName'] === 'string' ? input['pieceName'] : '',
+                        ...spreadIfDefined('connectionLabel', connectionLabel),
+                        status: isAppSuccess ? 'success' : 'failed',
+                        output: rawOutput,
+                        ...spreadIfDefined('errorMessage', errorText),
+                        timestamp: new Date().toISOString(),
+                    })
+                }
                 break
             }
         }
@@ -204,6 +281,8 @@ function buildStepParts({ content }: {
 export const chatAiUtils = {
     createChatModel,
     stripThinkingBlocks,
+    sanitizeTruncatedAssistantTail,
+    collectStepMessages,
     buildProviderOptions,
     buildSystemPromptWithCaching,
     buildStepParts,

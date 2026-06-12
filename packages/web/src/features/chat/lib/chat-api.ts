@@ -2,6 +2,7 @@ import {
   type ChatHistoryMessage,
   type PersistedChatMessage,
   ChatConversation,
+  ConnectionOption,
   CreateChatConversationRequest,
   SeekPage,
   UpdateChatConversationRequest,
@@ -54,26 +55,58 @@ async function deleteConversation(id: string): Promise<void> {
 async function sendMessage({
   conversationId,
   content,
+  runId,
   files,
 }: {
   conversationId: string;
   content: string;
+  runId?: string;
   files?: Array<{ name: string; mimeType: string; data: string }>;
-}): Promise<{ conversationId: string }> {
-  return api.post<{ conversationId: string }>(
+}): Promise<{ conversationId: string; runId?: string }> {
+  return api.post<{ conversationId: string; runId?: string }>(
     `/v1/chat/conversations/${conversationId}/messages`,
-    { content, files },
+    { content, runId, files },
   );
 }
 
 async function approveToolCall({
   gateId,
   approved,
+  payload,
 }: {
   gateId: string;
   approved: boolean;
+  payload?: Record<string, unknown>;
 }): Promise<void> {
-  return api.post<void>(`/v1/chat/tool-approvals/${gateId}`, { approved });
+  return api.post<void>(`/v1/chat/tool-approvals/${gateId}`, {
+    approved,
+    payload,
+  });
+}
+
+async function cancelConversation(conversationId: string): Promise<void> {
+  return api.post<void>(`/v1/chat/conversations/${conversationId}/cancel`);
+}
+
+async function getPickerConnections({
+  conversationId,
+  pieceName,
+}: {
+  conversationId: string;
+  pieceName: string;
+}): Promise<ConnectionOption[]> {
+  return api.get(`/v1/chat/conversations/${conversationId}/connections`, {
+    pieceName,
+  });
+}
+
+async function getPendingGate(conversationId: string): Promise<{
+  gateId: string;
+  toolName: string;
+  displayName: string;
+  toolInput: Record<string, unknown>;
+} | null> {
+  return api.get(`/v1/chat/conversations/${conversationId}/pending-gate`);
 }
 
 export const chatApi = {
@@ -85,4 +118,7 @@ export const chatApi = {
   deleteConversation,
   sendMessage,
   approveToolCall,
+  cancelConversation,
+  getPickerConnections,
+  getPendingGate,
 };
