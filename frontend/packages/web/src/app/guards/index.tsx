@@ -25,6 +25,12 @@ const ChatWithAIPage = React.lazy(() =>
   })),
 );
 
+const IntegrationHubPage = React.lazy(() =>
+  import('@/app/routes/integration-hub').then((m) => ({
+    default: m.IntegrationHubPage,
+  })),
+);
+
 function chatElement() {
   return (
     <AllowOnlyLoggedInUserOnlyGuard>
@@ -44,12 +50,31 @@ const chatRoutes = [
   { path: '/chat/:conversationId', element: chatElement() },
 ];
 
+function integrationHubElement() {
+  return (
+    <AllowOnlyLoggedInUserOnlyGuard>
+      <ProjectDashboardLayout>
+        <PageTitle title="Integration Hub">
+          <Suspense fallback={<RouteLoadingBar />}>
+            <IntegrationHubPage />
+          </Suspense>
+        </PageTitle>
+      </ProjectDashboardLayout>
+    </AllowOnlyLoggedInUserOnlyGuard>
+  );
+}
+
+const integrationHubRoutes = [
+  { path: '/integration-hub', element: integrationHubElement() },
+];
+
 const routes = [
   ...publicRoutes,
   ...projectRoutes,
   ...authRoutes,
   ...platformRoutes,
   ...chatRoutes,
+  ...integrationHubRoutes,
   {
     path: '/projects/:projectId',
     element: (
