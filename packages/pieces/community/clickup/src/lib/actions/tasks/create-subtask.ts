@@ -4,7 +4,7 @@ import {
   createAction,
 } from '@activepieces/pieces-framework';
 import { HttpMethod, getAccessTokenOrThrow } from '@activepieces/pieces-common';
-import { MarkdownVariant } from '@activepieces/shared';
+import { MarkdownVariant } from '@activepieces/pieces-framework';
 
 import {
   clickupCommon,
@@ -17,6 +17,8 @@ export const createClickupSubtask = createAction({
   auth: clickupAuth,
   name: 'create_subtask',
   description: 'Creates a subtask in ClickUp',
+  audience: 'both',
+  aiMetadata: { description: 'Create a child task nested under an existing parent task in a ClickUp list, with optional status, priority, assignees, dates, time estimate, and custom fields. Pick this when the new task must belong to a parent task; use Create Task for a standalone top-level task. Each call creates a new subtask, so it is not idempotent.', idempotent: false },
   displayName: 'Create Subtask',
   props: {
     workspace_id: clickupCommon.workspace_id(),

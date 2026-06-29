@@ -1,14 +1,6 @@
-import {
-    ExecutionMode,
-    isNil,
-    NetworkMode,
-    partition,
-    WorkerMachineHealthcheckRequest,
-    WorkerMachineStatus,
-    WorkerMachineType,
-    WorkerMachineWithStatus,
-    WorkerSettingsResponse,
-} from '@activepieces/shared'
+import { isNil, partition } from '@activepieces/core-utils'
+import { apVersionUtil } from '@activepieces/server-utils'
+import { ExecutionMode, NetworkMode, WorkerMachineHealthcheckRequest, WorkerMachineStatus, WorkerMachineType, WorkerMachineWithStatus, WorkerSettingsResponse } from '@activepieces/shared'
 
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
@@ -51,7 +43,6 @@ async function buildSettingsResponse(_log: FastifyBaseLogger): Promise<WorkerSet
         LOKI_USERNAME: system.get(AppSystemProp.LOKI_USERNAME),
         BETTERSTACK_HOST: system.get(AppSystemProp.BETTERSTACK_HOST),
         BETTERSTACK_TOKEN: system.get(AppSystemProp.BETTERSTACK_TOKEN),
-        OTEL_ENABLED: system.get(AppSystemProp.OTEL_ENABLED) === 'true',
         PUBLIC_URL: await domainHelper.getPublicUrl({
             path: '',
         }),
@@ -62,6 +53,7 @@ async function buildSettingsResponse(_log: FastifyBaseLogger): Promise<WorkerSet
         SSRF_ALLOW_LIST: system.get(AppSystemProp.SSRF_ALLOW_LIST)?.split(',').map(f => f.trim()) ?? [],
         NETWORK_MODE: system.getOrThrow<NetworkMode>(AppSystemProp.NETWORK_MODE),
         PAGE_ONCALL_WEBHOOK: system.get(AppSystemProp.PAGE_ONCALL_WEBHOOK),
+        APP_VERSION: apVersionUtil.getCurrentRelease(),
     }
     settingsCache.set(cacheKey, settings)
     return settings
@@ -72,7 +64,7 @@ export const machineService = (log: FastifyBaseLogger) => {
         async onDisconnect(request: OnDisconnectParams): Promise<void> {
             log.info({
                 message: 'Worker disconnected',
-                workerId: request.workerId,
+                worker: { id: request.workerId },
             })
             await workerMachineCache().delete([request.workerId])
         },

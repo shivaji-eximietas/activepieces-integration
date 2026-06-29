@@ -1,6 +1,7 @@
-import { z } from 'zod';
+import * as z from "zod/mini";
 import { ActionContext } from '../context';
-import { ActionBase } from '../piece-metadata';
+import type { OutputSchema } from '../output-schema';
+import { ActionBase, Audience, AiMetadata } from '../piece-metadata';
 import { InputPropertyMap } from '../property';
 import { ExtractPieceAuthPropertyTypeForMethods, PieceAuthProperty } from '../property/authentication';
 
@@ -9,12 +10,12 @@ export type ActionRunner<PieceAuth extends PieceAuthProperty | PieceAuthProperty
 
 export const ErrorHandlingOptionsParam = z.object({
   retryOnFailure: z.object({
-    defaultValue: z.boolean().optional(),
-    hide: z.boolean().optional(),
+    defaultValue: z.optional(z.boolean()),
+    hide: z.optional(z.boolean()),
   }),
   continueOnFailure: z.object({
-    defaultValue: z.boolean().optional(),
-    hide: z.boolean().optional(),
+    defaultValue: z.optional(z.boolean()),
+    hide: z.optional(z.boolean()),
   }),
 })
 export type ErrorHandlingOptionsParam = z.infer<typeof ErrorHandlingOptionsParam>
@@ -30,18 +31,14 @@ type CreateActionParams<PieceAuth extends PieceAuthProperty | PieceAuthProperty[
   auth?: PieceAuth
   displayName: string
   description: string
-  /**
-   * Optional alternate description shown to LLMs (chat / MCP).
-   * Use this for tool-selection guidance, anti-patterns, disambiguation,
-   * and parameter pitfalls that would be noise in the human UI description.
-   * Falls back to {@code description} when omitted.
-   */
-  llmDescription?: string
   props: ActionProps
   run: ActionRunner<ExtractPieceAuthPropertyTypeForMethods<PieceAuth>, ActionProps>
   test?: ActionRunner<ExtractPieceAuthPropertyTypeForMethods<PieceAuth>, ActionProps>
   requireAuth?: boolean
   errorHandlingOptions?: ErrorHandlingOptionsParam
+  outputSchema?: OutputSchema
+  audience?: Audience
+  aiMetadata?: AiMetadata
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -55,7 +52,9 @@ export class IAction<PieceAuth extends PieceAuthProperty | PieceAuthProperty[] |
     public readonly test: ActionRunner<ExtractPieceAuthPropertyTypeForMethods<PieceAuth>, ActionProps>,
     public readonly requireAuth: boolean,
     public readonly errorHandlingOptions: ErrorHandlingOptionsParam,
-    public readonly llmDescription?: string,
+    public readonly outputSchema?: OutputSchema,
+    public readonly audience?: Audience,
+    public readonly aiMetadata?: AiMetadata,
   ) { }
 }
 
@@ -88,6 +87,8 @@ export const createAction = <
         defaultValue: false,
       }
     },
-    params.llmDescription,
+    params.outputSchema,
+    params.audience,
+    params.aiMetadata,
   )
 }

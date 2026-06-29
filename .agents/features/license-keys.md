@@ -7,7 +7,7 @@ License Keys are the mechanism by which self-hosted Enterprise customers activat
 - `packages/server/api/src/app/ee/license-keys/license-keys-module.ts` — module registration, schedules daily `TRIAL_TRACKER` job
 - `packages/server/api/src/app/ee/license-keys/license-keys-controller.ts` — REST controller (get key info, verify and apply)
 - `packages/server/api/src/app/ee/license-keys/license-keys-service.ts` — service (validate, apply limits, downgrade, request trial)
-- `packages/shared/src/lib/core/license-keys/index.ts` — `LicenseKeyEntity`, `VerifyLicenseKeyRequestBody`, `CreateTrialLicenseKeyRequestBody` types
+- `packages/core/shared/src/lib/core/license-keys/index.ts` — `LicenseKeyEntity`, `VerifyLicenseKeyRequestBody`, `CreateTrialLicenseKeyRequestBody` types
 - `packages/web/src/features/billing/components/license-key.tsx` — frontend license key display component
 - `packages/web/src/features/billing/components/activate-license-dialog.tsx` — activation dialog
 - `packages/web/src/app/routes/platform/billing/index.tsx` — billing/license page
@@ -73,6 +73,7 @@ The remote secrets service returns an object with these feature flags:
 | `secretManagersEnabled` | boolean | Secret managers |
 | `agentsEnabled` | boolean | Agents |
 | `aiProvidersEnabled` | boolean | AI providers |
+| `dataManipulationEnabled` | boolean | Formula / data-manipulation builder feature |
 | `isTrial` | boolean | Whether this is a trial key |
 
 ## Background Job

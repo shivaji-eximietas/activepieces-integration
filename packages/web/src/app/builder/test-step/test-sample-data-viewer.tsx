@@ -1,22 +1,23 @@
-import {
-  AgentResult,
-  AgentTaskStatus,
-  FlowAction,
-  isNil,
-} from '@activepieces/shared';
+import { isNil, tryParseFriendlyPieceError } from '@activepieces/core-utils';
+import { AgentResult, AgentTaskStatus, FlowAction } from '@activepieces/shared';
 import { t } from 'i18next';
 import { Loader2, Play } from 'lucide-react';
 import React, { useState } from 'react';
 
+import { SmartOutputViewer } from '@/components/custom/smart-output-viewer';
+import type { OutputSchema } from '@/components/custom/smart-output-viewer/types';
 import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 
 import { DataDisplayTabs } from '../data-display/data-display-tabs';
+import { ErrorExplanationContext } from '../data-display/explanation-prompt';
+import { FriendlyErrorView } from '../data-display/friendly-error-view';
+import { ClosePanelButton } from '../step-data/close-panel-button';
+import { StepDataPanelHeader } from '../step-data/step-data-panel-header';
+import { StepDataPanelViewToggle } from '../step-data/step-data-panel-view-toggle';
 
 import { AgentTestStep, isRunAgent } from './agent-test-step';
-import { TestPanelHeader } from './test-panel-header';
-import { TestPanelViewToggle } from './test-panel-view-toggle';
+import { JsonTreeSkeleton } from './json-tree-skeleton';
 import { TestButtonTooltip } from './test-step-tooltip';
 
 type TestSampleDataViewerProps = {
@@ -30,6 +31,9 @@ type TestSampleDataViewerProps = {
   lastTestDate: string | undefined;
   children?: React.ReactNode;
   consoleLogs: string | null;
+  explanationContext?: ErrorExplanationContext;
+  pieceDisplayName?: string;
+  pieceSchema?: OutputSchema | null;
 } & (
   | {
       hideCancel: true;
@@ -72,6 +76,9 @@ export const TestSampleDataViewer = React.memo(
       hideCancel,
       sampleDataInput,
       consoleLogs,
+      explanationContext,
+      pieceDisplayName,
+      pieceSchema,
     } = props;
     const [requestedTab, setActiveTab] = useState<ActiveTab>('Output');
     const hasInput = !isNil(sampleDataInput);
@@ -103,11 +110,14 @@ export const TestSampleDataViewer = React.memo(
         : outputData;
 
     const showAgentView = isRunAgent(currentStep) && !errorMessage;
+    const friendlyError =
+      !isTesting && !showAgentView && activeTab === 'Output'
+        ? tryParseFriendlyPieceError(errorMessage)
+        : null;
 
     return (
       <div className="flex flex-col h-full w-full min-h-0">
-        <TestPanelHeader status={status} lastTestDate={lastTestDate} />
-        {!isTesting && children}
+        <StepDataPanelHeader status={status} lastTestDate={lastTestDate} />
         <div className="flex-1 flex flex-col w-full text-start min-h-0">
           {errorMessage && !isTesting && (
             <div className="px-3 pt-2 text-xs text-muted-foreground shrink-0">
@@ -123,6 +133,7 @@ export const TestSampleDataViewer = React.memo(
               disabled={isTesting}
             />
           )}
+          {!isTesting && !showAgentView && children}
           <div className="flex-1 min-h-0 px-3 pb-3 overflow-auto">
             {isTesting && !showAgentView ? (
               <TestingPreviewContent data={activeData} />
@@ -130,6 +141,18 @@ export const TestSampleDataViewer = React.memo(
               <AgentTestStep
                 agentResult={getAgentResult(sampleData)}
                 errorMessage={errorMessage}
+              />
+            ) : friendlyError ? (
+              <FriendlyErrorView
+                error={friendlyError}
+                explanationContext={explanationContext}
+                pieceDisplayName={pieceDisplayName}
+              />
+            ) : activeTab === 'Output' && !errorMessage ? (
+              <SmartOutputViewer
+                json={outputData}
+                title={t('Output')}
+                pieceSchema={pieceSchema ?? null}
               />
             ) : (
               <DataDisplayTabs
@@ -183,7 +206,10 @@ const TestPanelToolbar = ({
       hasLogs={hasLogs}
       disabled={disabled}
     />
-    <TestPanelViewToggle disabled={disabled} />
+    <div className="flex items-center gap-1 shrink-0">
+      <StepDataPanelViewToggle disabled={disabled} />
+      <ClosePanelButton />
+    </div>
   </div>
 );
 
@@ -333,26 +359,6 @@ const TestingPreviewContent = ({ data }: TestingPreviewContentProps) => {
   }
   return <JsonTreeSkeleton />;
 };
-
-const JsonTreeSkeleton = () => (
-  <div className="flex flex-col gap-3 py-3 animate-pulse">
-    <Skeleton className="h-3 w-24" />
-    <div className="pl-4 flex flex-col gap-2.5">
-      <Skeleton className="h-3 w-32" />
-      <div className="pl-4 flex flex-col gap-2.5">
-        <Skeleton className="h-3 w-48" />
-        <Skeleton className="h-3 w-40" />
-        <Skeleton className="h-3 w-44" />
-      </div>
-      <Skeleton className="h-3 w-28" />
-      <div className="pl-4 flex flex-col gap-2.5">
-        <Skeleton className="h-3 w-36" />
-        <Skeleton className="h-3 w-52" />
-      </div>
-      <Skeleton className="h-3 w-32" />
-    </div>
-  </div>
-);
 
 TestSampleDataViewer.displayName = 'TestSampleDataViewer';
 

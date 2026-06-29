@@ -1,3 +1,4 @@
+import { isNil, stringifyNullOrUndefined } from '@activepieces/core-utils';
 import {
   FlowAction,
   FlowActionType,
@@ -6,11 +7,9 @@ import {
   flowOperations,
   flowStructureUtil,
   FlowVersion,
-  isNil,
   LoopStepOutput,
   SampleDataFileType,
   StepRunResponse,
-  stringifyNullOrUndefined,
   WebsocketClientEvent,
 } from '@activepieces/shared';
 import { Socket } from 'socket.io-client';
@@ -99,6 +98,7 @@ export const createRunState = (
           userManuallySelectedStepDuringRun: isNewRun
             ? false
             : state.userManuallySelectedStepDuringRun,
+          isStepDataPanelOpen: isNewRun ? true : state.isStepDataPanelOpen,
         };
       }),
     selectFailedStep: () => {
@@ -121,8 +121,8 @@ export const createRunState = (
         loopsIndexes: {},
         selectedBranchIndex: null,
         userManuallySelectedStepDuringRun: false,
+        isStepDataPanelOpen: false,
       }),
-
     setLoopIndex: (stepName: string, index: number) => {
       set((state) => {
         const parentLoop = flowStructureUtil.getStepOrThrow(

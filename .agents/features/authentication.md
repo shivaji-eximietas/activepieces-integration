@@ -11,7 +11,7 @@ The authentication feature handles user identity creation, sign-in, and JWT sess
 - `packages/server/api/src/app/authentication/lib/password-hasher.ts` — bcrypt helpers
 - `packages/server/api/src/app/authentication/user-identity/user-identity-entity.ts` — `user_identity` table entity
 - `packages/server/api/src/app/authentication/user-identity/user-identity-service.ts` — identity CRUD, password verification, `verify()`, `getIdentityByEmail()`
-- `packages/shared/src/lib/core/authentication/dto/authentication-response.ts` — `AuthenticationResponse` Zod schema
+- `packages/core/shared/src/lib/core/authentication/dto/authentication-response.ts` — `AuthenticationResponse` Zod schema
 - `packages/web/src/features/authentication/hooks/auth-hooks.ts` — React Query mutations: `useSignIn`, `useSignUp`, `useSendOtpEmail`, `useResetPassword`, `useVerifyEmail`
 - `packages/web/src/features/authentication/components/sign-in-form.tsx` — sign-in form component
 - `packages/web/src/features/authentication/components/sign-up-form.tsx` — sign-up form component
@@ -79,3 +79,7 @@ All endpoints are rate-limited via `API_RATE_LIMIT_AUTHN_MAX` / `API_RATE_LIMIT_
 7. `ApFlagId.USER_CREATED` flag saved
 8. Telemetry `SIGNED_UP` event fired
 9. Newsletter subscription attempted (production + non-embedding platforms only)
+
+## Side Effects on Sign-In
+1. `ApplicationEventName.USER_SIGNED_IN` audit event recorded
+2. Telemetry `SIGNED_IN` event fired (email/password sign-in only; SSO/federated not covered)

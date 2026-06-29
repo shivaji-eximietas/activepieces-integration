@@ -5,7 +5,7 @@ The AI Providers module lets platform admins configure one or more LLM backends 
 
 ## Key Files
 - `packages/server/api/src/app/ai/` — backend module (controller, service, entity)
-- `packages/shared/src/lib/management/ai-providers/index.ts` — all shared Zod schemas, enums, and request/response types
+- `packages/core/shared/src/lib/management/ai-providers/index.ts` — all shared Zod schemas, enums, and request/response types
 - `packages/web/src/features/platform-admin/api/ai-provider-api.ts` — frontend API client
 - `packages/web/src/features/platform-admin/hooks/ai-provider-hooks.ts` — TanStack Query hooks
 - `packages/web/src/app/routes/platform/setup/ai/index.tsx` — platform admin AI setup page
@@ -84,3 +84,33 @@ During flow execution, AI pieces call `GET /v1/ai-providers/{provider}/config` t
 The platform admin AI setup page lives at `/platform/setup/ai`. It renders an `ai-provider-card` for each configured provider and an "Add Provider" button that opens `upsert-provider-dialog`. The `upsert-provider-config-form` adapts its fields to the selected `AIProviderName`. The `model-form-popover` lets admins configure which models are exposed per provider.
 
 Inside the builder, the agent step settings use `features/agents/ai-model/index.tsx` (with `hooks.ts`) to render a model selector that queries `GET /v1/ai-providers/:provider/models` via `aiProviderApi.listModelsForProvider()`.
+
+## AI Tool Configs (Capabilities)
+
+A sibling feature under `packages/server/api/src/app/ai/`, distinct from AI Providers (LLM vendors). It lets platform admins give the chat assistant external **capabilities** — web search, web scraping, image generation — by storing per-provider API keys. Consumed by the chat feature (#13906) via `getEnabledTools()`.
+
+### Key Files
+- `packages/server/api/src/app/ai/ai-tool-config-controller.ts` — CRUD controller (`/v1/ai-tools`), all routes `platformAdminOnly`
+- `packages/server/api/src/app/ai/ai-tool-config-service.ts` — list/upsert/update/delete/getEnabledTools (auth encrypted at rest, ownership checked before update/delete)
+- `packages/server/api/src/app/ai/ai-tool-config.module.ts` — module registration (EE/Cloud only)
+- `packages/core/shared/src/lib/management/ai-tools/index.ts` — shared Zod schemas/enums
+- `packages/web/src/features/platform-admin/api/ai-tool-config-api.ts` + `hooks/ai-tool-config-hooks.ts` — frontend client + TanStack Query hooks
+- `packages/web/src/app/routes/platform/setup/ai-capabilities/` — admin page, capability dialog, provider catalog
+
+### Endpoints (platform-admin only, EE/Cloud)
+- `GET /v1/ai-tools` — list configs (returns `AiToolConfigWithoutSensitiveData`, `auth` stripped)
+- `POST /v1/ai-tools` — upsert a capability config (one per capability)
+- `POST /v1/ai-tools/:id` — update (e.g. toggle `enabled`)
+- `DELETE /v1/ai-tools/:id` — delete
+
+### Edition Availability
+`aiToolConfigModule` is registered only in EE and Cloud editions in `app.ts` (not Community). The frontend page is gated to platform admins.
+
+### Entity
+**AiToolConfig**: id, platformId, capability (`AiToolCapability`), provider (`AiToolProvider`), auth (EncryptedObject), config (JSON, nullable), enabled (boolean). Unique on (platformId, capability). Relation: platform (CASCADE).
+
+### Domain Terms
+- **AiToolConfig**: platform-scoped row binding a capability to a provider's encrypted credentials.
+- **AiToolCapability**: `WEB_SEARCH`, `WEB_SCRAPING`, `IMAGE_GENERATION`.
+- **AiToolProvider**: `TAVILY`, `FIRECRAWL`, `APIFY`, `FAL`.
+- **AiToolConfigWithoutSensitiveData**: list/read DTO with `auth` removed and a `hasApiKey` boolean.

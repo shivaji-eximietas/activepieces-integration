@@ -1,7 +1,7 @@
+import { ApId, isNil } from '@activepieces/core-utils'
 import { apDayjsDuration, memoryLock } from '@activepieces/server-utils'
-import { ApId, EventDestinationJobData, ExecuteChatAgentJobData, ExecuteFlowJobData, getDefaultJobPriority, isNil, JOB_PRIORITY, JobData, PollingJobData, RenewWebhookJobData, ScheduleOptions, UserInteractionJobData, WebhookJobData, WorkerJobType } from '@activepieces/shared'
+import { EventDestinationJobData, ExecuteChatAgentJobData, ExecuteFlowJobData, getDefaultJobPriority, JOB_PRIORITY, JobData, PollingJobData, RenewWebhookJobData, ScheduleOptions, UserInteractionJobData, WebhookJobData, WorkerJobType } from '@activepieces/shared'
 import { Job, Queue } from 'bullmq'
-import { BullMQOtel } from 'bullmq-otel'
 import { FastifyBaseLogger } from 'fastify'
 import { redisConnections } from '../../database/redis-connections'
 import { workerGroupService } from '../../ee/platform/platform-plan/worker-group.service'
@@ -47,6 +47,7 @@ export const jobQueue = (log: FastifyBaseLogger) => ({
                     delay: params.delay,
                     jobId: params.id,
                     ...(data.jobType === WorkerJobType.EVENT_DESTINATION ? { removeOnFail: true } : {}),
+                    ...(data.jobType === WorkerJobType.EXECUTE_CHAT_AGENT ? { attempts: 1 } : {}),
                     ...isUserInteractionJob(data.jobType) ? {
                         attempts: 1,
                         removeOnComplete: { age: 300 },
@@ -64,7 +65,7 @@ export const jobQueue = (log: FastifyBaseLogger) => ({
         )
 
         log.info({
-            flowVersionId,
+            flowVersion: { id: flowVersionId },
         }, '[jobQueue#removeRepeatingJob] removed jobs from all queues')
     },
 
@@ -75,13 +76,13 @@ export const jobQueue = (log: FastifyBaseLogger) => ({
         if (!isNil(job)) {
             await job.remove()
             log.info({
-                jobId,
+                job: { id: jobId },
                 queueName,
             }, '[jobQueue#removeOneTimeJob] removed job from queue')
             return
         }
         log.info({
-            jobId,
+            job: { id: jobId },
             queueName,
         }, '[jobQueue#removeOneTimeJob] job not found in queue')
     },
@@ -124,9 +125,7 @@ async function ensureQueueExists({ log, queueName }: { log: FastifyBaseLogger, q
                 return existingQueue
             }
 
-            const isOtpEnabled = system.getBoolean(AppSystemProp.OTEL_ENABLED)
             const queue = new Queue(queueName, {
-                telemetry: isOtpEnabled ? new BullMQOtel(queueName) : undefined,
                 connection: await redisConnections.create(),
                 defaultJobOptions: {
                     attempts: 2,
@@ -160,6 +159,7 @@ const USER_INTERACTION_JOB_TYPES = new Set([
     WorkerJobType.EXECUTE_VALIDATION,
     WorkerJobType.EXECUTE_TRIGGER_HOOK,
     WorkerJobType.EXECUTE_EXTRACT_PIECE_INFORMATION,
+    WorkerJobType.EXECUTE_TOKEN_REFRESH,
 ])
 
 export function isUserInteractionJob(jobType: WorkerJobType): boolean {

@@ -1,7 +1,7 @@
 import { googleSheetsAuth } from '../common/common';
 import { createAction } from '@activepieces/pieces-framework';
 import { includeTeamDrivesProp, sheetIdProp, spreadsheetIdProp } from '../common/props';
-import { google } from 'googleapis';
+import { sheets as googleSheets } from '@googleapis/sheets';
 import { createGoogleClient } from '../common/common';
 
 export const deleteWorksheetAction = createAction({
@@ -9,6 +9,12 @@ export const deleteWorksheetAction = createAction({
     name: 'delete-worksheet',
     displayName: 'Delete Worksheet',
     description: 'Permanently delete a specific worksheet.',
+    audience: 'both',
+    aiMetadata: {
+        description:
+            'Permanently removes one worksheet (tab) from a spreadsheet, identified by its stable sheet id. Use when an agent needs to drop an entire tab and its data. Idempotent on the stable sheet id — the tab ends up absent; this is destructive and cannot be undone.',
+        idempotent: true,
+    },
     props: {
         includeTeamDrives: includeTeamDrivesProp(),
         spreadsheetId: spreadsheetIdProp('Spreadsheet', 'The ID of the spreadsheet to use.'),
@@ -16,7 +22,7 @@ export const deleteWorksheetAction = createAction({
     },
     async run(context) {
         const authClient = await createGoogleClient(context.auth);
-        const sheets = google.sheets({ version: 'v4', auth: authClient });
+        const sheets = googleSheets({ version: 'v4', auth: authClient });
 
         const response = await sheets.spreadsheets.batchUpdate({
             spreadsheetId: context.propsValue.spreadsheetId,

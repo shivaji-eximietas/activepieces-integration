@@ -4,7 +4,8 @@ import {
 	DynamicPropsValue,
 	Property,
 } from '@activepieces/pieces-framework';
-import { google } from 'googleapis';
+import { drive as googleDrive } from '@googleapis/drive';
+import { docs as googleDocs } from '@googleapis/docs';
 import { folderIdProp } from '../common/props';
 
 export const findDocumentAction = createAction({
@@ -12,6 +13,12 @@ export const findDocumentAction = createAction({
 	name: 'google-docs-find-document',
 	displayName: 'Find Document',
 	description: 'Search for document by name.',
+	audience: 'both',
+	aiMetadata: {
+		description:
+			'Searches Google Drive for a Google Docs document whose name contains the given text, optionally scoped to a folder, and returns the first match. Use when an agent has a document name but not its ID and needs to resolve it. Idempotent only when used purely for lookup; enabling "Create a new document if not found" makes it create (and optionally move) a new document on each miss, which is a mutating side effect.',
+		idempotent: false,
+	},
 	props: {
 		name: Property.ShortText({
 			displayName: 'Document Name',
@@ -51,8 +58,8 @@ export const findDocumentAction = createAction({
 
 		const authClient = await createGoogleClient(context.auth);
 
-		const drive = google.drive({ version: 'v3', auth: authClient });
-		const docs = google.docs({ version: 'v1', auth: authClient });
+		const drive = googleDrive({ version: 'v3', auth: authClient });
+		const docs = googleDocs({ version: 'v1', auth: authClient });
 
 		// Search for the document in Google Drive
 		const query: string[] = [

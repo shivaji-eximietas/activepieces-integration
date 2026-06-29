@@ -1,4 +1,5 @@
-import { Flow, FlowId, FlowRunId, PlatformId, ProjectId, UserId } from '@activepieces/shared'
+import { FlowId, FlowRunId, PlatformId, ProjectId, UserId } from '@activepieces/core-utils'
+import { Flow } from '@activepieces/shared'
 import { Job, JobsOptions } from 'bullmq'
 import { Dayjs } from 'dayjs'
 
@@ -12,7 +13,15 @@ export enum SystemJobName {
     AI_CREDIT_UPDATE_CHECK = 'ai-credit-update-check',
     HARD_DELETE_PROJECT = 'hard-delete-project',
     HARD_DELETE_PLATFORM = 'hard-delete-platform',
+    FLOW_RUN_TRACKING = 'flow-run-tracking',
     RESUME_DELAY_WAITPOINT = 'resume-delay-waitpoint',
+    BUNDLE_PIECE = 'bundle-piece',
+    CHAT_FUNNEL_SYNC = 'chat-funnel-sync',
+}
+
+type BundlePieceSystemJobData = {
+    name: string
+    version: string
 }
 
 type DeleteFlowDurableSystemJobData =  {
@@ -53,7 +62,10 @@ type SystemJobDataMap = {
     [SystemJobName.AI_CREDIT_UPDATE_CHECK]: AiCreditUpdateCheckSystemJobData
     [SystemJobName.HARD_DELETE_PROJECT]: HardDeleteProjectSystemJobData
     [SystemJobName.HARD_DELETE_PLATFORM]: HardDeletePlatformSystemJobData
+    [SystemJobName.FLOW_RUN_TRACKING]: Record<string, never>
     [SystemJobName.RESUME_DELAY_WAITPOINT]: ResumeDelayWaitpointSystemJobData
+    [SystemJobName.BUNDLE_PIECE]: BundlePieceSystemJobData
+    [SystemJobName.CHAT_FUNNEL_SYNC]: Record<string, never>
 }
 
 export type SystemJobData<T extends SystemJobName = SystemJobName> = T extends SystemJobName ? SystemJobDataMap[T] : never

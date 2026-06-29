@@ -1,9 +1,9 @@
-import { beforeAll, afterAll, describe, it, expect } from 'vitest'
-import { FastifyInstance } from 'fastify'
 import { DefaultProjectRole } from '@activepieces/shared'
+import { FastifyInstance } from 'fastify'
 import { StatusCodes } from 'http-status-codes'
-import { setupTestEnvironment, teardownTestEnvironment } from '../../../helpers/test-setup'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { createMemberContext, createTestContext } from '../../../helpers/test-context'
+import { setupTestEnvironment, teardownTestEnvironment } from '../../../helpers/test-setup'
 
 let app: FastifyInstance
 
@@ -81,6 +81,28 @@ describe('Chat Conversations API', () => {
             expect(memberResponse.statusCode).toBe(StatusCodes.OK)
             const memberBody = memberResponse.json()
             expect(memberBody.data.every((c: { userId: string }) => c.userId === memberCtx.user.id)).toBe(true)
+        })
+    })
+
+    describe('List conversations performance', () => {
+        it('does not return messages or uiMessages in list response', async () => {
+            const ctx = await createTestContext(app, { plan: { chatEnabled: true } })
+
+            await ctx.post(CONVERSATIONS_URL, { title: 'Lightweight List Test' })
+
+            const response = await ctx.get(CONVERSATIONS_URL)
+            expect(response.statusCode).toBe(StatusCodes.OK)
+            const body = response.json()
+            expect(body.data).toHaveLength(1)
+
+            const conv = body.data[0]
+            expect(conv.id).toBeDefined()
+            expect(conv.title).toBe('Lightweight List Test')
+            expect(conv.status).toBeDefined()
+            expect(conv.created).toBeDefined()
+            expect(conv.messages).toBeUndefined()
+            expect(conv.uiMessages).toBeUndefined()
+            expect(conv.summary).toBeUndefined()
         })
     })
 

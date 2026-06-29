@@ -5,7 +5,7 @@ import { Message, FileAttachment } from '@microsoft/microsoft-graph-types';
 import dayjs from 'dayjs';
 import { microsoftOutlookAuth } from '../common/auth';
 import { mailFolderIdDropdown } from '../common/props';
-import { isNil } from '@activepieces/shared';
+import { isNil } from '@activepieces/pieces-framework';
 
 async function enrichAttachments(
 	client: Client,
@@ -58,6 +58,9 @@ export const newAttachmentTrigger = createTrigger({
 	name: 'newAttachment',
 	displayName: 'New Attachment',
 	description: 'Triggers when a new email containing one or more attachments arrives.',
+	aiMetadata: {
+		description: 'Fires once per attachment when a new email carrying one or more file attachments arrives, optionally scoped to a folder, sender, or attachment-name filter. Each fire represents a single attachment from a newly received message.',
+	},
 	props: {
 		folderId: mailFolderIdDropdown({
 			displayName: 'Folder',

@@ -1,80 +1,96 @@
 import { t } from 'i18next';
+import { ReactNode } from 'react';
 
 import { chatStoreSelectors } from '@/features/chat/lib/chat-store';
 import { useChatStoreContext } from '@/features/chat/lib/chat-store-context';
-import { ChatUIMessage } from '@/features/chat/lib/chat-types';
+import { MultiQuestion } from '@/features/chat/lib/chat-store-types';
+import {
+  AnyToolPart,
+  ChatUIMessage,
+  chatPartUtils,
+} from '@/features/chat/lib/chat-types';
 
+import {
+  ConnectionPickerData,
+  ProjectPickerData,
+} from '../lib/message-parsers';
+
+import { ActionPreviewCard } from './action-preview-card';
+import { ChatCardSkeleton } from './chat-card-primitives';
 import { ChatInput } from './chat-input';
 import { ChatModelSelector } from './chat-model-selector';
+import { ConnectionPickerCard } from './connection-picker-card';
+import { McpReconnectCard, McpReconnectData } from './mcp-reconnect-card';
 import { MultiQuestionForm } from './multi-question-form';
-import { PlanApprovalForm } from './plan-approval-form';
-import { ToolApprovalForm } from './tool-approval-form';
+import { ProjectPickerCard } from './project-picker-card';
 
 export function ChatBottomBar({
   isStreaming,
   onSend,
   onStop,
+  onInputChange,
   selectedModel,
   onModelChange,
   lastAssistantMessage,
   lastMessageId,
+  placeholder,
+  banner,
 }: ChatBottomBarProps) {
-  const hasPlanApproval = useChatStoreContext(
-    chatStoreSelectors.hasPlanApproval,
+  const pendingActionPreview = useChatStoreContext((s) =>
+    chatStoreSelectors.pendingActionPreview({
+      state: s,
+      lastAssistantMessage,
+    }),
   );
-  const pendingPlanApproval = useChatStoreContext((s) => s.pendingPlanApproval);
-  const approvePlan = useChatStoreContext((s) => s.approvePlan);
-  const rejectPlan = useChatStoreContext((s) => s.rejectPlan);
-  const dismissPlan = useChatStoreContext((s) => s.dismissPlan);
-
-  const hasActiveApproval = useChatStoreContext(
-    chatStoreSelectors.hasActiveApproval,
+  const activeDisplayTool = useChatStoreContext((s) =>
+    chatStoreSelectors.activeDisplayTool({
+      state: s,
+      lastAssistantMessage,
+    }),
   );
-  const approvalDisplayName = useChatStoreContext(
-    chatStoreSelectors.approvalDisplayName,
-  );
-  const pendingApprovalRequest = useChatStoreContext(
-    (s) => s.pendingApprovalRequest,
-  );
-  const approveToolCall = useChatStoreContext((s) => s.approveToolCall);
-  const rejectToolCall = useChatStoreContext((s) => s.rejectToolCall);
-  const dismissApproval = useChatStoreContext((s) => s.dismissApproval);
-
   const activeQuestions = useChatStoreContext((s) =>
     chatStoreSelectors.activeQuestions({ state: s, lastAssistantMessage }),
   );
   const hasActiveForm = useChatStoreContext((s) =>
     chatStoreSelectors.hasActiveForm({ state: s, lastAssistantMessage }),
   );
+
+  const approveGate = useChatStoreContext((s) => s.approveGate);
+  const rejectGate = useChatStoreContext((s) => s.rejectGate);
   const dismissForm = useChatStoreContext((s) => s.dismissForm);
 
-  if (hasPlanApproval && pendingPlanApproval) {
-    return (
-      <PlanApprovalForm
-        key={pendingPlanApproval.gateId}
-        planSummary={pendingPlanApproval.planSummary}
-        steps={pendingPlanApproval.steps}
-        onApprove={approvePlan}
-        onReject={rejectPlan}
-        onDismiss={dismissPlan}
+  let activeCard: ReactNode = null;
+  let dismissActiveCard: (() => void) | null = null;
+
+  if (pendingActionPreview) {
+    const toolCallId = pendingActionPreview.toolCallId;
+    dismissActiveCard = () => rejectGate(toolCallId);
+    activeCard = (
+      <ActionPreviewCard
+        key={toolCallId}
+        preview={pendingActionPreview}
+        onRun={() => approveGate(toolCallId)}
+        onCancel={() => rejectGate(toolCallId)}
+        onDismiss={() => rejectGate(toolCallId)}
       />
     );
-  }
-
-  if (hasActiveApproval) {
-    return (
-      <ToolApprovalForm
-        key={pendingApprovalRequest?.gateId}
-        displayName={approvalDisplayName ?? ''}
-        onApprove={approveToolCall}
-        onReject={rejectToolCall}
-        onDismiss={dismissApproval}
+  } else if (activeDisplayTool) {
+    const toolCallId = chatPartUtils.getToolCallId(activeDisplayTool);
+    dismissActiveCard = () => rejectGate(toolCallId);
+    activeCard = (
+      <BlockingDisplayCard
+        toolPart={activeDisplayTool}
+        toolCallId={toolCallId}
+        activeQuestions={activeQuestions}
+        approveGate={approveGate}
+        rejectGate={rejectGate}
       />
     );
-  }
-
-  if (hasActiveForm && !isStreaming) {
-    return (
+  } else if (hasActiveForm && !isStreaming) {
+    dismissActiveCard = () => {
+      if (lastMessageId) dismissForm(lastMessageId);
+    };
+    activeCard = (
       <MultiQuestionForm
         key={lastMessageId}
         questions={activeQuestions}
@@ -90,28 +106,110 @@ export function ChatBottomBar({
     );
   }
 
+  // Typing a free-text reply abandons the active card. onSend resets interaction
+  // state (clearing dismissals); dismissing afterwards re-marks the gate as
+  // dismissed/rejected so the card doesn't flash back before the worker unblocks.
+  const handleSend = (text: string, files?: File[]) => {
+    void onSend(text, files);
+    dismissActiveCard?.();
+  };
+
   return (
-    <ChatInput
-      isStreaming={isStreaming}
-      onSend={onSend}
-      onStop={onStop}
-      placeholder={t('Reply...')}
-      rightActions={
-        <ChatModelSelector
-          selectedModel={selectedModel}
-          onModelChange={onModelChange}
+    <div className="flex flex-col gap-2">
+      {activeCard}
+      <div className="overflow-hidden rounded-2xl border border-foreground/20 transition-colors hover:border-foreground/40 focus-within:border-foreground/40">
+        {banner}
+        <ChatInput
+          isStreaming={activeCard ? false : isStreaming}
+          onSend={handleSend}
+          onStop={onStop}
+          onInputChange={onInputChange}
+          placeholder={
+            activeCard
+              ? t('Or reply in your own words')
+              : placeholder ?? t('Reply...')
+          }
+          rightActions={
+            <ChatModelSelector
+              selectedModel={selectedModel}
+              onModelChange={onModelChange}
+            />
+          }
         />
-      }
-    />
+      </div>
+    </div>
   );
+}
+
+function BlockingDisplayCard({
+  toolPart,
+  toolCallId,
+  activeQuestions,
+  approveGate,
+  rejectGate,
+}: {
+  toolPart: AnyToolPart;
+  toolCallId: string;
+  activeQuestions: MultiQuestion[];
+  approveGate: (gateId: string, payload?: Record<string, unknown>) => void;
+  rejectGate: (gateId: string) => void;
+}) {
+  const toolName = chatPartUtils.getToolPartName(toolPart);
+  const data = toolPart.input as Record<string, unknown>;
+
+  if (toolPart.state === 'input-streaming') {
+    return <ChatCardSkeleton />;
+  }
+
+  switch (toolName) {
+    case 'ap_show_questions':
+      return (
+        <MultiQuestionForm
+          key={toolCallId}
+          questions={activeQuestions}
+          onSubmit={(text) => approveGate(toolCallId, { answers: text })}
+          onDismiss={() => rejectGate(toolCallId)}
+        />
+      );
+    case 'ap_show_connection_required':
+    case 'ap_show_connection_picker':
+      return (
+        <ConnectionPickerCard
+          picker={data as unknown as ConnectionPickerData}
+          onResolve={(payload) => approveGate(toolCallId, payload)}
+          onDismiss={() => rejectGate(toolCallId)}
+        />
+      );
+    case 'ap_show_mcp_reconnect':
+      return (
+        <McpReconnectCard
+          reconnect={data as unknown as McpReconnectData}
+          onResolve={(payload) => approveGate(toolCallId, payload)}
+          onDismiss={() => rejectGate(toolCallId)}
+        />
+      );
+    case 'ap_show_project_picker':
+      return (
+        <ProjectPickerCard
+          picker={data as unknown as ProjectPickerData}
+          onResolve={(payload) => approveGate(toolCallId, payload)}
+          onDismiss={() => rejectGate(toolCallId)}
+        />
+      );
+    default:
+      return null;
+  }
 }
 
 type ChatBottomBarProps = {
   isStreaming: boolean;
   onSend: (text: string, files?: File[]) => void;
   onStop: () => void;
+  onInputChange?: (hasInput: boolean) => void;
   selectedModel: string | null;
   onModelChange: (modelId: string) => void;
   lastAssistantMessage: ChatUIMessage | undefined;
   lastMessageId: string | undefined;
+  placeholder?: string;
+  banner?: ReactNode;
 };

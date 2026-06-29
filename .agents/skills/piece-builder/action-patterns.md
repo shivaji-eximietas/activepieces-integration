@@ -14,6 +14,12 @@ export const createRecordAction = createAction({
   name: 'create_record',        // Unique snake_case ID -- never change after publishing
   displayName: 'Create Record',
   description: 'Creates a new record in My App',
+  audience: 'both',             // explicit -- see ai-metadata.md
+  aiMetadata: {
+    description:
+      'Create a new record in My App. Use to add a single entry when you already have its field values. Each call creates a new record, so retries duplicate.',
+    idempotent: false,
+  },
   props: {
     name: Property.ShortText({
       displayName: 'Name',
@@ -48,3 +54,7 @@ The `token` field above assumes a `PieceAuth.SecretText()` auth. For other auth 
 **Real example:** `packages/pieces/community/github/src/lib/actions/create-issue.ts`
 
 For all available property types (`Property.ShortText`, `Property.Dropdown`, `Property.Array`, etc.) read `props-patterns.md`.
+
+## AI-Ready Metadata (required on new actions)
+
+Every new action ships with an explicit `audience` (`'both'` for normal integration actions, `'human'` for LLM-wrappers/utilities) and `aiMetadata: { description, idempotent }` — the agent-facing description and safe-retry hint. They are additive and change nothing for human users. Writing rules and the `idempotent` derivation table: `ai-metadata.md`.

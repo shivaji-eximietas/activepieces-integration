@@ -1,12 +1,14 @@
 import { Property, createAction } from '@activepieces/pieces-framework';
 import { googleDriveAuth, createGoogleClient } from '../auth';
-import { google } from 'googleapis';
+import { drive as googleDrive } from '@googleapis/drive';
 import { downloadFileFromDrive } from '../common/get-file-content';
 
 export const setPublicAccess = createAction({
   auth: googleDriveAuth,
   name: 'set_public_access',
   description: 'Set public access for a file or folder',
+  audience: 'both',
+  aiMetadata: { description: 'Makes a Drive file or folder accessible to anyone with the link at the chosen role (reader, commenter, or writer) and returns its shareable view/download URL. Use to publish a resource publicly. Requires the file/folder ID. Not idempotent: each call adds a new anyone-with-link permission.', idempotent: false },
   displayName: 'Set public access',
   props: {
     fileId: Property.ShortText({
@@ -34,7 +36,7 @@ export const setPublicAccess = createAction({
     const fileId = context.propsValue.fileId;
     const role = context.propsValue.role;
 
-    const drive = google.drive({ version: 'v3', auth: authClient });
+    const drive = googleDrive({ version: 'v3', auth: authClient });
     const permission = {
       role,
       type: 'anyone',

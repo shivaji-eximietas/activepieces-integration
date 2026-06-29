@@ -1,5 +1,10 @@
 import {
   ApErrorParams,
+  isNil,
+  ErrorCode,
+  SeekPage,
+} from '@activepieces/core-utils';
+import {
   ApFlagId,
   FlowOperationType,
   FlowStatus,
@@ -10,9 +15,6 @@ import {
   PopulatedFlow,
   FlowTrigger,
   FlowTriggerType,
-  isNil,
-  ErrorCode,
-  SeekPage,
   Template,
   UncategorizedFolderId,
   UpdateRunProgressRequest,
@@ -173,6 +175,9 @@ export const flowHooks = {
             },
           );
         }
+      },
+      onError: () => {
+        toast.error(t('Failed to export flows'));
       },
     });
   },

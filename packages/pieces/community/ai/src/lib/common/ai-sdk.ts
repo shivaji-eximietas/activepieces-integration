@@ -8,7 +8,7 @@ import { createOpenRouter } from '@openrouter/ai-sdk-provider'
 import { EmbeddingModel, ImageModel, LanguageModel } from 'ai'
 import { ProviderOptions } from '@ai-sdk/provider-utils'
 import { httpClient, HttpMethod } from '@activepieces/pieces-common'
-import { AIProviderName, AzureProviderConfig, BaseAIProviderAuthConfig, BedrockProviderAuthConfig, BedrockProviderConfig, CloudflareGatewayProviderConfig, GetProviderConfigResponse, OpenAICompatibleProviderConfig, splitCloudflareGatewayModelId } from '@activepieces/shared'
+import { AIProviderName, AzureProviderConfig, BaseAIProviderAuthConfig, BedrockProviderAuthConfig, BedrockProviderConfig, CloudflareGatewayProviderConfig, GetProviderConfigResponse, OpenAICompatibleProviderConfig, splitCloudflareGatewayModelId } from '@activepieces/pieces-framework'
 import { createAiGateway } from 'ai-gateway-provider';
 import { createAnthropic as createAnthropicGateway } from 'ai-gateway-provider/providers/anthropic';
 import { createGoogleGenerativeAI as createGoogleGateway } from 'ai-gateway-provider/providers/google';
@@ -188,6 +188,18 @@ export async function createAIModel({
             if (isImage) {
                 return provider.imageModel(modelId)
             }
+            return provider.chatModel(modelId)
+        }
+        case AIProviderName.MISTRAL: {
+            const { apiKey } = auth as BaseAIProviderAuthConfig
+            if (isImage) {
+                throw new Error(`Provider ${AIProviderName.MISTRAL} does not support image models`)
+            }
+            const provider = createOpenAICompatible({
+                name: 'mistral',
+                baseURL: 'https://api.mistral.ai/v1',
+                apiKey,
+            })
             return provider.chatModel(modelId)
         }
         case AIProviderName.ACTIVEPIECES:

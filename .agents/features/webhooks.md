@@ -9,8 +9,8 @@ Ingests inbound HTTP requests from external services and routes them to flows fo
 - `packages/server/api/src/app/webhooks/webhook-request-converter.ts` — payload normalization and file upload
 - `packages/server/api/src/app/webhooks/webhook-handshake.ts` — handshake verification logic
 - `packages/server/api/src/app/webhooks/webhook-module.ts` — module registration
-- `packages/shared/src/lib/automation/webhook/dto.ts` — WebhookUrlParams schema
-- `packages/shared/src/lib/automation/trigger/index.ts` — WebhookHandshakeStrategy enum and WebhookHandshakeConfiguration schema
+- `packages/core/shared/src/lib/automation/webhook/dto.ts` — WebhookUrlParams schema
+- `packages/core/shared/src/lib/automation/trigger/index.ts` — WebhookHandshakeStrategy enum and WebhookHandshakeConfiguration schema
 - `packages/web/src/app/builder/test-step/custom-test-step/test-webhook-dialog.tsx` — dialog for sending a manual test request to the webhook URL
 - `packages/web/src/app/builder/test-step/test-trigger-section/manual-webhook-test-button.tsx` — button that opens the test webhook dialog
 - `packages/web/src/app/builder/test-step/test-trigger-section/index.tsx` — test trigger panel (includes webhook test entry point)
@@ -27,7 +27,7 @@ Ingests inbound HTTP requests from external services and routes them to flows fo
 - **Draft webhook** — routes to the latest (draft) flow version instead of the published version; used for testing
 - **Test endpoint** (`/:flowId/test`) — captures the request as sample data without executing the flow
 - **Handshake** — a one-time ownership challenge sent by external services before activating a webhook subscription
-- **HandshakeStrategy** — how ownership is verified: `HEADER_PRESENT`, `QUERY_PRESENT`, `BODY_PARAM_PRESENT`, `NONE`
+- **HandshakeStrategy** — how ownership is verified: `HEADER_PRESENT`, `QUERY_PRESENT`, `BODY_PARAM_PRESENT`, `NONE`, `HEAD_REQUEST` (for services like Trello that validate by sending a HEAD request)
 - **engineResponseWatcher** — a one-time listener that bridges the BullMQ engine response back to the waiting HTTP connection for sync mode
 - **LOCKED_FALL_BACK_TO_LATEST** — version resolution: uses `publishedVersionId` if set, falls back to latest draft
 - **flowExecutionCache** — Redis-backed fast path for resolving flow metadata without hitting PostgreSQL on every webhook
@@ -47,9 +47,11 @@ All routes accept GET, POST, PUT, DELETE, PATCH methods.
 ## Sync vs Async Execution
 
 **Async path**:
-1. Offload payload to S3 if > `AP_WEBHOOK_PAYLOAD_INLINE_THRESHOLD_KB` (default 512KB)
+1. Offload payload to S3/DB if > `AP_WEBHOOK_PAYLOAD_INLINE_THRESHOLD_KB` (default 512KB). The job carries a `JobPayload` discriminated union — `inline` (value embedded) or `ref` (`fileId` of a `WEBHOOK_PAYLOAD` file).
 2. Queue BullMQ job (`WorkerJobType.EXECUTE_WEBHOOK`)
 3. Return 200 with `x-webhook-id` header immediately
+
+The worker forwards the `JobPayload` straight into the `EXECUTE_TRIGGER_HOOK` engine operation; the **engine** resolves it at execution time (inline value, or a `ref` downloaded via the file-download path — direct bytes or an S3 signed-link redirect). Workers no longer fetch payloads themselves.
 
 **Sync path**:
 1. Create FlowRun with `ProgressUpdateType.WEBHOOK_RESPONSE`
@@ -72,7 +74,7 @@ External services verify webhook ownership before sending events:
 - **HEADER_PRESENT**: Check for specific header
 - **QUERY_PRESENT**: Check for query parameter
 - **BODY_PARAM_PRESENT**: Check for body field
-- Submits HANDSHAKE hook job to worker → piece validates signature → returns verification response
+- Submits HANDSHAKE hook job to worker → piece validates signature → returns verification response. The check runs **before** the disabled-flow guard so that handshake pings are processed both during the publish window (flow still DISABLED) and for third-party re-verification pings on ENABLED flows.
 
 ## Payload Size Limit
 
@@ -82,4 +84,4 @@ External services verify webhook ownership before sending events:
 
 - Uses `flowExecutionCache` for fast lookup
 - LOCKED_FALL_BACK_TO_LATEST: uses `publishedVersionId` if exists, else latest
-- Returns 410 GONE if flow not found, 404 if disabled
+- Returns 410 GONE if flow not found; 404 if disabled (unless the request matches the flow's `handshakeConfiguration`, in which case the handshake is processed and the disabled check is skipped)

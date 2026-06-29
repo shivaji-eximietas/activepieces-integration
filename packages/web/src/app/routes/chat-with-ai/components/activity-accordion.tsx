@@ -1,18 +1,8 @@
-import { isObject } from '@activepieces/shared';
+import { isObject } from '@activepieces/core-utils';
 import { t } from 'i18next';
-import {
-  Brain,
-  Check,
-  ChevronDown,
-  Clock,
-  Loader2,
-  Search,
-  Wrench,
-  XCircle,
-  Zap,
-} from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
-import React, { useMemo, useState } from 'react';
+import { ChevronDown, Code } from 'lucide-react';
+import { motion } from 'motion/react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { SimpleJsonViewer } from '@/components/custom/simple-json-viewer';
 import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
@@ -23,6 +13,7 @@ import {
   chatPartUtils,
 } from '@/features/chat/lib/chat-types';
 import { chatUtils } from '@/features/chat/lib/chat-utils';
+import { toolIconUtils } from '@/features/chat/lib/tool-icons';
 import { PieceIcon } from '@/features/pieces/components/piece-icon';
 import { piecesHooks } from '@/features/pieces/hooks/pieces-hooks';
 import { cn } from '@/lib/utils';
@@ -32,42 +23,44 @@ export function ThinkingBlock({
   reasoningText,
   isStreaming,
   thinkingDurationMs,
+  onOpenChange,
 }: {
   thinkingSteps: ThinkingStep[];
   reasoningText: string;
   isStreaming: boolean;
   thinkingDurationMs?: number;
+  onOpenChange?: (open: boolean) => void;
 }) {
   const [isOpen, setIsOpen] = useState(false);
+
+  const handleOpenChange = useCallback(
+    (open: boolean) => {
+      setIsOpen(open);
+      onOpenChange?.(open);
+    },
+    [onOpenChange],
+  );
 
   const hasReasoning = reasoningText.length > 0;
   const hasSteps = thinkingSteps.length > 0;
 
   if (!hasSteps && !hasReasoning && !isStreaming) return null;
 
-  const isExpandable = hasSteps || hasReasoning;
+  const isExpandable = hasSteps;
 
-  const doneLabel =
-    thinkingDurationMs !== undefined
-      ? t('Thought for {seconds} seconds', {
-          seconds: Math.round(thinkingDurationMs / 1000),
-        })
-      : t('Thought for a few seconds');
-
-  const lastStep = hasSteps ? thinkingSteps[thinkingSteps.length - 1] : null;
-  const lastStepIdx = thinkingSteps.length - 1;
+  const doneLabel = formatThinkingDuration(thinkingDurationMs);
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 6 }}
+      initial={isStreaming ? false : { opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, ease: 'easeOut' }}
+      transition={{ duration: 0.4, ease: 'easeOut' }}
     >
-      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <Collapsible open={isOpen} onOpenChange={handleOpenChange}>
         <button
           type="button"
           disabled={!isExpandable}
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={() => handleOpenChange(!isOpen)}
           className={cn(
             'flex items-center gap-1.5 text-sm text-muted-foreground text-left w-full',
             isExpandable &&
@@ -75,45 +68,23 @@ export function ThinkingBlock({
           )}
         >
           {isStreaming ? (
-            <TextShimmer className="text-sm" duration={3}>
+            <TextShimmer className="text-sm" duration={2}>
               {t('Thinking...')}
             </TextShimmer>
           ) : (
             <span>{doneLabel}</span>
           )}
-          {isExpandable && (
-            <ChevronDown
-              className={cn(
-                'size-4 shrink-0 text-muted-foreground/50 transition-transform',
-                isOpen && 'rotate-180',
-              )}
-            />
-          )}
+          <ChevronDown
+            className={cn(
+              'size-3.5 shrink-0 transition-all duration-300',
+              isOpen && 'rotate-180',
+              isExpandable ? 'opacity-50 text-muted-foreground' : 'opacity-0',
+            )}
+          />
         </button>
 
-        {!isOpen && isStreaming && lastStep && (
-          <div className="mt-3 ml-1">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={`step-${lastStepIdx}`}
-                initial={{ opacity: 0, y: 4 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <StepRenderer
-                  step={lastStep}
-                  showConnector={false}
-                  isStreaming={true}
-                  showIcon={false}
-                />
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        )}
-
         <CollapsibleContent className="data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down overflow-hidden">
-          <div className="mt-3 ml-1">
+          <div className="mt-2 space-y-0.5">
             {thinkingSteps.map((step, idx) => (
               <StepRenderer
                 key={
@@ -122,22 +93,8 @@ export function ThinkingBlock({
                     : `${step.kind}-${idx}`
                 }
                 step={step}
-                showConnector={true}
-                isStreaming={isStreaming}
-                showIcon={true}
               />
             ))}
-
-            {!isStreaming && hasSteps && (
-              <div className="flex gap-3 items-center">
-                <div className="flex items-center justify-center size-5 rounded-full bg-muted">
-                  <Check className="size-3 text-muted-foreground" />
-                </div>
-                <span className="text-xs text-muted-foreground">
-                  {t('Done')}
-                </span>
-              </div>
-            )}
           </div>
         </CollapsibleContent>
       </Collapsible>
@@ -145,125 +102,73 @@ export function ThinkingBlock({
   );
 }
 
-function StepRenderer({
-  step,
-  showConnector,
-  isStreaming,
-  showIcon,
-}: {
-  step: ThinkingStep;
-  showConnector: boolean;
-  isStreaming: boolean;
-  showIcon: boolean;
-}) {
+function StepRenderer({ step }: { step: ThinkingStep }) {
   switch (step.kind) {
-    case 'reasoning':
-      return (
-        <StepLayout
-          showIcon={showIcon}
-          showConnector={showConnector}
-          icon={Brain}
-        >
-          <p
-            className={cn(
-              'whitespace-pre-wrap break-words line-clamp-3',
-              isStreaming
-                ? 'text-sm text-foreground'
-                : 'text-xs text-muted-foreground',
-            )}
-          >
-            {step.text}
-          </p>
-        </StepLayout>
-      );
     case 'thinking-status':
-      if (step.toolPart) {
-        return (
-          <ToolStep
-            part={step.toolPart}
-            showConnector={showConnector}
-            showIcon={showIcon}
-            label={step.text}
-          />
-        );
-      }
       return (
-        <StepLayout
-          showIcon={showIcon}
-          showConnector={showConnector}
-          icon={Clock}
-        >
-          {isStreaming ? (
-            <TextShimmer className="text-sm" duration={3}>
-              {step.text}
-            </TextShimmer>
-          ) : (
-            <p className="text-xs text-muted-foreground">{step.text}</p>
-          )}
-        </StepLayout>
+        <div className="py-0.5">
+          <p className="text-sm text-muted-foreground">{step.text}</p>
+        </div>
       );
     case 'tool':
-      return (
-        <ToolStep
-          part={step.part}
-          showConnector={showConnector}
-          showIcon={showIcon}
-        />
-      );
+      return <ToolStepRow part={step.part} description={step.description} />;
   }
 }
 
-function StepLayout({
-  showIcon,
-  showConnector,
-  icon: Icon,
-  children,
-}: {
-  showIcon: boolean;
-  showConnector: boolean;
-  icon: React.FC<{ className?: string }>;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="flex gap-3">
-      {showIcon && (
-        <div className="flex flex-col items-center shrink-0">
-          <div className="flex items-center justify-center size-5 rounded-full bg-muted">
-            <Icon className="size-3 text-muted-foreground" />
-          </div>
-          {showConnector && <div className="w-px flex-1 bg-border min-h-3" />}
-        </div>
-      )}
-      <div className="flex-1 min-w-0 pb-4 pt-0.5">{children}</div>
-    </div>
-  );
-}
-
-function ToolStep({
+function ToolStepRow({
   part,
-  showConnector,
-  showIcon,
-  label,
+  description,
 }: {
   part: AnyToolPart;
-  showConnector: boolean;
-  showIcon: boolean;
-  label?: string;
+  description: string | null;
 }) {
   const status = chatPartUtils.deriveToolStatus(part);
-  const icon =
-    status === 'running' ? Loader2 : status === 'failed' ? XCircle : Wrench;
-
-  return (
-    <StepLayout showIcon={showIcon} showConnector={showConnector} icon={icon}>
-      <ToolCard part={part} label={label} />
-    </StepLayout>
-  );
-}
-
-function ToolCard({ part, label }: { part: AnyToolPart; label?: string }) {
+  const { activeTitle, doneTitle } = chatPartUtils.extractToolTitles(part);
+  const activeFallback = chatUtils.formatToolActionName({ part });
+  const doneFallback = chatUtils.formatToolDoneTitle({ part });
+  const rawInput = isObject(part.input) ? part.input : undefined;
+  const isRunCode = chatPartUtils.getToolPartName(part) === 'ap_run_code';
+  const recipeLines = useMemo(() => {
+    if (!isRunCode || !Array.isArray(rawInput?.recipe)) return [];
+    return rawInput.recipe.filter(
+      (line): line is string => typeof line === 'string',
+    );
+  }, [isRunCode, rawInput]);
+  const codeSource = useMemo(() => {
+    if (!isRunCode || !rawInput) return null;
+    const code = typeof rawInput.code === 'string' ? rawInput.code : '';
+    const packageJson =
+      typeof rawInput.packageJson === 'string' ? rawInput.packageJson : '';
+    if (!code && !packageJson) return null;
+    return packageJson ? `${code}\n\n// package.json\n${packageJson}` : code;
+  }, [isRunCode, rawInput]);
+  const resolvedDescription =
+    description ??
+    (rawInput &&
+    typeof rawInput.description === 'string' &&
+    rawInput.description
+      ? rawInput.description
+      : null);
   const [detailsOpen, setDetailsOpen] = useState(false);
-  const input = isObject(part.input) ? part.input : undefined;
+  const [codeOpen, setCodeOpen] = useState(false);
+  const input = useMemo(() => {
+    if (!rawInput) return undefined;
+    const {
+      title: _t,
+      description: _d,
+      activeTitle: _a,
+      doneTitle: _dt,
+      ...rest
+    } = rawInput;
+    if (isRunCode) {
+      delete rest.code;
+      delete rest.packageJson;
+      delete rest.inputFileIds;
+      delete rest.input;
+      delete rest.recipe;
+    }
+    return Object.keys(rest).length > 0 ? rest : undefined;
+  }, [rawInput, isRunCode]);
   const output = chatPartUtils.extractToolOutputText(part);
   const hasInput = input && Object.keys(input).length > 0;
   const hasOutput = Boolean(output);
@@ -273,96 +178,192 @@ function ToolCard({ part, label }: { part: AnyToolPart; label?: string }) {
     [detailsOpen, output],
   );
   const pieceNames = useMemo(
-    () => chatPartUtils.extractPieceNames(input),
-    [input],
+    () => chatPartUtils.extractPieceNames(rawInput),
+    [rawInput],
   );
   const { summaries: pieceSummaries } = piecesHooks.usePieceSummariesByNames({
     names: pieceNames,
   });
-  const summary = buildToolSummary({ part });
-  const displayLabel = label ?? summary.label;
-  const primaryPiece = pieceSummaries.find((p) => p.logoUrl);
+  const matchedPieces = pieceSummaries.filter((p) => p.logoUrl);
+
+  const ToolIcon = toolIconUtils.getToolIcon(
+    chatPartUtils.getToolPartName(part),
+  );
+
+  const label =
+    status === 'running'
+      ? activeTitle ?? activeFallback
+      : status === 'completed'
+      ? doneTitle ?? doneFallback
+      : doneFallback;
 
   return (
-    <Collapsible open={detailsOpen} onOpenChange={setDetailsOpen}>
-      <div
-        className={cn(
-          'inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-2.5 py-1',
-          hasDetails && 'cursor-pointer hover:bg-muted/50 transition-colors',
-        )}
-        onClick={() => hasDetails && setDetailsOpen(!detailsOpen)}
-      >
-        {primaryPiece ? (
-          <PieceIcon
-            displayName={primaryPiece.displayName}
-            logoUrl={primaryPiece.logoUrl!}
-            size="xxs"
-            border={false}
-            showTooltip={false}
-          />
-        ) : (
-          <summary.icon className="size-3 text-muted-foreground shrink-0" />
-        )}
-        <span className="text-xs text-muted-foreground whitespace-nowrap">
-          {displayLabel}
-        </span>
-        {hasDetails && (
-          <ChevronDown
-            className={cn(
-              'size-3 shrink-0 text-muted-foreground/50 transition-transform',
-              detailsOpen && 'rotate-180',
-            )}
-          />
-        )}
-      </div>
-      {hasDetails && (
-        <CollapsibleContent className="data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down overflow-hidden">
-          <div className="mt-1.5 space-y-1.5 text-[11px]">
-            {hasInput && input && (
-              <div>
-                <p className="text-muted-foreground font-medium mb-0.5">
-                  {t('Input')}
-                </p>
-                <SimpleJsonViewer
-                  data={input}
-                  hideCopyButton={true}
-                  maxHeight={100}
-                  fontSize="11px"
-                />
-              </div>
-            )}
-            {hasOutput && parsedOutput !== undefined && (
-              <div>
-                <p className="text-muted-foreground font-medium mb-0.5">
-                  {t('Output')}
-                </p>
-                <SimpleJsonViewer
-                  data={parsedOutput}
-                  hideCopyButton={true}
-                  maxHeight={120}
-                  fontSize="11px"
-                />
-              </div>
-            )}
+    <div className="py-1">
+      {recipeLines.length > 0 ? (
+        <div className="mb-1.5 overflow-hidden rounded-lg border border-border bg-muted/20">
+          <div className="flex items-center gap-2 border-b border-border/60 px-3 py-1">
+            <Code className="size-3 shrink-0 text-primary/80" />
+            <span className="text-[11px] font-medium text-muted-foreground">
+              {t('What this code does')}
+            </span>
           </div>
-        </CollapsibleContent>
+          <div className="space-y-0.5 px-3 py-2 font-mono text-xs leading-relaxed">
+            {recipeLines.map((line, idx) => (
+              <div
+                key={`${idx}-${line}`}
+                className="flex items-start gap-2 text-foreground/75"
+              >
+                <span className="select-none pt-px text-primary/70">›</span>
+                <span>{line}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        resolvedDescription && (
+          <p className="text-sm text-muted-foreground mb-1.5">
+            {resolvedDescription}
+          </p>
+        )
       )}
-    </Collapsible>
+      <Collapsible open={detailsOpen} onOpenChange={setDetailsOpen}>
+        {status === 'running' ? (
+          <TextShimmer
+            as="div"
+            className={cn(
+              'inline-flex items-center gap-2 rounded-lg border px-4 py-1.5 text-sm border-border',
+              hasDetails && 'cursor-pointer',
+            )}
+            duration={2}
+            onClick={() => hasDetails && setDetailsOpen(!detailsOpen)}
+          >
+            <ToolIcon className="size-4 shrink-0 text-muted-foreground animate-pulse motion-reduce:animate-none" />
+            {label}
+            {matchedPieces.map((piece) => (
+              <PieceIcon
+                key={piece.name}
+                displayName={piece.displayName}
+                logoUrl={piece.logoUrl!}
+                size="xxs"
+                border={false}
+                showTooltip={false}
+              />
+            ))}
+          </TextShimmer>
+        ) : (
+          <div>
+            <div
+              className={cn(
+                'inline-flex items-center gap-2 rounded-lg border px-4 py-1.5 text-sm border-border',
+                hasDetails && 'cursor-pointer',
+              )}
+              onClick={() => hasDetails && setDetailsOpen(!detailsOpen)}
+            >
+              <ToolIcon className="size-4 shrink-0 text-muted-foreground" />
+              <span className="text-sm text-muted-foreground">{label}</span>
+              {matchedPieces.map((piece) => (
+                <PieceIcon
+                  key={piece.name}
+                  displayName={piece.displayName}
+                  logoUrl={piece.logoUrl!}
+                  size="xxs"
+                  border={false}
+                  showTooltip={false}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+        {hasDetails && (
+          <CollapsibleContent className="data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down overflow-hidden">
+            <div className="mt-1 rounded-lg bg-muted/30 px-3 py-2 space-y-2 text-[11px]">
+              {hasInput && input && (
+                <div>
+                  <p className="text-muted-foreground font-medium mb-0.5">
+                    {t('Input')}
+                  </p>
+                  <SimpleJsonViewer
+                    data={input}
+                    hideCopyButton={true}
+                    maxHeight={100}
+                    fontSize="11px"
+                  />
+                </div>
+              )}
+              {hasOutput && parsedOutput !== undefined && (
+                <div>
+                  <p className="text-muted-foreground font-medium mb-0.5">
+                    {t('Output')}
+                  </p>
+                  <SimpleJsonViewer
+                    data={parsedOutput}
+                    hideCopyButton={true}
+                    maxHeight={120}
+                    fontSize="11px"
+                  />
+                </div>
+              )}
+            </div>
+          </CollapsibleContent>
+        )}
+      </Collapsible>
+      {codeSource && (
+        <Collapsible
+          open={codeOpen}
+          onOpenChange={setCodeOpen}
+          className="mt-1.5"
+        >
+          <button
+            type="button"
+            onClick={() => setCodeOpen(!codeOpen)}
+            className="flex items-center gap-1 text-[11px] text-muted-foreground/70 hover:text-foreground transition-colors"
+          >
+            <Code className="size-3 shrink-0" />
+            {codeOpen ? t('Hide code') : t('View code')}
+          </button>
+          <CollapsibleContent className="data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down overflow-hidden">
+            <pre className="mt-1 max-h-64 overflow-auto rounded-lg bg-muted/40 px-3 py-2 text-[11px] font-mono whitespace-pre-wrap break-words text-muted-foreground">
+              {codeSource}
+            </pre>
+          </CollapsibleContent>
+        </Collapsible>
+      )}
+    </div>
   );
 }
 
-function buildToolSummary({ part }: { part: AnyToolPart }): {
-  icon: React.FC<{ className?: string }>;
-  label: string;
-} {
-  const toolName = chatPartUtils.getToolPartName(part);
-  const icon =
-    toolName === 'ap_run_one_time_action'
-      ? Zap
-      : toolName.startsWith('mcp__')
-      ? Wrench
-      : Search;
-  return { icon, label: chatUtils.formatToolActionName({ part }) };
+function formatThinkingDuration(ms: number | undefined): string {
+  if (ms === undefined) return t('Thought for a few seconds');
+  const totalSeconds = Math.round(ms / 1000);
+  if (totalSeconds <= 0) return t('Thought for a moment');
+  if (totalSeconds < 60) {
+    return t(
+      'Thought for {seconds} {seconds, plural, =1 {second} other {seconds}}',
+      {
+        seconds: totalSeconds,
+      },
+    );
+  }
+  const minutes = Math.floor(totalSeconds / 60);
+  if (minutes < 60) {
+    return t(
+      'Thought for {minutes} {minutes, plural, =1 {minute} other {minutes}}',
+      {
+        minutes,
+      },
+    );
+  }
+  const hours = Math.floor(minutes / 60);
+  const remainMinutes = minutes % 60;
+  if (remainMinutes > 0) {
+    return t(
+      'Thought for {hours} {hours, plural, =1 {hour} other {hours}} {minutes} {minutes, plural, =1 {minute} other {minutes}}',
+      { hours, minutes: remainMinutes },
+    );
+  }
+  return t('Thought for {hours} {hours, plural, =1 {hour} other {hours}}', {
+    hours,
+  });
 }
 
 function tryParseJson(value: string): unknown {

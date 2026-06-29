@@ -5,7 +5,7 @@ import {
 } from '@activepieces/pieces-framework';
 import { GmailProps } from '../common/props';
 import { gmailAuth, createGoogleClient } from '../auth';
-import { google } from 'googleapis';
+import { gmail as googleGmail } from '@googleapis/gmail';
 import { parseStream, convertAttachment } from '../common/data';
 
 async function enrichGmailMessage({
@@ -58,17 +58,20 @@ export const gmailNewLabeledEmailTrigger = createTrigger({
   name: 'new_labeled_email',
   displayName: 'New Labeled Email',
   description: 'Triggers when a label is added to an email',
+  aiMetadata: {
+    description:
+      'Fires when the specified label is applied to an email (either newly received with the label or labeled afterward). Each event represents one message that just gained that label, with its parsed contents and label info.',
+  },
   props: {
-    label: {
-      ...GmailProps.label,
+    label: GmailProps.label({
       required: true,
-    },
+    }),
   },
   sampleData: {},
   type: TriggerStrategy.POLLING,
   onEnable: async (context) => {
     const authClient = await createGoogleClient(context.auth);
-    const gmail = google.gmail({ version: 'v1', auth: authClient });
+    const gmail = googleGmail({ version: 'v1', auth: authClient });
 
     const profile = await gmail.users.getProfile({
       userId: 'me',
@@ -81,7 +84,7 @@ export const gmailNewLabeledEmailTrigger = createTrigger({
   },
   run: async (context) => {
     const authClient = await createGoogleClient(context.auth);
-    const gmail = google.gmail({ version: 'v1', auth: authClient });
+    const gmail = googleGmail({ version: 'v1', auth: authClient });
 
     const lastHistoryId = await context.store.get('lastHistoryId');
 
@@ -154,7 +157,7 @@ export const gmailNewLabeledEmailTrigger = createTrigger({
   },
   test: async (context) => {
     const authClient = await createGoogleClient(context.auth);
-    const gmail = google.gmail({ version: 'v1', auth: authClient });
+    const gmail = googleGmail({ version: 'v1', auth: authClient });
 
     const messagesResponse = await gmail.users.messages.list({
       userId: 'me',

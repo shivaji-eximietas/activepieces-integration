@@ -2,10 +2,8 @@ import { createAction, Property } from '@activepieces/pieces-framework';
 import { getGraphBaseUrl } from '../common/microsoft-cloud';
 import { Client } from '@microsoft/microsoft-graph-client';
 import { BodyType } from '@microsoft/microsoft-graph-types';
-import {
-  assertNotNullOrUndefined,
-  ExecutionType,
-} from '@activepieces/shared';
+import { assertNotNullOrUndefined } from '@activepieces/pieces-framework';
+import { ExecutionType } from '@activepieces/pieces-framework';
 import { microsoftOutlookAuth } from '../common/auth';
 
 export const requestApprovalInMail = createAction({
@@ -14,6 +12,8 @@ export const requestApprovalInMail = createAction({
   displayName: 'Request Approval in Email',
   description:
     'Send approval request email and then wait until the email is approved or disapproved',
+  audience: 'both',
+  aiMetadata: { description: 'Sends an email containing Approve/Disapprove links to one recipient, then pauses the flow until they click one of the links, resuming with the decision. Use this as a human-in-the-loop approval gate before proceeding. Not idempotent: each call sends a new email and creates a new pending waitpoint.', idempotent: false },
   props: {
     recipients: Property.ShortText({
       displayName: 'To Email Address',

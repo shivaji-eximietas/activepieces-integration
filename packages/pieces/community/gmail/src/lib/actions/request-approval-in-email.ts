@@ -5,10 +5,11 @@ import {
   getAccessToken,
   getUserEmail,
 } from '../auth';
-import { google } from 'googleapis';
+import { gmail as googleGmail } from '@googleapis/gmail';
 import MailComposer from 'nodemailer/lib/mail-composer';
 import Mail from 'nodemailer/lib/mailer';
-import { assertNotNullOrUndefined, ExecutionType } from '@activepieces/shared';
+import { assertNotNullOrUndefined } from '@activepieces/pieces-framework';
+import { ExecutionType } from '@activepieces/pieces-framework';
 
 export const requestApprovalInEmail = createAction({
   auth: gmailAuth,
@@ -16,6 +17,12 @@ export const requestApprovalInEmail = createAction({
   displayName: 'Request Approval in Email',
   description:
     'Send approval request email and then wait until the email is approved or disapproved',
+  audience: 'both',
+  aiMetadata: {
+    description:
+      'Sends an email containing Approve and Disapprove links to a recipient, then pauses the flow until the recipient clicks one, resuming with their decision. Use this as a human-in-the-loop gate before proceeding with a sensitive action. The flow blocks indefinitely until a response arrives. Not idempotent: each call sends a new approval email and creates a new wait.',
+    idempotent: false,
+  },
   props: {
     receiver: Property.ShortText({
       displayName: 'Receiver Email (To)',
@@ -103,7 +110,7 @@ export const requestApprovalInEmail = createAction({
 
         const authClient = await createGoogleClient(context.auth);
 
-        const gmail = google.gmail({ version: 'v1', auth: authClient });
+        const gmail = googleGmail({ version: 'v1', auth: authClient });
 
         const subjectBase64 = Buffer.from(
           context.propsValue['subject']

@@ -13,9 +13,10 @@ import {
   objectToArray,
   ValueInputOption,
 } from '../common/common';
-import { isString, MarkdownVariant } from '@activepieces/shared';
+import { MarkdownVariant } from '@activepieces/pieces-framework';
+import { isString } from '@activepieces/pieces-framework';
 import { getWorkSheetName } from '../triggers/helpers';
-import { google, sheets_v4 } from 'googleapis';
+import { sheets as googleSheets, sheets_v4 } from '@googleapis/sheets';
 import { commonProps } from '../common/props';
 
 export const updateMultipleRowsAction = createAction({
@@ -23,6 +24,12 @@ export const updateMultipleRowsAction = createAction({
   name: 'update-multiple-rows',
   displayName: 'Update Multiple Rows',
   description: 'Updates multiple rows in a specific spreadsheet.',
+  audience: 'both',
+  aiMetadata: {
+    description:
+      'Overwrites several existing rows in one batch call, each targeted by its own row id. Use when an agent needs to apply edits to multiple known rows efficiently rather than calling Update Row repeatedly. Idempotent — re-running with the same row ids and values produces the same sheet state; rows without a row id are skipped.',
+    idempotent: true,
+  },
   props: {
     ...commonProps,
     values: Property.DynamicProperties({
@@ -130,7 +137,7 @@ export const updateMultipleRowsAction = createAction({
       : ValueInputOption.USER_ENTERED;
 
     const authClient = await createGoogleClient(context.auth);
-    const sheets = google.sheets({ version: 'v4', auth: authClient });
+    const sheets = googleSheets({ version: 'v4', auth: authClient });
 
     const values: sheets_v4.Schema$ValueRange[] = [];
 

@@ -28,6 +28,7 @@ import { apManageNotesTool } from './ap-manage-notes'
 import { apReadStepCodeTool } from './ap-read-step-code'
 import { apRenameFlowTool } from './ap-rename-flow'
 import { apResearchPiecesTool } from './ap-research-pieces'
+import { apResolvePropertyChainTool } from './ap-resolve-property-chain'
 import { apResolvePropertyOptionsTool } from './ap-resolve-property-options'
 import { apRetryRunTool } from './ap-retry-run'
 import { apRunActionTool } from './ap-run-action'
@@ -49,6 +50,7 @@ export const LOCKED_TOOL_NAMES: string[] = [
     'ap_research_pieces',
     'ap_get_piece_props',
     'ap_resolve_property_options',
+    'ap_resolve_property_chain',
     'ap_validate_step_config',
     'ap_list_connections',
     'ap_list_ai_models',
@@ -96,10 +98,10 @@ export const ALL_CONTROLLABLE_TOOL_NAMES: string[] = [
     'ap_run_action',
 ]
 
-export const activepiecesTools = (mcp: ProjectScopedMcpServer, log: FastifyBaseLogger): McpToolDefinition[] => [
-    apBuildFlowTool(mcp, log),
-    apCreateFlowTool(mcp, log),
-    apDuplicateFlowTool(mcp, log),
+export const activepiecesTools = (mcp: ProjectScopedMcpServer, userId: string | undefined, log: FastifyBaseLogger): McpToolDefinition[] => [
+    apBuildFlowTool({ mcp, userId }, log),
+    apCreateFlowTool({ mcp, userId }, log),
+    apDuplicateFlowTool({ mcp, userId }, log),
     apRenameFlowTool(mcp, log),
     apListFlowsTool(mcp, log),
     apFlowStructureTool(mcp, log),
@@ -108,6 +110,7 @@ export const activepiecesTools = (mcp: ProjectScopedMcpServer, log: FastifyBaseL
     apResearchPiecesTool(mcp, log),
     apGetPiecePropsTool(mcp, log),
     apResolvePropertyOptionsTool(mcp, log),
+    apResolvePropertyChainTool(mcp, log),
     apValidateStepConfigTool(mcp, log),
     apListConnectionsTool(mcp, log),
     apUpdateTriggerTool(mcp, log),
